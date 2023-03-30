@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DASHBOARD ADMIN</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/bootstrap.css">
+  <link rel="stylesheet" href="/vendors/iconly/bold.css">
+  <link rel="stylesheet" href="/vendors/perfect-scrollbar/perfect-scrollbar.css">
+  <link rel="stylesheet" href="/vendors/bootstrap-icons/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="shortcut icon" href="/images/favicon.svg" type="image/x-icon">
+</head>
+
+<body>
+  <div id="app">
+    <div id="sidebar" class="active">
+      <div class="sidebar-wrapper active">
+        <div class="sidebar-header">
+          <div class="d-flex justify-content-between">
+            <div class="logo">
+              <a href="index.html"><img src="/img/logo_ASYTECH.png" alt="Logo"></a>
+            </div>
+            <div class="toggler">
+              <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-menu">
+          <%- include('widget/menu') %>
+        </div>
+        <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
+      </div>
+    </div>
+    <div id="main">
+      <header class="mb-3">
+        <a href="#" class="burger-btn d-block d-xl-none">
+          <i class="bi bi-justify fs-3"></i>
+        </a>
+      </header>
+      <div class="page-heading">
+        <h3>TICKET SYSTEM STATUS</h3>
+        <h4>Bentornato <%= user.username %></h4>
+      </div>
+      <div class="page-content">
+        <section class="row">
+          <div class="col-12 col-lg-12">
+            <div class="row">
+              <div class="col-6 col-lg-3 col-md-6">
+                <div class="card">
+                  <div class="card-body px-3 py-4-5">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="stats-icon purple">
+                          <i class="iconly-boldShow"></i>
+                        </div>
+                      </div>
+                      <div class="col-md-8">
+                        <h6 class="text-muted font-semibold">TICKET ATTIVI</h6>
+                        <h6 class="font-extrabold mb-0"><%= data.nTicket %></h6>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6 col-lg-3 col-md-6">
+                <div class="card">
+                  <div class="card-body px-3 py-4-5">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="stats-icon blue">
+                          <i class="iconly-boldProfile"></i>
+                        </div>
+                      </div>
+                      <div class="col-md-8">
+                        <h6 class="text-muted font-semibold">UTENTI </h6>
+                        <h6 class="font-extrabold mb-0"><%= data.nWebSurfer %></h6>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6 col-lg-3 col-md-6">
+                <div class="card">
+                  <div class="card-body px-3 py-4-5">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="stats-icon green">
+                          <i class="iconly-boldAdd-User"></i>
+                        </div>
+                      </div>
+                      <div class="col-md-8">
+                        <h6 class="text-muted font-semibold">NUOVI UTENTI</h6>
+                        <h6 class="font-extrabold mb-0"><%= data.lastWebsurferInserted %></h6>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6 col-lg-3 col-md-6">
+                <div class="card">
+                  <div class="card-body px-3 py-4-5">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="stats-icon red">
+                          <i class="iconly-boldBookmark"></i>
+                        </div>
+                      </div>
+                      <div class="col-md-8">
+                        <h6 class="text-muted font-semibold">TICKET SCADUTI</h6>
+                        <h6 class="font-extrabold mb-0"><%= data.nTicketExpired %></h6>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-xl-6">
+                <div class="card">
+                  <div class="card-header text-align-center">
+                    <h4>ULTIMI UTENTI INSERITI(3 GIORNI)</h4>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-hover table-lg">
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>NOME</th>
+                            <th>COGNOME</th>
+                            <th>EMAIL</th>
+                            
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% data.lastWebsurfers.forEach(function(lastWebsurfers) { %>
+                          <tr>
+                            <td class="col-auto">
+                              <p class=" mb-0"> <%= lastWebsurfers.id %></p>
+                            </td>
+                            <td class="col-auto">
+                              <p class=" mb-0"><%= lastWebsurfers.firstname %></p>
+                            </td>
+                            <td class="col-auto">
+                              <p class=" mb-0"><%= lastWebsurfers.lastname %></p>
+                            </td>
+                            <td class="col-auto">
+                              <p class=" mb-0"><%= lastWebsurfers.email %></p>
+                            </td>
+                          </tr>
+                          <%  }) %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-xl-6">
+                <div class="card">
+                  <div class="card-header">
+                    <h4>ULTIMI TICKET CREATI(3 GIORNI)</h4>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-hover table-lg">
+                        <thead>
+                          <tr>
+                            <th>USER ID</th>
+                            <th>EMMISSIONE</th>
+                            <th>SCADENZA</th>
+                            <th>DURATA(GG)</th>
+                            <th>STATO</th>
+                            <th>LOGIN</th>
+                            <th>PASSWORD</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% data.lastTickets.forEach(function(lastTickets) { %>
+                          <tr>
+                            <td class="col-auto">
+                              <p class=" mb-0"><%= lastTickets.WebsurferId %></p>
+                            </td>
+                            <td class="col-auto">
+                              <p class=" mb-0"><%= lastTickets.emissionDate %></p>
+                            </td>
+                            <td class="col-auto">
+                              <p class=" mb-0"><%= lastTickets.expirationDate %></p>
+                            </td>
+                            <td class="col-auto">
+                              <p class=" mb-0"><%= lastTickets.durationDays %></p>
+                            </td>
+                            <td class="col-auto">
+                              <p class=" mb-0"><%= lastTickets.state %></p>
+                            </td>
+                            <td class="col-auto">
+                              <p class=" mb-0"><%= lastTickets.login %></p>
+                            </td>
+                            <td class="col-auto">
+                              <p class=" mb-0"><%= lastTickets.password %></p>
+                            </td>
+                          </tr>
+                          <%  }) %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> 
+        </section>
+      </div>
+    </div>
+  </div>
+  <script src="/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+  <script src="/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+
+</html>

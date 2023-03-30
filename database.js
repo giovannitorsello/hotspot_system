@@ -1,0 +1,202 @@
+const Sequelize = require('sequelize');
+var config = require("./config.js").load();
+
+const sequelize = new Sequelize(config.database.database, config.database.username, config.database.password, {
+    host: config.database.host,
+    dialect: config.database.dialect
+});
+
+const Websurfer = sequelize.define('Websurfer', {
+    firstname: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    lastname: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+
+    denominazione: {
+        type: Sequelize.INTEGER,
+        allowNull: true
+    },
+    email: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    note: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    phone: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    profile: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    idSocial: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    typeSocial: {
+        type: Sequelize.STRING,
+        allowNull: true
+    }
+}, {tableName: "websurfer"});
+
+const Customer = sequelize.define('Customer', {
+      fiscalCode: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    city: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    companyName: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    email: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    fax: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    addessCompany: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    note: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    phone: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    vatCode: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    web: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    pin: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    profile: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    defaultBandwidth: {
+        type: Sequelize.STRING,
+        allowNull: true
+    }
+}, {tableName: "customer"});
+
+const User = sequelize.define('User', {
+    admin: {
+        type: Sequelize.TINYINT,
+        allowNull: true
+    },
+    password: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    utente: {
+        type: Sequelize.STRING,
+        allowNull: true
+    }
+}, {tableName: "user"});
+
+const Ticket = sequelize.define('Ticket', {
+    emissionDate: {
+        type: Sequelize.DATEONLY,
+        allowNull: true
+    },
+    firstUse:{
+        type: Sequelize.DATEONLY,
+        allowNull: true
+    },
+    expirationDate:{
+        type: Sequelize.DATEONLY,
+        allowNull: true
+    },
+    expirationUsageDate: {
+        type: Sequelize.DATEONLY,
+        allowNull: true
+    },
+    durationDays:{
+        type: Sequelize.INTEGER,
+        allowNull: true
+    },
+    login:{
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    note:{
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    password:{
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    serialNumber:{
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    state:{
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    profile:{
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    WebsurferId:{
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    CustomerId:{
+        type: Sequelize.INTEGER,
+        allowNull: false
+    }
+
+}, {tableName: "ticket"});
+
+
+const connectToDatabase = async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('Connessione al database avvenuta con successo.');
+    } catch (error) {
+        console.error('Errore durante la connessione al database:', error);
+    }
+};
+
+const syncModels = async () => {
+    try {
+        await sequelize.sync({force: false});
+        console.log('Sincronizzazione con il database avvenuta con successo.');
+    } catch (error) {
+        console.error('Errore durante la sincronizzazione con il database:', error);
+    }
+};
+
+module.exports = {
+    sequelize: sequelize,
+    Websurfer: Websurfer,
+    Customer: Customer,
+    User: User,
+    Ticket: Ticket,
+    connectToDatabase: connectToDatabase,
+    syncModels: syncModels
+};

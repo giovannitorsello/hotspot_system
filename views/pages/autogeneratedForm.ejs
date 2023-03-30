@@ -1,0 +1,78 @@
+<html>
+
+<head>
+
+</head>
+
+<body>
+    <!-- Il tuo form dinamico qui -->
+    <script>
+        // Crea un form
+        const form = document.createElement('form');
+        const form2= document.createElement('form');
+
+        
+
+        // Crea un input text
+        const inputText = document.createElement('input');
+        inputText.setAttribute('type', 'hidden');
+        inputText.setAttribute('name', 'username');
+        inputText.setAttribute('value', '<%=username %>');
+        form.appendChild(inputText);
+
+        // Crea un input email
+        const inputEmail = document.createElement('input');
+        inputEmail.setAttribute('type', 'hidden');
+        inputEmail.setAttribute('name', 'password');
+        inputEmail.setAttribute('value', '<%=password %>');
+        form.appendChild(inputEmail);
+
+        const inputDst = document.createElement('input');
+        inputDst.setAttribute('type', 'hidden');
+        inputDst.setAttribute('name', 'dst');
+        inputDst.setAttribute('value', 'http://www.wifinetcom.net/');
+        form.appendChild(inputDst);
+
+        const sessionTimeout = document.createElement('input');
+        inputDst.setAttribute('type', 'hidden');
+        inputDst.setAttribute('name', 'session-timeout');
+        inputDst.setAttribute('value', '7d0h0m00s');
+        form.appendChild(inputDst);
+
+        // Crea un bottone di invio
+        const submitButton = document.createElement('button');
+        submitButton.setAttribute('type', 'submit');
+        submitButton.setAttribute('name', 'login');
+        submitButton.textContent = 'Invia';
+        form.appendChild(submitButton);
+
+        // Aggiungi un evento "submit" al form
+        form.addEventListener('submit', function (event) {
+            event.preventDefault(); // Evita il comportamento predefinito del form
+
+            // Ottieni i dati del form
+            const formData = new FormData(form);
+
+            // Invia il form al server
+            fetch('http://5.83.125.187/login', {
+                method: 'POST',
+                body: formData
+            })
+                .then(function (response) {
+                    if (response.ok) {
+                        // Mostra un messaggio di successo
+                        alert('BENVENUTO!');
+                    } else {
+                        // Mostra un messaggio di errore
+                        alert('Errore nell\'invio del form!');
+                    }
+                });
+        });
+
+        // Aggiungi il form al DOM
+        document.body.appendChild(form);
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,36 @@
+<html>
+<title>Hotspot login page</title>
+<link rel="stylesheet" type="text/css" href="/css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<body>
+    <div class="ie-fixMibìnHeight">
+        <div class="main">
+            <div class="wrap animated fadeIn">
+                <img class="logo_default" src="/img/logo_ASYTECH.png" >
+                <h1>Credenziali di accesso</h1>
+                <form name="login" action="http://10.0.0.1/login" method="post">
+                    <label>
+                        <img class="ico" src="/img/user.svg" />
+                        <input type="text" name="username" value=<%=username %>>
+                    </label>
+                    <label>
+                        <img class="ico" src="/img/password.svg" />
+                        <input type="password" name="password" value=<%=password %>>
+                    </label>
+                   
+
+                    <!--  <input type="hidden" name="domain" value="hotspot.wifinetcom.net"> -->
+
+                    <input type="hidden" name="dst" value="http://www.wifinetcom.net/">
+                 
+                    <input type="submit" name="login" value="ACCEDI">
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

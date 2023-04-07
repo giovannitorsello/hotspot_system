@@ -54,7 +54,7 @@
             </header>
 
             <div class="page-heading">
-                <h3>CLIENTI</h3>
+                <h3>WEBSURFER</h3>
             </div>
             <div class="page-content">
                 <section class="row">
@@ -83,86 +83,66 @@
                                     <div class="col-12">
                                         <div class="card">
                                             <div class="card-header">
-                                                <h4 class="card-title">INSERISCI CLIENTE</h4>
+                                                <h4 class="card-title">INSERISCI NUOVO OSPITE</h4>
                                             </div>
                                             <div class="card-content">
                                                 <div class="card-body">
-                                                    <form class="form" method="post" action="customers/insert" >
+                                                    <form class="form" method="post" action="websurfers/insert" >
                                                         <div class="row">
-                                                        
                                                             <div class="col-md-6 col-12">
                                                                 <div class="form-group">
-                                                                    <label >NOME</label>
-                                                                    <input type="text" class="form-control" name="companyName" required>
+                                                                    <label for="first-name-column">Nome</label>
+                                                                    <input type="text" class="form-control" id="denominazione"
+                                                                        name="firstname" required>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6 col-12">
                                                                 <div class="form-group">
-                                                                    <label >CODICE FISCALE </label>
-                                                                    <input type="text" class="form-control" name="fiscalCode" required>
+                                                                    <label for="last-name-column">Cognome</label>
+                                                                    <input type="text" class="form-control"
+                                                                        name="lastname" required>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6 col-12">
                                                                 <div class="form-group">
-                                                                    <label >P.IVA</label>
-                                                                    <input type="text" class="form-control" name="vatCode" required>
+                                                                    <label for="city-column">Email</label>
+                                                                    <input type="text"
+                                                                        class="form-control" 
+                                                                        name="email" required>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6 col-12">
                                                                 <div class="form-group">
-                                                                    <label >CITTA</label>
-                                                                    <input type="text" class="form-control" name="city" required>
+                                                                    <label for="country-floating">Telefono</label>
+                                                                    <input type="text"
+                                                                        class="form-control" name="phone"
+                                                                        required>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6 col-12">
                                                                 <div class="form-group">
-                                                                    <label >FAX</label>
-                                                                    <input type="text"class="form-control" name="fax" required>
+                                                                    <label for="company-column">Note</label>
+                                                                    <input type="text" 
+                                                                        class="form-control" name="note"
+                                                                        required>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6 col-12">
                                                                 <div class="form-group">
-                                                                    <label >WEB PAGE</label>
-                                                                    <input type="text" class="form-control" name="web" required>
+                                                                    
+                                                            <label for="first-name-column">CLIENTE</label>
+                                                            <select class="form-select" name="role" required>
+                                                                <% customerOfThisReseller.forEach(function(customer) { %>
+                                                                <option value=<%=customer.id %>> <%= customer.companyName %></option>
+                                                                <%  }) %>
+                                                            </select>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-6 col-12">
-                                                                <div class="form-group">
-                                                                    <label >BANDA</label>
-                                                                    <input type="text" class="form-control" name="defaultBandwidth" required>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6 col-12">
-                                                                <div class="form-group">
-                                                                    <label>NOTE</label>
-                                                                    <input type="text" class="form-control" name="note" required >
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6 col-12">
-                                                                <div class="form-group">
-                                                                    <label >INDIRIZZO</label>
-                                                                    <input type="text" class="form-control" name="addessCompany" required >
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6 col-12">
-                                                                <div class="form-group">
-                                                                    <label >TELEFONO</label>
-                                                                    <input type="text" class="form-control" name="phone" required >
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6 col-12">
-                                                                <div class="form-group">
-                                                                    <label >PIN</label>
-                                                                    <input type="text" class="form-control" name="pin" value=<%=randomPin %>>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6 col-12">
-                                                                <div class="form-group">
-                                                                    <label >EMAIL</label>
-                                                                    <input type="email" class="form-control" name="email" required >
-                                                                </div>
-                                                            </div>
-                                                         
+
+
+
+                                                           
+                                                           
 
                                                             <div class="col-12 d-flex justify-content-end">
                                                                 <button type="submit"
@@ -187,62 +167,34 @@
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
-                                                    <th>DENOMINAZIONE</th>
-                                                    <th>CODICE FISCALE</th>
-                                                    <th>PARTITA IVA</th>
-                                                    <th>COMUNE</th>
-                                                    <th>FAX</th>
-                                                    <th>WEB PAGE</th>
-                                                    <th>DEFAULT BANDWITH</th>
-                                                    <th>NOTE</th>
-                                                    <th>INDIRIZZO</th>
-                                                    <th>TELEFONO</th>
-                                                    <th>PIN</th>
+                                                    <th>NOME</th>
+                                                    <th>COGNOME</th>
                                                     <th>EMAIL</th>
+                                                    <th>TELEFONO</th>
+                                                    <th>NOTE</th>
                                                   
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <% customers.forEach(function(customer) { %>
+                                                <% websurfers.forEach(function(websurfer) { %>
                                                     <tr >
                                                         <td>
-                                                            <%= customer.id %>
+                                                            <%= websurfer.id %>
                                                         </td>
                                                         <td>
-                                                            <%= customer.companyName %>
+                                                            <%= websurfer.firstname %>
                                                         </td>
                                                         <td>
-                                                            <%= customer.fiscalCode %>
+                                                            <%= websurfer.lastname %>
                                                         </td>
                                                         <td>
-                                                            <%= customer.vatCode %>
+                                                            <%= websurfer.email %>
                                                         </td>
                                                         <td>
-                                                            <%= customer.city %>
+                                                            <%= websurfer.phone %>
                                                         </td>
                                                         <td>
-                                                            <%= customer.fax %>
-                                                        </td>
-                                                        <td>
-                                                            <%= customer.web %>
-                                                        </td>
-                                                        <td>
-                                                            <%= customer.defaultBandwidth %>
-                                                        </td>
-                                                        <td>
-                                                            <%= customer.note %>
-                                                        </td>
-                                                        <td>
-                                                            <%= customer.addessCompany %>
-                                                        </td>
-                                                        <td>
-                                                            <%= customer.phone %>
-                                                        </td>
-                                                        <td>
-                                                            <%= customer.pin %>
-                                                        </td>   
-                                                        <td>
-                                                            <%= customer.email %>
+                                                            <%= websurfer.note %>
                                                         </td>
                                                        
                                                     </tr>

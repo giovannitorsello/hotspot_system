@@ -1,5 +1,11 @@
-<% if (user.role == 'admin') { %>
+
+
+
+<% if (user.role == 'ADMIN') { %>
 <ul class="menu">
+
+
+
     <li class="sidebar-title">Menu</li>
 
     <li class="sidebar-item active">
@@ -8,12 +14,12 @@
             <span>Home</span>
         </a>
     </li>
-<!--     <li class="sidebar-item  ">
+    <li class="sidebar-item  ">
         <a href="customers" class='sidebar-link'>
             <i class="bi bi-person"></i>
             <span>Clienti</span>
         </a>
-    </li> -->
+    </li>
     <li class="sidebar-item  ">
         <a href="users" class='sidebar-link'>
             <i class="bi bi-people"></i>
@@ -26,16 +32,13 @@
             <span>Ticket</span>
         </a>
     </li>
-<!--     <li class="sidebar-item ">
-        <a href="radius" class='sidebar-link'>
-            <i class="bi bi-server"></i>
-            <span>Radius</span>
-        </a>
-    </li> -->
+
+
+
 </ul>
 <% } %>
 
-<% if (user.role == 'user') { %>
+<% if (user.role == 'USER') { %>
     <ul class="menu">
         <li class="sidebar-title">Menu</li>
     
@@ -45,34 +48,16 @@
                 <span>Home</span>
             </a>
         </li>
-<!--         <li class="sidebar-item  ">
-            <a href="customers" class='sidebar-link'>
-                <i class="bi bi-person"></i>
-                <span>Clienti</span>
-            </a>
-        </li>
-        <li class="sidebar-item  ">
-            <a href="users" class='sidebar-link'>
-                <i class="bi bi-people"></i>
-                <span>Utenti</span>
-            </a>
-        </li> -->
         <li class="sidebar-item  ">
             <a href="tickets" class='sidebar-link'>
                 <i class="bi bi-wifi"></i>
                 <span>Ticket</span>
             </a>
         </li>
-<!--         <li class="sidebar-item ">
-            <a href="radius" class='sidebar-link'>
-                <i class="bi bi-server"></i>
-                <span>Radius</span>
-            </a>
-        </li> -->
     </ul>
     <% } %>
 
-    <% if (user.role == 'developer') { %>
+    <% if (user.role == 'HOTEL') { %>
         <ul class="menu">
             <li class="sidebar-title">Menu</li>
         
@@ -82,12 +67,7 @@
                     <span>Home</span>
                 </a>
             </li>
-            <li class="sidebar-item  ">
-                <a href="customers" class='sidebar-link'>
-                    <i class="bi bi-person"></i>
-                    <span>Clienti</span>
-                </a>
-            </li>
+    
             <li class="sidebar-item  ">
                 <a href="users" class='sidebar-link'>
                     <i class="bi bi-people"></i>
@@ -100,11 +80,48 @@
                     <span>Ticket</span>
                 </a>
             </li>
-            <li class="sidebar-item ">
-                <a href="radius" class='sidebar-link'>
-                    <i class="bi bi-server"></i>
-                    <span>Radius</span>
-                </a>
-            </li>
         </ul>
         <% } %>
+
+        <% if (user.role == 'SUPERADMIN') { %>
+            <ul class="menu">
+                <li class="sidebar-title">Menu</li>
+            
+                <li class="sidebar-item active">
+                    <a href="dashboard" class='sidebar-link'>
+                        <i class="bi bi-grid-fill"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="sidebar-item  ">
+                    <a href="customers" class='sidebar-link'>
+                        <i class="bi bi-person"></i>
+                        <span>Clienti</span>
+                    </a>
+                </li>
+                <li class="sidebar-item  ">
+                    <a href="customers" class='sidebar-link'>
+                        <i class="bi bi-person"></i>
+                        <span>Reseller</span>
+                    </a>
+                </li>
+                <li class="sidebar-item  ">
+                    <a href="users" class='sidebar-link'>
+                        <i class="bi bi-people"></i>
+                        <span>Utenti</span>
+                    </a>
+                </li>
+                <li class="sidebar-item  ">
+                    <a href="tickets" class='sidebar-link'>
+                        <i class="bi bi-wifi"></i>
+                        <span>Ticket</span>
+                    </a>
+                </li>
+                <li class="sidebar-item ">
+                    <a href="radius" class='sidebar-link'>
+                        <i class="bi bi-server"></i>
+                        <span>Radius</span>
+                    </a>
+                </li>
+            </ul>
+            <% } %>

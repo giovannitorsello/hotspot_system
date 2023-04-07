@@ -36,37 +36,18 @@
                 </div>
                 <div class="sidebar-menu">
                     <ul class="menu">
-                        <li class="sidebar-title">Menu</li>
-                        <li class="sidebar-item ">
-                            <a href="dashboard" class='sidebar-link'>
-                                <i class="bi bi-grid-fill"></i>
-                                <span>Home</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item ">
-                            <a href="customers" class='sidebar-link'>
-                                <i class="bi bi-person"></i>
-                                <span>Clienti</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item  ">
-                            <a href="users" class='sidebar-link'>
-                                <i class="bi bi-people"></i>
-                                <span>Utenti</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item  active">
-                            <a href="tickets" class='sidebar-link'>
-                                <i class="bi bi-wifi"></i>
-                                <span>Ticket</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item ">
-                            <a href="radius" class='sidebar-link'>
-                                <i class="bi bi-server"></i>
-                                <span>Radius</span>
-                            </a>
-                        </li>
+                        <% menus.forEach(menu=> { %>
+                            <% if (menu.active) { %>
+                                <li class="sidebar-item active"><a class='sidebar-link' href="<%= menu.path %>"><span>
+                                            <%= menu.name %>
+                                        </span></a></li>
+                                <% } else { %>
+                                    <li class="sidebar-item"><a class='sidebar-link' href="<%= menu.path %>"><i
+                                                class="bi bi-grid-fill"></i><span>
+                                                <%= menu.name %>
+                                            </span></a></li>
+                                    <% } %>
+                                        <% }); %>
                     </ul>
                 </div>
                 <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
@@ -92,56 +73,86 @@
                                 <div class="card-body">
                                     <form class="form" method="post" action="ticket/insert">
                                         <div class="row">
+                                            <input type="hidden" class="form-control" name="resellerID" value=<%=dataCreationTicker.user.ResellerId %>>
                                             <div class="col-md-6 col-12">
                                                 <div class="form-group">
-                                                    <label for="first-name-column">WEBSURFER</label>
-                                                    <input type="text" class="form-control" id="denominazione"
-                                                        name="webSurfer" required>
+                                                    <label for="first-name-column">DATA INIZIO </label>
+                                                    <input type="date" class="form-control" name="emission" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="first-name-column">DATA FINE </label>
+                                                    <input type="date" class="form-control" name="exirration" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="first-name-column">LOGIN</label>
+                                                    <input type="text" class="form-control" disabled value=<%=username %>>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="first-name-column">PASSWORD</label>
+                                                    <input type="text" class="form-control" disabled value=<%=password %>>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="first-name-column">UTENTE</label>
+                                                    <select class="form-select" name="websurfer" >
+                                                    <% dataCreationTicker.websurfer.forEach(function(websurfer) { %>
+                                                        <option id="customerID" value=<%=websurfer.id %>> <%=
+                                                            websurfer.firstname +' ' + websurfer.lastname%>
+                                                        </option>
+                                                        <% }) %>
+                                                </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="first-name-column">CLIENTE</label>
+                                                    <select class="form-select" name="client" onchange="getValueOfTheInput(event)">
+                                                        <option name="default">Selezione il cliente</option>
+                                                    <% dataCreationTicker.customer.forEach(function(customer) { %>
+                                                        <option name=<%=customer.pin %> value=<%=customer.id %> > 
+                                                            <%= customer.companyName %>
+                                                        </option>
+                                                        <% }) %>
+                                                </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="first-name-column">STATE</label>
+                                                    <select class="form-select" name="role" required>
+                                                        <option value="active">ATTIVO</option>
+                                                        <option value="disabled">DISATTIVO</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="first-name-column">PIN AZIENDA</label>
+                                                    <input type="text" class="form-control" id="pinAgency" name="pinAzienda">
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-12">
                                                 <div class="form-group">
                                                     <label for="first-name-column">NOTE</label>
                                                     <input type="text" class="form-control" id="denominazione"
-                                                        name="note" required>
+                                                        name="webSurfer" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-12">
                                                 <div class="form-group">
-                                                    <label for="first-name-column">EMAIL</label>
+                                                    <label for="first-name-column">SERIALE</label>
                                                     <input type="text" class="form-control" id="denominazione"
-                                                        name="email" required>
+                                                        name="webSurfer" required>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 col-12">
-                                                <div class="form-group">
-                                                    <label for="first-name-column">TELEFONO</label>
-                                                    <input type="text" class="form-control" id="denominazione"
-                                                        name="phone" required>
-                                                </div>
-                                            </div>
-                                          
-                                            <div class="col-md-6 col-12">
-                                                <div class="form-group">
-                                                    <label for="startDate">Data di inizio:</label>
-                                                    <input type="text" class="form-control" id="startDate" name="startDate" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-12">
-                                                <div class="form-group">
-                                                    <label for="endDate">Data di fine:</label>
-                                                    <input type="text" class="form-control" id="endDate" name="endDate" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-12">
-                                                <div class="form-group">
-                                                    <label>Profilo</label>
-                                                    <select class="form-select" name="profile" required>
-                                                        <option value="DEFAULT">DEFAULT</option>
-                                                        <option value="PROFESSIONAL">PROFESSIONAL</option>
-                                                    </select>
-                                                </div>
-                                            </div>
+                                        
                                             <div class="col-12 d-flex justify-content-end">
                                                 <button type="submit"
                                                     class="btn btn-primary me-1 mb-1">Inserisci</button>
@@ -165,32 +176,31 @@
                                         <table class="table table-striped" id="table1">
                                             <thead>
                                                 <tr>
-                                                    <th>SERIALE</th>
+                                                    <th>ID</th>
                                                     <th>DATA EMISSIONE</th>
                                                     <th>DATA SCADENZA</th>
                                                     <th>DURATA</th>
                                                     <th>LOGIN</th>
                                                     <th>NOTE</th>
                                                     <th>PASSWORD</th>
-                                                    <th>ID</th>
+                                                    <th>SERIALE</th>
                                                     <th>STATO</th>
                                                     <th>PROFILE</th>
                                                     <th>WEBSURFER ID</th>
-                                                    <th>ID CLIENTE</th>
+                                                    <th>CUSTOMER ID</th>
+                                                    <th>RESELLER ID</th>
+                                                    <th>PIN AZIENDA</th>
+                                                   
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <% tickets.forEach(function(ticket) { %>
                                                     <tr>
                                                         <td>
-                                                            <%= ticket.serialNumber.toString() %>
+                                                            <%= ticket.id %>
                                                         </td>
                                                         <td>
-                                                            <script>
-                                                            var date= ticket.emissionDate;
-                                                            console.log(date);            
-                                                            </script>
-                                                            
+                                                            <%= ticket.emissionDate %>
                                                         </td>
                                                         <td>
                                                             <%= ticket.expirationDate %>
@@ -202,13 +212,10 @@
                                                             <%= ticket.login %>
                                                         </td>
                                                         <td>
-                                                            <%= ticket.note %>
-                                                        </td>
-                                                        <td>
                                                             <%= ticket.password %>
                                                         </td>
                                                         <td>
-                                                            <%= ticket.id %>
+                                                            <%= ticket.serialNumber %>
                                                         </td>
                                                         <td>
                                                             <%= ticket.state %>
@@ -217,10 +224,19 @@
                                                             <%= ticket.profile %>
                                                         </td>
                                                         <td>
-                                                            <%= ticket.WebsurferId %>
+                                                            <%= ticket.websurferID %>
                                                         </td>
                                                         <td>
-                                                            <%= ticket.CustomerId %>
+                                                            <%= ticket.customerID %>
+                                                        </td>
+                                                        <td>
+                                                            <%= ticket.resellerID %>
+                                                        </td>
+                                                        <td>
+                                                            <%= ticket.pinAzienda %>
+                                                        </td>
+                                                        <td>
+                                                            <%= ticket.note %>
                                                         </td>
                                                     </tr>
                                                     <% }) %>
@@ -233,32 +249,17 @@
                         <link rel="stylesheet" href="/vendors/simple-datatables/style.css">
                         <script src="/vendors/simple-datatables/simple-datatables.js"></script>
                         <script>
+                            function getValueOfTheInput(e){
+                                document.getElementById('pinAgency').name.value= e.target.value;
+                            };
                             let table1 = document.querySelector('#table1');
                             let dataTable = new simpleDatatables.DataTable(table1);
-                            $(function () {
-                                $("#startDate, #endDate").datepicker({
-                                    range: true,
-                                    dateFormat: "dd-mm-yy",
-                                    onSelect: function (dateText, inst, extensionRange) {
-                                        if (extensionRange && extensionRange.startDateText && extensionRange.endDateText) {
-                                            // Aggiorna il valore dell'input corrispondente con l'intervallo selezionato
-                                            $(this).val(extensionRange.startDateText + " - " + extensionRange.endDateText);
-
-                                            // Recupera i valori dei campi di input e li visualizza nella console
-                                            var startDate = $("#startDate").val();
-                                            var endDate = $("#endDate").val();
-                                            console.log("Intervallo selezionato: " + startDate + " - " + endDate);
-                                        }
-                                    }
-                                });
-                            });
                         </script>
                     </div>
                 </section>
             </div>
         </div>
     </div>
-
     <script src="/js/bootstrap.min.js"></script>
     <script src="/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>

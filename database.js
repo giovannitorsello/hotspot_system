@@ -15,11 +15,6 @@ const Websurfer = sequelize.define('Websurfer', {
         type: Sequelize.STRING,
         allowNull: false
     },
-
-    denominazione: {
-        type: Sequelize.INTEGER,
-        allowNull: true
-    },
     email: {
         type: Sequelize.STRING,
         allowNull: false
@@ -31,10 +26,6 @@ const Websurfer = sequelize.define('Websurfer', {
     phone: {
         type: Sequelize.STRING,
         allowNull: false
-    },
-    profile: {
-        type: Sequelize.STRING,
-        allowNull: true
     },
     idSocial: {
         type: Sequelize.STRING,
@@ -91,20 +82,71 @@ const Customer = sequelize.define('Customer', {
         type: Sequelize.STRING,
         allowNull: true
     },
-    profile: {
-        type: Sequelize.STRING,
-        allowNull: true
-    },
     defaultBandwidth: {
         type: Sequelize.STRING,
         allowNull: true
     }
 }, {tableName: "customer"});
 
+const Reseller = sequelize.define('Reseller', {
+    fiscalCode: {
+      type: Sequelize.STRING,
+      allowNull: true
+  },
+  city: {
+      type: Sequelize.STRING,
+      allowNull: true
+  },
+  companyName: {
+      type: Sequelize.STRING,
+      allowNull: true
+  },
+  email: {
+      type: Sequelize.STRING,
+      allowNull: true
+  },
+  fax: {
+      type: Sequelize.STRING,
+      allowNull: true
+  },
+  addessCompany: {
+      type: Sequelize.STRING,
+      allowNull: true
+  },
+  note: {
+      type: Sequelize.STRING,
+      allowNull: true
+  },
+  phone: {
+      type: Sequelize.STRING,
+      allowNull: true
+  },
+  vatCode: {
+      type: Sequelize.STRING,
+      allowNull: true
+  },
+  web: {
+      type: Sequelize.STRING,
+      allowNull: true
+  },
+  pin: {
+      type: Sequelize.STRING,
+      allowNull: true
+  },
+  profile: {
+      type: Sequelize.STRING,
+      allowNull: true
+  },
+  defaultBandwidth: {
+      type: Sequelize.STRING,
+      allowNull: true
+  }
+}, {tableName: "reseller"});
+
 const User = sequelize.define('User', {
-    admin: {
-        type: Sequelize.TINYINT,
-        allowNull: true
+    role: {
+        type: Sequelize.ENUM('SUPERADMIN', 'ADMIN', 'HOTEL', 'USER'), 
+        allowNull: false
     },
     password: {
         type: Sequelize.STRING,
@@ -113,7 +155,7 @@ const User = sequelize.define('User', {
     utente: {
         type: Sequelize.STRING,
         allowNull: true
-    }
+    },
 }, {tableName: "user"});
 
 const Ticket = sequelize.define('Ticket', {
@@ -157,20 +199,21 @@ const Ticket = sequelize.define('Ticket', {
         type: Sequelize.STRING,
         allowNull: true
     },
-    profile:{
-        type: Sequelize.STRING,
-        allowNull: true
-    },
-    WebsurferId:{
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    CustomerId:{
+    pinAzienda:{
         type: Sequelize.INTEGER,
         allowNull: false
     }
 
 }, {tableName: "ticket"});
+
+
+Reseller.hasMany(Customer);
+Reseller.hasMany(Ticket);
+Reseller.hasMany(User);
+Customer.hasMany(Ticket);
+Customer.hasMany(User);
+Customer.hasMany(Websurfer);
+Websurfer.hasOne(Ticket);
 
 
 const connectToDatabase = async () => {
@@ -197,6 +240,7 @@ module.exports = {
     Customer: Customer,
     User: User,
     Ticket: Ticket,
+    Reseller: Reseller,
     connectToDatabase: connectToDatabase,
     syncModels: syncModels
 };

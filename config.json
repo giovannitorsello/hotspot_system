@@ -1,10 +1,10 @@
 {
     "database": {
         "type": "mysql",
-        "host": "127.0.0.1",
+        "host": "localhost",
         "database": "hotspot_system",
-        "username": "hotspot",
-        "password": "hotspot",
+        "username": "root",
+        "password": "antonio",
         "protocol": "mysql",
         "port": "3306",
         "query": {

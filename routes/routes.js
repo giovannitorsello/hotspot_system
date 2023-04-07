@@ -2,11 +2,11 @@ const express = require('express');
 const session = require('express-session');
 const router = express.Router();
 const passport = require('passport');
-const {Websurfer, Ticket} = require('./database');
-const generateRandomCredentials = require("./utils/random");
+const {Websurfer, Ticket} = require('../database');
+const generateRandomCredentials = require("../utils/random");
 const {ticketUsername, ticketPassword} = generateRandomCredentials();
-const createUser = require("./utils/radiusDB");
-const dateUtils = require('./utils/dateUtils');
+const createUser = require("../utils/radiusDB");
+const dateUtils = require('../utils/dateUtils');
 
 var device = {};
 
@@ -55,8 +55,10 @@ router.post('/auth/register', (req, res) => {
                                 serialNumber: device.mac,
                                 state: 'active',
                                 profile: '',
-                                WebsurferId: resultCreation.id,
-                                CustomerId: device.pin
+                                websurferID: resultCreation.id,
+                                customerID: device.pin,
+                                resellerID: 00000,
+                                pinAzienda: 12341
                             }).then(resultCreationTicket => {
                                 if (resultCreationTicket != null) {
                                     res.render('pages/successLogin', {
@@ -75,7 +77,7 @@ router.post('/auth/register', (req, res) => {
 
             })
         } else { console.log('UTENTE GIA ESISTENTE');
-        }
+        } 
     })
 });
 
@@ -116,12 +118,33 @@ router.get('/auth/google/callback', passport.authenticate('google', {failureRedi
     })
 });
 
-/* router.get('/auth/facebook', passport.authenticate('facebook', {scope: ['profile', 'email']}));
+ router.get('/auth/facebook', passport.authenticate('facebook'));
 
-router.get('/auth/facebook/callback', passport.authenticate('facebook', {failureRedirect:'/error'}), function (req,res){
-    res.send(userProfileFacebook);
-})
- */
+
+
+router.get('/auth/facebook/callback', passport.authenticate('facebook', {failureRedirect: '/error'}), function (req, res) {
+    Websurfer.create({
+        firstname: userProfileFacebook.displayName,
+        lastname: '',
+        email: '',
+        phone: '000000000',
+        idSocial: userProfileFacebook.id,
+        typeSocial: 'FACEBOOK'
+    }).then((newWebsurfer) => {
+        if (newWebsurfer) {
+            createUser(ticketUsername, ticketPassword);
+            res.render('pages/successLogin', {
+                username: ticketUsername,
+                password: ticketPassword
+            });
+          
+        } else {
+            res.send("ERRORE CREAZIONE");
+        }
+    }).catch((error) => {
+        res.send(error);
+    })
+});
 
 router.get('/success', (req, res) => {
     res.render('pages/success', {socialUser: userProfile});

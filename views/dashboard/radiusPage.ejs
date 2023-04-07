@@ -34,40 +34,15 @@
                 </div>
                 <div class="sidebar-menu">
                     <ul class="menu">
-                        <li class="sidebar-title">Menu</li>
-
-                        <li class="sidebar-item ">
-                            <a href="dashboard" class='sidebar-link'>
-                                <i class="bi bi-grid-fill"></i>
-                                <span>Home</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item ">
-                            <a href="customers" class='sidebar-link'>
-                                <i class="bi bi-person"></i>
-                                <span>Clienti</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item  ">
-                            <a href="users" class='sidebar-link'>
-                                <i class="bi bi-people"></i>
-                                <span>Utenti</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item  ">
-                            <a href="tickets" class='sidebar-link'>
-                                <i class="bi bi-wifi"></i>
-                                <span>Ticket</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item active">
-                            <a href="radius" class='sidebar-link'>
-                                <i class="bi bi-server"></i>
-                                <span>Radius</span>
-                            </a>
-                        </li>
+                      <% menus.forEach(menu => { %>
+                        <% if (menu.active) { %>
+                          <li class="sidebar-item active"><a class='sidebar-link' href="<%= menu.path %>"><span><%= menu.name %></span></a></li>
+                        <% } else { %>
+                          <li class="sidebar-item"><a class='sidebar-link' href="<%= menu.path %>"><i class="bi bi-grid-fill"></i><span><%= menu.name %></span></a></li>
+                        <% } %>
+                      <% }); %>
                     </ul>
-                </div>
+                  </div>
                 <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
             </div>
         </div>

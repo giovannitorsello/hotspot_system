@@ -168,12 +168,11 @@
             <div class="page-content">
                 <section class="row">
                     <div class="col-12 col-lg-12">
-
                         <div class="page-heading">
                             <section class="section">
                                 <div class="card">
                                     <div class="card-body">
-                                        <table class="table table-striped" id="table1">
+                                        <table class="table table-striped" id="tableTicket">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
@@ -181,16 +180,14 @@
                                                     <th>DATA SCADENZA</th>
                                                     <th>DURATA</th>
                                                     <th>LOGIN</th>
-                                                    <th>NOTE</th>
                                                     <th>PASSWORD</th>
-                                                    <th>SERIALE</th>
+                                                    <th>NOTE</th>
                                                     <th>STATO</th>
                                                     <th>PROFILE</th>
                                                     <th>WEBSURFER ID</th>
                                                     <th>CUSTOMER ID</th>
                                                     <th>RESELLER ID</th>
                                                     <th>PIN AZIENDA</th>
-                                                   
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -252,8 +249,11 @@
                             function getValueOfTheInput(e){
                                 document.getElementById('pinAgency').name.value= e.target.value;
                             };
-                            let table1 = document.querySelector('#table1');
-                            let dataTable = new simpleDatatables.DataTable(table1);
+                            const dataTable = new simpleDatatables.DataTable("#tableTicket", {
+                                searchable: true,
+                                sortable: false,
+                                paging: false
+                            });
                         </script>
                     </div>
                 </section>

@@ -2,11 +2,11 @@ const menus = [
     {
         name: 'Home',
         path: '/admin/dashboard',
-        access: ['SUPERADMIN', 'ADMIN', 'HOTEL', 'USER']
+        access: ['SUPERADMIN', 'RESELLER', 'HOTEL', 'USER']
     },{
         name: 'Clienti',
         path: '/admin/customers',
-        access: ['SUPERADMIN', 'ADMIN']
+        access: ['SUPERADMIN', 'RESELLER']
     },{
         name: 'Reseller',
         path: '/admin/resellers',
@@ -15,15 +15,15 @@ const menus = [
     {
         name: 'Naviatore web',
         path: '/admin/websurfers',
-        access: ['SUPERADMIN', 'ADMIN', 'HOTEL', 'USER']
+        access: ['SUPERADMIN', 'RESELLER', 'HOTEL', 'USER']
     }, {
         name: 'Ruoli',
         path: '/admin/users',
-        access: ['SUPERADMIN', 'ADMIN', 'HOTEL']
+        access: ['SUPERADMIN', 'RESELLER', 'HOTEL']
     }, {
         name: 'Ticket',
         path: '/admin/tickets',
-        access: ['SUPERADMIN', 'ADMIN', 'HOTEL', 'USER']
+        access: ['SUPERADMIN', 'RESELLER', 'HOTEL', 'USER']
     }, {
         name: 'Radius',
         path: '/admin/radius',

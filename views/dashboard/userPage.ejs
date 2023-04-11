@@ -66,8 +66,6 @@
                     <div class="col-12 col-lg-12">
 
                         <div class="page-heading">
-
-
                             <section class="section">
                                 <div class="card">
 
@@ -156,7 +154,7 @@
                                     </div>
 
                                     <div class="card-body">
-                                        <table class="table table-striped" id="table1">
+                                        <table class="table table-striped" id="tableUsers">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
@@ -179,20 +177,19 @@
                                                         </td>
                                                         <% if(user.role=='ADMIN' ) { %>
                                                             <td>
-                                                                <span class="badge bg-success">RESELLER</span>
+                                                                <span class="badge bg-primary">RESELLER</span>
                                                             </td>
                                                             <%} else if(user.role=='HOTEL' ){%>
                                                                 <td>
-                                                                    <span class="badge bg-danger">ADMIN</span>
+                                                                    <span class="badge bg-success">ADMIN</span>
                                                                 </td>
                                                                 <% } else { %>
                                                                     <td>
-                                                                        <span class="badge bg-danger">USER</span>
+                                                                        <span class="badge bg-dark">USER</span>
                                                                     </td>
                                                                     <% } %>
                                                     </tr>
                                                     <% }) %>
-
                                             </tbody>
                                         </table>
                                     </div>
@@ -205,16 +202,15 @@
 
                         <script src="/vendors/simple-datatables/simple-datatables.js"></script>
                         <script>
-                            // Simple Datatable
-                            let table1 = document.querySelector('#table1');
-                            let dataTable = new simpleDatatables.DataTable(table1);
+                            const dataTable = new simpleDatatables.DataTable("#tableUsers", {
+                                searchable: true,
+                                sortable: false,
+                                paging: false
+                            });
                         </script>
-
                     </div>
-
                 </section>
             </div>
-
         </div>
     </div>
     <script src="/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>

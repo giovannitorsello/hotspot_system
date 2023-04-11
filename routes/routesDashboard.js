@@ -1,22 +1,17 @@
 const express = require('express');
 const session = require('express-session');
-const {
-    Customer,
-    User,
-    Ticket,
-    Websurfer,
-    Reseller
-} = require('../database');
+const {Customer,User,Ticket,Websurfer,Reseller} = require('../database');
 const menuMiddleware = require('../utils/menu');
 const routerDashboard = express.Router();
 const generateRandomCredentials = require("../utils/random");
 const {ticketUsername, ticketPassword} = generateRandomCredentials();
 var randomPin = require('../utils/randomPin');
-const findCustomerFromReseller = require('../utils/selectCustomer');
+const getDataUser = require('../data/getDataUser');
+var userOBJ;
 var clients = {};
 var dataCreationTicker = {};
 const dataTables = require('../data/dashboard');
-
+const getResellerUser = require('../data/getResellerData');
 
 function checkSession(req, res, next) {
     if (! req.session.user) {
@@ -25,7 +20,6 @@ function checkSession(req, res, next) {
         next();
     }
 };
-
 
 // AUTH PAGE
 routerDashboard.get('/', (req, res) => {
@@ -58,12 +52,23 @@ routerDashboard.post('/login', (req, res) => {
 });
 
 // HOME PAGE
-routerDashboard.get('/dashboard', checkSession, menuMiddleware, (req, res) => {
+routerDashboard.get('/dashboard', checkSession, menuMiddleware, async (req, res) => {
+    console.log(req.session.user);
+    if(req.session.user.role == "SUPERADMIN"){
+
+    }else if(req.session.user.role == "RESELLER"){
+        userOBJ = await getResellerUser(req.session.user);
+    }else if(req.session.user.role == "HOTEL"){
+        userOBJ = await getDataUser(req.session.user);
+    }else{
+        
+    };
+    console.log(userOBJ);
     res.render('dashboard/home', {
         user: req.session.user,
         title: 'Home',
-        data: dataTables
-    });
+        data: userOBJ
+    });  
 });
 
 // WEBSURFER PAGE
@@ -73,7 +78,6 @@ routerDashboard.get('/websurfers', checkSession, menuMiddleware, (req, res) => {
             ResellerId: req.session.user.resellerID
         }
     }).then(function (customerOfThisReseller) {
-     
         if (customerOfThisReseller) {
             dataCreationTicker.customer = customerOfThisReseller;
             clients = customerOfThisReseller;
@@ -102,6 +106,7 @@ routerDashboard.post('/websurfers/insert', checkSession, menuMiddleware, (req, r
         where: {
             email: req.body.email
         }
+        
     }).then(function (newWebsurfer) {
         if (newWebsurfer === null) {
             Websurfer.create({
@@ -140,7 +145,6 @@ routerDashboard.get('/resellers', checkSession, menuMiddleware, (req, res) => {
         }
     });
 });
-
 
 // USER PAGE -----------TODO
 routerDashboard.get('/users', checkSession, menuMiddleware, (req, res) => {
@@ -228,6 +232,7 @@ routerDashboard.post('/customers/insert', checkSession, menuMiddleware, (req, re
             }).then(function (y) {
                 if (y !== null) {
                     res.redirect('/admin/customers');
+                   
                 } else {
                     res.redirect('/admin/customers');
                 }

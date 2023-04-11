@@ -24,5 +24,4 @@ async function createUser(user,pass){
         console.error(error);
     }
 }
-
 module.exports = createUser

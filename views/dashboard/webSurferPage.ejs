@@ -34,16 +34,21 @@
                 </div>
                 <div class="sidebar-menu">
                     <ul class="menu">
-                      <% menus.forEach(menu => { %>
-                        <% if (menu.active) { %>
-                          <li class="sidebar-item active"><a class='sidebar-link' href="<%= menu.path %>"><span><%= menu.name %></span></a></li>
-                        <% } else { %>
-                          <li class="sidebar-item"><a class='sidebar-link' href="<%= menu.path %>"><i class="bi bi-grid-fill"></i><span><%= menu.name %></span></a></li>
-                        <% } %>
-                      <% }); %>
+                        <% menus.forEach(menu=> { %>
+                            <% if (menu.active) { %>
+                                <li class="sidebar-item active"><a class='sidebar-link' href="<%= menu.path %>"><span>
+                                            <%= menu.name %>
+                                        </span></a></li>
+                                <% } else { %>
+                                    <li class="sidebar-item"><a class='sidebar-link' href="<%= menu.path %>"><i
+                                                class="bi bi-grid-fill"></i><span>
+                                                <%= menu.name %>
+                                            </span></a></li>
+                                    <% } %>
+                                        <% }); %>
                     </ul>
-                  </div>
-        
+                </div>
+
             </div>
         </div>
         <div id="main">
@@ -59,25 +64,7 @@
             <div class="page-content">
                 <section class="row">
                     <div class="col-12 col-lg-12">
-
                         <div class="page-heading">
-                            <!--   <div class="page-title">
-                                <div class="row">
-                                    <div class="col-12 col-md-6 order-md-1 order-last">
-                                        <h3>DataTable</h3>
-                                        <p class="text-subtitle text-muted">For user to check they list</p>
-                                    </div>
-                                    <div class="col-12 col-md-6 order-md-2 order-first">
-                                        <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-                                                <li class="breadcrumb-item active" aria-current="page">DataTable</li>
-                                            </ol>
-                                        </nav>
-                                    </div>
-                                </div>
-                            </div> -->
-
                             <section id="multiple-column-form">
                                 <div class="row match-height">
                                     <div class="col-12">
@@ -87,13 +74,13 @@
                                             </div>
                                             <div class="card-content">
                                                 <div class="card-body">
-                                                    <form class="form" method="post" action="websurfers/insert" >
+                                                    <form class="form" method="post" action="websurfers/insert">
                                                         <div class="row">
                                                             <div class="col-md-6 col-12">
                                                                 <div class="form-group">
                                                                     <label for="first-name-column">Nome</label>
-                                                                    <input type="text" class="form-control" id="denominazione"
-                                                                        name="firstname" required>
+                                                                    <input type="text" class="form-control"
+                                                                        id="denominazione" name="firstname" required>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6 col-12">
@@ -106,44 +93,38 @@
                                                             <div class="col-md-6 col-12">
                                                                 <div class="form-group">
                                                                     <label for="city-column">Email</label>
-                                                                    <input type="text"
-                                                                        class="form-control" 
-                                                                        name="email" required>
+                                                                    <input type="text" class="form-control" name="email"
+                                                                        required>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6 col-12">
                                                                 <div class="form-group">
                                                                     <label for="country-floating">Telefono</label>
-                                                                    <input type="text"
-                                                                        class="form-control" name="phone"
+                                                                    <input type="text" class="form-control" name="phone"
                                                                         required>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6 col-12">
                                                                 <div class="form-group">
                                                                     <label for="company-column">Note</label>
-                                                                    <input type="text" 
-                                                                        class="form-control" name="note"
+                                                                    <input type="text" class="form-control" name="note"
                                                                         required>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6 col-12">
                                                                 <div class="form-group">
-                                                                    
-                                                            <label for="first-name-column">CLIENTE</label>
-                                                            <select class="form-select" name="role" required>
-                                                                <% customerOfThisReseller.forEach(function(customer) { %>
-                                                                <option value=<%=customer.id %>> <%= customer.companyName %></option>
-                                                                <%  }) %>
-                                                            </select>
+
+                                                                    <label for="first-name-column">CLIENTE</label>
+                                                                    <select class="form-select" name="role" required>
+                                                                        <% customerOfThisReseller.forEach(function(customer)
+                                                                            { %>
+                                                                            <option value=<%=customer.id %>> <%=
+                                                                                    customer.companyName %>
+                                                                            </option>
+                                                                            <% }) %>
+                                                                    </select>
                                                                 </div>
                                                             </div>
-
-
-
-                                                           
-                                                           
-
                                                             <div class="col-12 d-flex justify-content-end">
                                                                 <button type="submit"
                                                                     class="btn btn-primary me-1 mb-1">Inserisci</button>
@@ -159,64 +140,59 @@
                             </section>
                             <section class="section">
                                 <div class="card">
-                                    <!--        <div class="card-header">
-                                        Simple Datatable
-                                    </div> -->
-                                    <div class="card-body">
-                                        <table class="table table-striped" id="table1">
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>NOME</th>
-                                                    <th>COGNOME</th>
-                                                    <th>EMAIL</th>
-                                                    <th>TELEFONO</th>
-                                                    <th>NOTE</th>
-                                                  
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <% websurfers.forEach(function(websurfer) { %>
-                                                    <tr >
-                                                        <td>
-                                                            <%= websurfer.id %>
-                                                        </td>
-                                                        <td>
-                                                            <%= websurfer.firstname %>
-                                                        </td>
-                                                        <td>
-                                                            <%= websurfer.lastname %>
-                                                        </td>
-                                                        <td>
-                                                            <%= websurfer.email %>
-                                                        </td>
-                                                        <td>
-                                                            <%= websurfer.phone %>
-                                                        </td>
-                                                        <td>
-                                                            <%= websurfer.note %>
-                                                        </td>
-                                                       
+                                    <div class="card-body">   
+                                            <table class="table table-striped" id="tableWebsurfer">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>NOME</th>
+                                                        <th>COGNOME</th>
+                                                        <th>EMAIL</th>
+                                                        <th>TELEFONO</th>
+                                                        <th>NOTE</th>
                                                     </tr>
-
-                                                    <%  }) %>
-
-                                               
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    <% websurfers.forEach(function(websurfer) { %>
+                                                        <tr>
+                                                            <td>
+                                                                <%= websurfer.id %>
+                                                            </td>
+                                                            <td>
+                                                                <%= websurfer.firstname %>
+                                                            </td>
+                                                            <td>
+                                                                <%= websurfer.lastname %>
+                                                            </td>
+                                                            <td>
+                                                                <%= websurfer.email %>
+                                                            </td>
+                                                            <td>
+                                                                <%= websurfer.phone %>
+                                                            </td>
+                                                            <td>
+                                                                <%= websurfer.note %>
+                                                            </td>
+                                                            <td>
+                                                                <button>MODIFICA</button>
+                                                                <button>ELIMINA</button>
+                                                            </td>
+                                                        </tr>
+                                                        <% }) %>
+                                                </tbody>
+                                            </table>
                                     </div>
                                 </div>
-
                             </section>
                         </div>
-
                         <link rel="stylesheet" href="/vendors/simple-datatables/style.css">
-
                         <script src="/vendors/simple-datatables/simple-datatables.js"></script>
                         <script>
-                            // Simple Datatable
-                            let table1 = document.querySelector('#table1');
-                            let dataTable = new simpleDatatables.DataTable(table1);
+                            const dataTable = new simpleDatatables.DataTable("#tableWebsurfer", {
+                                searchable: true,
+                                sortable: false,
+                                paging: false
+                            });
                         </script>
 
                     </div>
@@ -226,7 +202,7 @@
 
         </div>
     </div>
-  
+
     <script src="/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
     <script src="/js/main.js"></script>

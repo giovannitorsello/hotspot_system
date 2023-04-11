@@ -75,14 +75,7 @@
                       <div class="col-md-8">
                         <h6 class="text-muted font-semibold">CLIENTI </h6>
                         <h6 class="font-extrabold mb-0">
-                          <% if (data.reseller==null) { %>
-                            0
-                            <% }else{ %>
-
-                              <%= data.reseller.length %>
-
-                                <% } %>
-
+                          <%= data.customerOfThisReseller.length %>
                         </h6>
                       </div>
                     </div>
@@ -102,9 +95,6 @@
                         <div class="col-md-8">
                           <h6 class="text-muted font-semibold">NUOVI CLIENTI</h6>
                           <h6 class="font-extrabold mb-0">
-
-
-
                             <%= data.lastUserInserted %>
                           </h6>
                         </div>
@@ -125,14 +115,13 @@
                           <div class="col-md-8">
                             <h6 class="text-muted font-semibold">WEBSURFER </h6>
                             <h6 class="font-extrabold mb-0">
-                              <%= data.totWebsurfer %>
+                              <%= data.websurfers.length %>
                             </h6>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-
                   <div class="col-6 col-lg-2 col-md-6">
                     <div class="card">
                       <div class="card-body px-3 py-4-5">
@@ -145,14 +134,13 @@
                           <div class="col-md-8">
                             <h6 class="text-muted font-semibold">TICKET ATTIVI</h6>
                             <h6 class="font-extrabold mb-0">
-                              <%= data.nTicket %>
+                              <%= data.activeTickets.length %>
                             </h6>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-
                   <div class="col-6 col-lg-2 col-md-6">
                     <div class="card">
                       <div class="card-body px-3 py-4-5">
@@ -165,7 +153,7 @@
                           <div class="col-md-8">
                             <h6 class="text-muted font-semibold">TICKET SCADUTI</h6>
                             <h6 class="font-extrabold mb-0">
-                              <%= data.nTicketExpired %>
+                              <%= data.expiredTickets.length %>
                             </h6>
                           </div>
                         </div>
@@ -173,101 +161,107 @@
                     </div>
                   </div>
             </div>
-
-            <% if(data.reseller==null){ %>
-              <% }else{ %>
-                <div class="row">
-                  <div class="col-12 col-xl-12">
-                    <div class="card">
-                      <div class="card-header text-align-center">
-                        <h4>CLIENTI</h4>
-                      </div>
-                      <div class="card-body">
-                        <div class="table-responsive">
-                          <table class="table table-hover table-lg" id="table1">
-                            <thead>
+            <% if(user.role=='RESELLER' ){ %>
+              <div class="row">
+                <div class="col-12 col-xl-12">
+                  <div class="card">
+                    <div class="card-header text-align-center">
+                      <h4>CLIENTI</h4>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-hover table-lg" id="table1">
+                          <thead>
+                            <tr>
+                              <th>ID</th>
+                              <th>NOME</th>
+                              <th>C.F/P.IVA</th>
+                              <th>EMAIL</th>
+                              <th>FAX</th>
+                              <th>INDIRIZZO</th>
+                              <th>NOTE</th>
+                              <th>TELEFONO</th>
+                              <th>WEB</th>
+                              <th>PIN</th>
+                              <th>DEFAULT BANDWITH</th>
+                              <th>ACTIONS</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <% data.customerOfThisReseller.forEach(function(reseller) { %>
                               <tr>
-                                <th>ID</th>
-                                <th>NOME</th>
-                                <th>C.F/P.IVA</th>
-                                <th>EMAIL</th>
-                                <th>FAX</th>
-                                <th>INDIRIZZO</th>
-                                <th>NOTE</th>
-                                <th>TELEFONO</th>
-                                <th>WEB</th>
-                                <th>PIN</th>
-                                <th>DEFAULT BANDWITH</th>
+                                <td class="col-auto">
+                                  <p class=" mb-0">
+                                    <%= reseller.id %>
+                                  </p>
+                                </td>
+                                <td class="col-auto">
+                                  <p class=" mb-0">
+                                    <%= reseller.companyName %>
+                                  </p>
+                                </td>
+                                <td class="col-auto">
+                                  <p class=" mb-0">
+                                    <%= reseller.fiscalCode %>
+                                  </p>
+                                </td>
+                                <td class="col-auto">
+                                  <p class=" mb-0">
+                                    <%= reseller.email %>
+                                  </p>
+                                </td>
+                                <td class="col-auto">
+                                  <p class=" mb-0">
+                                    <%= reseller.fax %>
+                                  </p>
+                                </td>
+                                <td class="col-auto">
+                                  <p class=" mb-0">
+                                    <%= reseller.addessCompany %>
+                                  </p>
+                                </td>
+                                <td class="col-auto">
+                                  <p class=" mb-0">
+                                    <%= reseller.note %>
+                                  </p>
+                                </td>
+                                <td class="col-auto">
+                                  <p class=" mb-0">
+                                    <%= reseller.phone %>
+                                  </p>
+                                </td>
+                                <td class="col-auto">
+                                  <p class=" mb-0">
+                                    <%= reseller.web %>
+                                  </p>
+                                </td>
+                                <td class="col-auto">
+                                  <p class=" mb-0">
+                                    <%= reseller.pin %>
+                                  </p>
+                                </td>
+                                <td class="col-auto">
+                                  <p class=" mb-0">
+                                    <%= reseller.defaultBandwidth %>
+                                  </p>
+                                </td>
+                                <td class="col-auto">
+                                  <p class=" mb-0">
+                                    <button>MODIFICA</button>
+                                    <button>ELIMINA</button>
+                                  </p>
+                                </td>
                               </tr>
-                            </thead>
-                            <tbody>
-                              <% data.reseller.forEach(function(reseller) { %>
-                                <tr>
-                                  <td class="col-auto">
-                                    <p class=" mb-0">
-                                      <%= reseller.id %>
-                                    </p>
-                                  </td>
-                                  <td class="col-auto">
-                                    <p class=" mb-0">
-                                      <%= reseller.companyName %>
-                                    </p>
-                                  </td>
-                                  <td class="col-auto">
-                                    <p class=" mb-0">
-                                      <%= reseller.fiscalCode %>
-                                    </p>
-                                  </td>
-                                  <td class="col-auto">
-                                    <p class=" mb-0">
-                                      <%= reseller.email %>
-                                    </p>
-                                  </td>
-                                  <td class="col-auto">
-                                    <p class=" mb-0">
-                                      <%= reseller.fax %>
-                                    </p>
-                                  </td>
-                                  <td class="col-auto">
-                                    <p class=" mb-0">
-                                      <%= reseller.addessCompany %>
-                                    </p>
-                                  </td>
-                                  <td class="col-auto">
-                                    <p class=" mb-0">
-                                      <%= reseller.note %>
-                                    </p>
-                                  </td>
-                                  <td class="col-auto">
-                                    <p class=" mb-0">
-                                      <%= reseller.phone %>
-                                    </p>
-                                  </td>
-                                  <td class="col-auto">
-                                    <p class=" mb-0">
-                                      <%= reseller.web %>
-                                    </p>
-                                  </td>
-                                  <td class="col-auto">
-                                    <p class=" mb-0">
-                                      <%= reseller.pin %>
-                                    </p>
-                                  </td>
-                                  <td class="col-auto">
-                                    <p class=" mb-0">
-                                      <%= reseller.defaultBandwidth %>
-                                    </p>
-                                  </td>
-                                </tr>
-                                <% }) %>
-                            </tbody>
-                          </table>
-                        </div>
+                              <% }) %>
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                   </div>
-
                 </div>
+              </div>
+              <% }else{ %>
+
                 <% } %>
                   <div class="row">
                     <div class="col-12 col-xl-6">
@@ -275,22 +269,50 @@
                         <div class="card-header text-align-center">
                           <h4>ULTIMI WEBSURFER INSERITI(3 GIORNI)</h4>
                         </div>
-                        <div class="card-body">
-                          <div class="table-responsive">
-                            <table class="table table-hover table-lg">
-                              <thead>
-                                <tr>
-                                  <th>ID</th>
-                                  <th>NOME</th>
-                                  <th>COGNOME</th>
-                                  <th>EMAIL</th>
-
-                                </tr>
-                              </thead>
-
-                            </table>
+                        <% if(data.lastWebsurfers == 'NESSUN UTENTE AGGIUNTO DI RECENTE'){ %>
+                          <div class="card-body">
+                            <div class="table-responsive">
+                              <table class="table table-hover table-lg">
+                                <tbody>
+                                  <tr>
+                                    <td class="col-auto">
+                                      <p class=" mb-0">
+                                        <%= data.lastWebsurfers %>
+                                      </p>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
                           </div>
-                        </div>
+                          <% }else{ %>
+                            <div class="card-body">
+                              <div class="table-responsive">
+                                <table class="table table-hover table-lg">
+                                  <thead>
+                                    <tr>
+                                      <th>USER ID</th>
+                                      <th>EMMISSIONE</th>
+                                      <th>SCADENZA</th>
+                                      <th>DURATA(GG)</th>
+                                      <th>STATO</th>
+                                      <th>LOGIN</th>
+                                      <th>PASSWORD</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td class="col-auto">
+                                        <p class=" mb-0">
+                                          <%= data.lastWebsurfers %>
+                                        </p>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                            <% } %>
                       </div>
                     </div>
                     <div class="col-12 col-xl-6">
@@ -298,6 +320,23 @@
                         <div class="card-header">
                           <h4>ULTIMI TICKET CREATI(3 GIORNI)</h4>
                         </div>
+                        <% if(data.lastTickets == 'NESSUN TICKET AGGIUNTO DI RECENTE'){ %>
+                        <div class="card-body">
+                          <div class="table-responsive">
+                            <table class="table table-hover table-lg">
+                              <tbody>
+                                <tr>
+                                  <td class="col-auto">
+                                    <p class=" mb-0">
+                                      <%= data.lastTickets %>
+                                    </p>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <% }else{ %>
                         <div class="card-body">
                           <div class="table-responsive">
                             <table class="table table-hover table-lg">
@@ -315,6 +354,7 @@
                             </table>
                           </div>
                         </div>
+                        <% } %>
                       </div>
                     </div>
                   </div>

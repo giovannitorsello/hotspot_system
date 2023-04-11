@@ -145,7 +145,7 @@ const Reseller = sequelize.define('Reseller', {
 
 const User = sequelize.define('User', {
     role: {
-        type: Sequelize.ENUM('SUPERADMIN', 'ADMIN', 'HOTEL', 'USER'), 
+        type: Sequelize.ENUM('SUPERADMIN', 'RESELLER', 'HOTEL', 'USER'), 
         allowNull: false
     },
     password: {
@@ -214,6 +214,9 @@ Customer.hasMany(Ticket);
 Customer.hasMany(User);
 Customer.hasMany(Websurfer);
 Websurfer.hasOne(Ticket);
+Websurfer.belongsTo(Customer);
+Ticket.belongsTo(Customer);
+
 
 
 const connectToDatabase = async () => {

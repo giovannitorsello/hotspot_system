@@ -3,11 +3,6 @@
 }
 
 
-.dataTable-top,
-.dataTable-bottom {
-	
-	visibility: hidden;
-}
 
 .dataTable-top > div:first-child,
 .dataTable-bottom > div:first-child {

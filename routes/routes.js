@@ -114,7 +114,7 @@ router.get(
   })
 );
 
-router.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/error" }), async function (req, res) {
+router.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/http://wifi.hotspot.local" }), async function (req, res) {
   socialUser = await Websurfer.findOne({ where: { email: userProfile._json.email } });
   if (socialUser == null) {
     var newWebsurfer = await Websurfer.create({
@@ -169,30 +169,60 @@ router.get("/auth/google/callback", passport.authenticate("google", { failureRed
 
 router.get("/auth/facebook", passport.authenticate("facebook"));
 
-router.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/error" }), function (req, res) {
-  Websurfer.create({
-    firstname: userProfileFacebook.displayName,
-    lastname: "",
-    email: "",
-    phone: "000000000",
-    idSocial: userProfileFacebook.id,
-    typeSocial: "FACEBOOK",
-    CustomerId: customer.id,
-  })
-    .then((newWebsurfer) => {
-      if (newWebsurfer) {
-        createUser(ticketUsername, ticketPassword);
-        res.render("pages/successLogin", {
-          username: ticketUsername,
-          password: ticketPassword,
-        });
-      } else {
-        res.send("ERRORE CREAZIONE");
-      }
-    })
-    .catch((error) => {
-      res.send(error);
+router.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/error" }), async function (req, res) {
+  socialUser = await Websurfer.findOne({ where: { firstname: userProfileFacebook.displayName } });
+  if (socialUser == null) {
+    var newWebsurfer = await Websurfer.create({
+      firstname: userProfileFacebook.displayName,
+      lastname: "",
+      email: "",
+      phone: "000000000",
+      idSocial: userProfileFacebook.id,
+      typeSocial: "FACEBOOK",
+      CustomerId: customer.id,
     });
+
+    if (newWebsurfer) {
+      const newTicket = database.generateTicket(customer, newWebsurfer, 7);
+      console.log("New ticket is. ", newTicket.login);
+      //invio tramite sms o email
+      senders.sendTicketByEmail(newWebsurfer.email, newTicket);
+      senders.sendTicketBySms(newWebsurfer.phone, newTicket);
+      //Abilitazione su RB
+      res.render("pages/successLogin", {
+        username: newTicket.login,
+        password: newTicket.password,
+      });
+    } else {
+      console.log("Error in /auth/facebook/callback");
+      res.render("pages/error");
+    }
+  } else {
+    //Recupero ticket esistente
+    var ticketFound = await Ticket.findOne({ where: { WebsurferId: socialUser.id } });
+    console.log("Found ticket for user social: ", ticketFound);
+    if (ticketFound.id) {
+      //invio tramite sms o email
+      senders.sendTicketByEmail(socialUser.email, ticketFound);
+      senders.sendTicketBySms(socialUser.phone, ticketFound);
+
+      res.render("pages/successLogin", {
+        username: ticketFound.login,
+        password: ticketFound.password,
+      });
+    } else {
+      //creazione nuovo ticket
+      const newTicket = database.generateTicket(customer, socialUser, 7);
+      console.log("New ticket is. ", newTicket.login);
+      //invio tramite sms o email
+      senders.sendTicketByEmail(socialUser.email, newTicket);
+      senders.sendTicketBySms(socialUser.phone, newTicket);
+      res.render("pages/successLogin", {
+        username: newTicket.login,
+        password: newTicket.password,
+      });
+    }
+  }
 });
 
 router.get("/success", (req, res) => {

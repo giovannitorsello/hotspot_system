@@ -114,45 +114,57 @@ router.get(
   })
 );
 
-router.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/error" }), function (req, res) {
-  Websurfer.findOne({ where: { email: userProfile._json.email } }).then((socialUser) => {
-    if (socialUser == null) {
-      Websurfer.create({
-        firstname: userProfile._json.given_name,
-        lastname: userProfile._json.family_name,
-        email: userProfile._json.email,
-        phone: "000000000",
-        idSocial: userProfile.id,
-        typeSocial: "GOOGLE",
-        CustomerId: customer.id,
-      })
-        .then((newWebsurfer) => {
-          if (newWebsurfer) {
-            const newTicket = database.generateTicket(customer, newWebsurfer, 7);
-            console.log("New ticket is. ", newTicket.login);
-            //invio tramite sms o email
-            senders.sendTicketByEmail(newWebsurfer.email, newTicket);
-            senders.sendTicketBySms(newWebsurfer.phone, newTicket);
-            //Abilitazione su RB
+router.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/error" }), async function (req, res) {
+  socialUser = await Websurfer.findOne({ where: { email: userProfile._json.email } });
+  if (socialUser == null) {
+    var newWebsurfer = await Websurfer.create({
+      firstname: userProfile._json.given_name,
+      lastname: userProfile._json.family_name,
+      email: userProfile._json.email,
+      phone: "000000000",
+      idSocial: userProfile.id,
+      typeSocial: "GOOGLE",
+      CustomerId: customer.id,
+    });
 
-            createUser(ticketUsername, ticketPassword);
-            res.render("pages/successLogin", {
-              username: ticketUsername,
-              password: ticketPassword,
-            });
-            /* res.redirect("http://10.10.10.178/hotspot/login.html"); */
-          } else {
-            res.send("ERRORE CREAZIONE");
-          }
-        })
-        .catch((error) => {
-          res.send(error);
-        });
+    if (newWebsurfer) {
+      const newTicket = database.generateTicket(customer, newWebsurfer, 7);
+      console.log("New ticket is. ", newTicket.login);
+      //invio tramite sms o email
+      senders.sendTicketByEmail(newWebsurfer.email, newTicket);
+      senders.sendTicketBySms(newWebsurfer.phone, newTicket);
+      //Abilitazione su RB
+      //createUser(ticketUsername, ticketPassword);
+      res.render("pages/successLogin", {
+        username: newTicket.login,
+        password: newTicket.password,
+      });
     } else {
-      console.log("ESISTE GIA");
-      res.render("pages/auth");
+      console.log("Error in /auth/google/callback");
+      res.render("pages/error");
     }
-  });
+  } else {
+    //Recupero ticket esistente
+    var ticketFound = await Ticket.findOne({ where: { WebsurferId: webSurferFound.id } });
+    console.log("Found ticket for user social: ", ticketFound);
+    if (ticketFound.id) {
+      res.render("pages/successLogin", {
+        username: ticketFound.login,
+        password: ticketFound.password,
+      });
+    } else {
+      //creazione nuovo ticket
+      const newTicket = database.generateTicket(customer, newWebsurfer, 7);
+      console.log("New ticket is. ", newTicket.login);
+      //invio tramite sms o email
+      senders.sendTicketByEmail(newWebsurfer.email, newTicket);
+      senders.sendTicketBySms(newWebsurfer.phone, newTicket);
+      res.render("pages/successLogin", {
+        username: newTicket.login,
+        password: newTicket.password,
+      });
+    }
+  }
 });
 
 router.get("/auth/facebook", passport.authenticate("facebook"));

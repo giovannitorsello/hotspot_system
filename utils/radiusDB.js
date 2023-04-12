@@ -1,6 +1,6 @@
 const generateRandomCredentials = require("./random");
 const Sequelize = require("sequelize");
-var config = require("./config.js").load();
+var config = require("../config.js").load();
 
 // CREATE A SEQUELIZE INSTANCE
 const sequelizeRAD = new Sequelize(config.radius_database_configuration);

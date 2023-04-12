@@ -73,7 +73,7 @@
                                 <div class="card-body">
                                     <form class="form" method="post" action="ticket/insert">
                                         <div class="row">
-                                            <input type="hidden" class="form-control" name="resellerID" value=<%=dataCreationTicker.user.ResellerId %>>
+                                            <!-- <input type="hidden" class="form-control" name="resellerID" value=<%=dataCreationTicker.user.ResellerId %>> -->
                                             <div class="col-md-6 col-12">
                                                 <div class="form-group">
                                                     <label for="first-name-column">DATA INIZIO </label>
@@ -98,31 +98,8 @@
                                                     <input type="text" class="form-control" disabled value=<%=password %>>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 col-12">
-                                                <div class="form-group">
-                                                    <label for="first-name-column">UTENTE</label>
-                                                    <select class="form-select" name="websurfer" >
-                                                    <% dataCreationTicker.websurfer.forEach(function(websurfer) { %>
-                                                        <option id="customerID" value=<%=websurfer.id %>> <%=
-                                                            websurfer.firstname +' ' + websurfer.lastname%>
-                                                        </option>
-                                                        <% }) %>
-                                                </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 col-12">
-                                                <div class="form-group">
-                                                    <label for="first-name-column">CLIENTE</label>
-                                                    <select class="form-select" name="client" onchange="getValueOfTheInput(event)">
-                                                        <option name="default">Selezione il cliente</option>
-                                                    <% dataCreationTicker.customer.forEach(function(customer) { %>
-                                                        <option name=<%=customer.pin %> value=<%=customer.id %> > 
-                                                            <%= customer.companyName %>
-                                                        </option>
-                                                        <% }) %>
-                                                </select>
-                                                </div>
-                                            </div>
+                                            
+                                         
                                             <div class="col-md-6 col-12">
                                                 <div class="form-group">
                                                     <label for="first-name-column">STATE</label>

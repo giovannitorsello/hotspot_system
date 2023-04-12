@@ -124,9 +124,11 @@
                                                                         </select>
                                                                     </fieldset>
                                                                 </div>
+                                                                <% if(role == "RESELLER"){ %>
                                                                 <div class="col-md-4">
                                                                     <label>Cliente</label>
                                                                 </div>
+                                                                
                                                                 <div class="col-md-8">
                                                                     <fieldset class="form-group">
                                                                         <select class="form-select" name="client"
@@ -139,6 +141,7 @@
                                                                         </select>
                                                                     </fieldset>
                                                                 </div>
+                                                                <% } %>
                                                                 <div class="col-12 d-flex justify-content-end">
                                                                     <button type="submit"
                                                                         class="btn btn-primary me-1 mb-1">INSERISCI</button>

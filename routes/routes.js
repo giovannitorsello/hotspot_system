@@ -2,12 +2,14 @@ const express = require('express');
 const session = require('express-session');
 const router = express.Router();
 const passport = require('passport');
-const {Websurfer, Ticket} = require('../database');
+const {Websurfer, Ticket, Customer} = require('../database');
 const generateRandomCredentials = require("../utils/random");
 const {ticketUsername, ticketPassword} = generateRandomCredentials();
 const createUser = require("../utils/radiusDB");
 const dateUtils = require('../utils/dateUtils');
-
+const axios = require('axios');
+const Swal = require('sweetalert2')
+var customer = {};
 var device = {};
 
 router.use(session({resave: false, saveUninitialized: true, secret: 'secret'}));
@@ -22,62 +24,61 @@ router.post('/', (req, res) => {
     console.log(device);
 });
 
-router.get('/register', function (req, res) {
-    res.render('pages/register', {error: null});
+router.get('/login', function (req, res) {
+    res.render('pages/login_sms');
 });
 
-router.post('/auth/register', (req, res) => {
+router.get('/register', function (req, res) {
+    res.render('pages/register');
+});
+
+router.post('/auth/register', async (req, res) => {
     console.log(req.body);
-    Websurfer.findOne({
+    console.log(device);
+
+    await Customer.findOne({
+        where: {
+            pin: device.pin
+        }
+    }).then(customerOfThisTicket => {
+        customer = customerOfThisTicket;
+    })
+    console.log(customer);
+
+
+    await Websurfer.findOne({
         where: {
             email: req.body.email
         }
     }).then(resultIfExist => {
         if (resultIfExist == null) {
             Websurfer.create({firstname: req.body.firstname, lastname: req.body.lastname, email: req.body.email, phone: req.body.phone}).then(resultCreation => {
-                if (resultCreation != null) {
-                    Ticket.findOne({
-                        where: {
-                            login: ticketUsername
-                        }
-                    }).then(resultIfTicketExist => {
-                        if (resultIfTicketExist == null) {
-                            createUser(ticketUsername, ticketPassword);
-                            Ticket.create({
-                                emissionDate: dateUtils.formatCurrentDate(),
-                                firstUse: dateUtils.formatCurrentDate(),
-                                expirationDate: dateUtils.addDays(dateUtils.formatCurrentDate()),
-                                expirationUsageDate: dateUtils.addDays(dateUtils.formatCurrentDate()),
-                                durationDays: dateUtils.calculateRemainingDays(dateUtils.addDays(dateUtils.formatCurrentDate())),
-                                login: ticketUsername,
-                                note: '',
-                                password: ticketPassword,
-                                serialNumber: device.mac,
-                                state: 'active',
-                                profile: '',
-                                websurferID: resultCreation.id,
-                                customerID: device.pin,
-                                resellerID: 00000,
-                                pinAzienda: 12341
-                            }).then(resultCreationTicket => {
-                                if (resultCreationTicket != null) {
-                                    res.render('pages/successLogin', {
-                                        username: ticketUsername,
-                                        password: ticketPassword,
-                                        device: device
-                                    });
-                                } else {  console.log('ERRORE CREAZIONE TICKET');
-                                }
-                            })
-                        } else { console.log('TICKET ESISTENTE');
-                        }
-                    })
-                } else { console.log('ERRORE CREAZIONE WEBSURFER');
+                if (resultCreation != null) { // definisci l'URL
+                    const url = "http://wifiticket.wifinetcom.net:8080/WIFITicketSystem2/TicketServlet?action=get_ticket_sms&pin=1111&nome=" +
+                      req.body.firstName +
+                      "&cognome=" +
+                      req.body.lastName +
+                      "&phone=" +
+                      req.body.phone +
+                      "&email=" +
+                      req.body.email +
+                      "&days=7";
+                    
+                    const data = {};
+                    
+                    axios.post(url, data)
+                      .then((response) => {
+                        // gestisce la risposta qui
+                        console.log(response.data);
+                      })
+                      .catch((error) => {
+                        // gestisce eventuali errori qui
+                        console.error(error);
+                      });
+                    
                 }
-
             })
-        } else { console.log('UTENTE GIA ESISTENTE');
-        } 
+        }
     })
 });
 
@@ -95,31 +96,39 @@ router.get('/auth/google', passport.authenticate('google', {
 }));
 
 router.get('/auth/google/callback', passport.authenticate('google', {failureRedirect: '/error'}), function (req, res) {
-    Websurfer.create({
-        firstname: userProfile._json.given_name,
-        lastname: userProfile._json.family_name,
-        email: userProfile._json.email,
-        phone: '000000000',
-        idSocial: userProfile.id,
-        typeSocial: 'GOOGLE'
-    }).then((newWebsurfer) => {
-        if (newWebsurfer) {
-            createUser(ticketUsername, ticketPassword);
-            res.render('pages/successLogin', {
-                username: ticketUsername,
-                password: ticketPassword
-            });
-            /* res.redirect("http://10.10.10.178/hotspot/login.html"); */
-        } else {
-            res.send("ERRORE CREAZIONE");
+    Websurfer.findOne({where:{email: userProfile._json.email}}).then(socialUser=>{
+        if(socialUser == null){
+            Websurfer.create({
+                firstname: userProfile._json.given_name,
+                lastname: userProfile._json.family_name,
+                email: userProfile._json.email,
+                phone: '000000000',
+                idSocial: userProfile.id,
+                typeSocial: 'GOOGLE',
+                CustomerId: customer.id
+            }).then((newWebsurfer) => {
+                if (newWebsurfer) {
+                    createUser(ticketUsername, ticketPassword);
+                    res.render('pages/successLogin', {
+                        username: ticketUsername,
+                        password: ticketPassword
+                    });
+                    /* res.redirect("http://10.10.10.178/hotspot/login.html"); */
+                } else {
+                    res.send("ERRORE CREAZIONE");
+                }
+            }).catch((error) => {
+                res.send(error);
+            })
+        }else{
+            console.log("ESISTE GIA");
+            res.render('pages/auth');
         }
-    }).catch((error) => {
-        res.send(error);
     })
+    
 });
 
- router.get('/auth/facebook', passport.authenticate('facebook'));
-
+router.get('/auth/facebook', passport.authenticate('facebook'));
 
 
 router.get('/auth/facebook/callback', passport.authenticate('facebook', {failureRedirect: '/error'}), function (req, res) {
@@ -129,7 +138,8 @@ router.get('/auth/facebook/callback', passport.authenticate('facebook', {failure
         email: '',
         phone: '000000000',
         idSocial: userProfileFacebook.id,
-        typeSocial: 'FACEBOOK'
+        typeSocial: 'FACEBOOK',
+        CustomerId:customer.id
     }).then((newWebsurfer) => {
         if (newWebsurfer) {
             createUser(ticketUsername, ticketPassword);
@@ -137,7 +147,7 @@ router.get('/auth/facebook/callback', passport.authenticate('facebook', {failure
                 username: ticketUsername,
                 password: ticketPassword
             });
-          
+
         } else {
             res.send("ERRORE CREAZIONE");
         }

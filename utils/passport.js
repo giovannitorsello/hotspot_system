@@ -15,7 +15,7 @@ passport.use(new GoogleStrategy({
  passport.use(new FacebookStrategy({
   clientID: "6015362055218031",
   clientSecret: "82530322668880a4eea01087f7d72635",
-  callbackURL: 'http://hotspot.wifinetcom.net/auth/facebook/callback',
+  callbackURL: 'https://hotspot.wifinetcom.net/auth/facebook/callback',
   profileFields: ['id', 'displayName','email']
 },
 function(accessToken, refreshToken, profile, cb) {

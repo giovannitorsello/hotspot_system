@@ -216,6 +216,7 @@ Customer.hasMany(Websurfer);
 Websurfer.hasOne(Ticket);
 Websurfer.belongsTo(Customer);
 Ticket.belongsTo(Customer);
+User.belongsTo(Customer);
 
 
 

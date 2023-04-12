@@ -20,7 +20,7 @@ async function getResellerUser(userLogged) {
     });
     userOBJ.customerOfThisReseller = customerOfThisReseller || null;
 
-    const websurfersOfAllCustomers = await Websurfer.findAll({
+    const websurfers = await Websurfer.findAll({
         include: [
           {
             model: Customer,
@@ -30,7 +30,7 @@ async function getResellerUser(userLogged) {
           },
         ],
       });
-    userOBJ.websurfersOfAllCustomers = websurfersOfAllCustomers || null;
+    userOBJ.websurfers = websurfers || null;
 
     const ticketsOfAllCustomers = await Ticket.findAll({
         include: [
@@ -44,6 +44,17 @@ async function getResellerUser(userLogged) {
       });
       userOBJ.ticketsOfAllCustomers = ticketsOfAllCustomers || null;
 
+      const userOfAllCustomers = await User.findAll({
+        include: [
+          {
+            model: Customer,
+            where: {
+              ResellerId: userLogged.resellerID,
+            },
+          },
+        ],
+      });
+      userOBJ.userOfAllCustomers = userOfAllCustomers || null;
 
     return userOBJ;
 }

@@ -6,12 +6,10 @@ const routerDashboard = express.Router();
 const generateRandomCredentials = require("../utils/random");
 const {ticketUsername, ticketPassword} = generateRandomCredentials();
 var randomPin = require('../utils/randomPin');
-const getDataUser = require('../data/getDataUser');
+var getDataUser = require('../data/getDataUser');
 var userOBJ;
-var clients = {};
 var dataCreationTicker = {};
-const dataTables = require('../data/dashboard');
-const getResellerUser = require('../data/getResellerData');
+var getResellerUser = require('../data/getResellerData');
 
 function checkSession(req, res, next) {
     if (! req.session.user) {
@@ -21,10 +19,13 @@ function checkSession(req, res, next) {
     }
 };
 
+
 // AUTH PAGE
 routerDashboard.get('/', (req, res) => {
     res.render('dashboard/authAdmin', {error: null});
 });
+
+
 
 routerDashboard.post('/login', (req, res) => {
     User.findOne({
@@ -58,47 +59,47 @@ routerDashboard.get('/dashboard', checkSession, menuMiddleware, async (req, res)
 
     }else if(req.session.user.role == "RESELLER"){
         userOBJ = await getResellerUser(req.session.user);
+        res.render('dashboard/home', {
+            user: req.session.user,
+            title: 'Home',
+            data: userOBJ
+        }); 
     }else if(req.session.user.role == "HOTEL"){
         userOBJ = await getDataUser(req.session.user);
+        res.render('dashboard/home', {
+            user: req.session.user,
+            title: 'Home',
+            data: userOBJ
+        }); 
     }else{
         
     };
-    console.log(userOBJ);
-    res.render('dashboard/home', {
-        user: req.session.user,
-        title: 'Home',
-        data: userOBJ
-    });  
+
+    
 });
 
 // WEBSURFER PAGE
-routerDashboard.get('/websurfers', checkSession, menuMiddleware, (req, res) => {
-    Customer.findAll({
-        where: {
-            ResellerId: req.session.user.resellerID
-        }
-    }).then(function (customerOfThisReseller) {
-        if (customerOfThisReseller) {
-            dataCreationTicker.customer = customerOfThisReseller;
-            clients = customerOfThisReseller;
-            Websurfer.findAll().then(function (websurfers) {
-                if (websurfers) {
-                    dataCreationTicker.websurfer = websurfers;
-                    res.render('dashboard/webSurferPage', {
-                        websurfers: websurfers,
-                        customerOfThisReseller: customerOfThisReseller,
-                        title: 'Websurfer'
-                    });
-                } else {
-                    res.render('dashboard/webSurferPage', {
-                        title: 'Websurfer',
-                        websurfers: websurfers,
-                        customerOfThisReseller: customerOfThisReseller
-                    });
-                }
-            });
-        }
-    })
+routerDashboard.get('/websurfers', checkSession, menuMiddleware, async (req, res) => {
+    if(req.session.user.role == "SUPERADMIN"){
+
+    }else if(req.session.user.role == "RESELLER"){
+        userOBJ = await getResellerUser(req.session.user);
+        console.log(userOBJ);
+        res.render('dashboard/webSurferPage', {
+            title: 'Websurfer',
+            websurfers: userOBJ.websurfers,
+        });
+       
+    }else if(req.session.user.role == "HOTEL"){
+        userOBJ = await getDataUser(req.session.user);
+        res.render('dashboard/webSurferPage', {
+            title: 'Websurfer',
+            websurfers: userOBJ.websurfers,
+        });
+    }else{
+        
+    };
+
 });
 
 routerDashboard.post('/websurfers/insert', checkSession, menuMiddleware, (req, res) => {
@@ -115,7 +116,7 @@ routerDashboard.post('/websurfers/insert', checkSession, menuMiddleware, (req, r
                 email: req.body.email,
                 note: req.body.note,
                 phone: req.body.phone,
-                CustomerId: req.body.role
+                CustomerId: req.session.customerID
             }).then(function (y) {
                 if (y !== null) {
                     res.redirect('/admin/websurfers');
@@ -147,8 +148,32 @@ routerDashboard.get('/resellers', checkSession, menuMiddleware, (req, res) => {
 });
 
 // USER PAGE -----------TODO
-routerDashboard.get('/users', checkSession, menuMiddleware, (req, res) => {
-    User.findAll().then(function (users) {
+routerDashboard.get('/users', checkSession, menuMiddleware, async (req, res) => {
+    if(req.session.user.role == "SUPERADMIN"){
+
+    }else if(req.session.user.role == "RESELLER"){
+        userOBJ = await getResellerUser(req.session.user);
+        console.log(userOBJ);
+        res.render('dashboard/userPage', {
+            role:req.session.user.role,
+            users: userOBJ.userOfAllCustomers,
+            title: 'Users',
+            clients: userOBJ.customerOfThisReseller
+        });
+       
+    }else if(req.session.user.role == "HOTEL"){
+        userOBJ = await getDataUser(req.session.user);
+        res.render('dashboard/userPage', {
+            role:req.session.user.role,
+            users: userOBJ.userOfAllCustomers,
+            title: 'Users',
+            clients: userOBJ.userOfAllCustomers
+        });
+    }else{
+        
+    };
+    
+   /*  User.findAll().then(function (users) {
         if (users) {
             res.render('dashboard/userPage', {
                 users: users,
@@ -161,8 +186,9 @@ routerDashboard.get('/users', checkSession, menuMiddleware, (req, res) => {
                 clients: clients
             });
         }
-    });
+    }); */
 });
+
 routerDashboard.post('/users/insert', checkSession, (req, res) => {
     User.findOne({
         where: {
@@ -190,7 +216,34 @@ routerDashboard.post('/users/insert', checkSession, (req, res) => {
 });
 
 // CUSTOMER
-routerDashboard.get('/customers', checkSession, menuMiddleware, (req, res) => {
+routerDashboard.get('/customers', checkSession, menuMiddleware, async (req, res) => {
+
+    if(req.session.user.role == "SUPERADMIN"){
+
+    }else if(req.session.user.role == "RESELLER"){
+        userOBJ = await getResellerUser(req.session.user);
+        console.log(userOBJ);
+        res.render('dashboard/clientPage', {
+            customers: userOBJ.customerOfThisReseller,
+            title: 'Customers',
+            randomPin: randomPin
+        });
+       
+    }else if(req.session.user.role == "HOTEL"){
+        userOBJ = await getDataUser(req.session.user);
+        res.render('dashboard/clientPage', {
+            customers: userOBJ.customerOfThisReseller,
+            title: 'Customers',
+            randomPin: randomPin
+        });
+    }else{
+        
+    };
+
+
+
+
+/* 
     Customer.findAll().then(function (customers) {
         if (customers) {
             res.render('dashboard/clientPage', {
@@ -204,11 +257,10 @@ routerDashboard.get('/customers', checkSession, menuMiddleware, (req, res) => {
                 randomPin: randomPin
             });
         }
-    });
+    }); */
 });
 
 routerDashboard.post('/customers/insert', checkSession, menuMiddleware, (req, res) => {
-  
     Customer.findOne({
         where: {
             companyName: req.body.companyName
@@ -241,7 +293,8 @@ routerDashboard.post('/customers/insert', checkSession, menuMiddleware, (req, re
             res.send("PROBLEMA A CARICARE LE RISORSE DEL SERVER")
         }
     })
-})
+});
+
 // TICKETS
 routerDashboard.get('/tickets', checkSession, menuMiddleware, (req, res) => {
     Ticket.findAll().then(function (tickets) {
@@ -263,6 +316,8 @@ routerDashboard.get('/tickets', checkSession, menuMiddleware, (req, res) => {
         }
     });
 });
+
+
 routerDashboard.post('/ticket/insert', checkSession, (req, res) => {
     console.log(req.body);
     /*   Ticket.findAll().then(function (tickets) {
@@ -274,6 +329,10 @@ routerDashboard.post('/ticket/insert', checkSession, (req, res) => {
             }
         }); */
 });
+
+
+
+
 // RADIUS
 routerDashboard.get('/radius', checkSession, menuMiddleware, (req, res) => {
     res.render('dashboard/radiusPage', {title: 'Radius'});

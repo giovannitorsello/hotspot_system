@@ -13,7 +13,7 @@ const menus = [
         access: ['SUPERADMIN']
     },
     {
-        name: 'Naviatore web',
+        name: 'Navigatore web',
         path: '/admin/websurfers',
         access: ['SUPERADMIN', 'RESELLER', 'HOTEL', 'USER']
     }, {

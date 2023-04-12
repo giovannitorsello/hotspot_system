@@ -7,6 +7,7 @@ yestardayAgo.setDate(yestardayAgo.getDate() - 3);
 async function getDataUser(userLogged) {
     const userOBJ = {};
 
+
     //SE E SUPERADMIN TROVA TUTTI I RESELLER
     if(userLogged.role== "SUPERADMIN"){
       const reseller = await Reseller.findAll()
@@ -64,6 +65,13 @@ async function getDataUser(userLogged) {
         }
     });
     userOBJ.lastTickets = lastTickets.length ? lastTickets : 'NESSUN TICKET AGGIUNTO DI RECENTE';
+
+    const userOfAllCustomers = await User.findAll({
+            where: {
+                CustomerId: userLogged.customerID,
+            },
+      });
+      userOBJ.userOfAllCustomers = userOfAllCustomers || '';
 
     return userOBJ;
 }

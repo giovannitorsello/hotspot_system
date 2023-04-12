@@ -1,6 +1,7 @@
 const Sequelize = require("sequelize");
 var config = require("./config.js").load();
 const generateRandomCredentials = require("./utils/random");
+const createRadiusUser = require("./utils/radiusDB");
 
 const sequelize = new Sequelize(config.database.database, config.database.username, config.database.password, {
   host: config.database.host,
@@ -281,6 +282,8 @@ const generateTicket = (customer, websurfer, durationDays) => {
     expirationDate: expirationDate,
     expirationUsageDate: expirationUsageDate,
   });
+  //Insert in radius database
+  createRadiusUser(ticketUsername, ticketPassword);
   return generatedTicket;
 };
 

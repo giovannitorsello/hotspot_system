@@ -13,6 +13,14 @@
         "dialect": "mysql",
         "logging": false
     },
+    "radius_database_configuration": {
+        "dialect": "mysql",
+        "host": "5.83.124.9",
+        "port": 3306,
+        "username": "hotspotsystem",
+        "password": "hotspotsystem2023!",
+        "database": "radius"
+    },
     "server": {
         "hostname": "127.0.0.1",
         "ip": "127.0.0.1",
@@ -21,7 +29,6 @@
         "sslCertificateKey": "/certs/hotspot.wifinetcom.net.key",
         "sslCertificateCrt": "/certs/hotspot.wifinetcom.net.crt"
     },
-
     "mailserver": {
         "host": "smtp.wifinetcom.net",
         "port": 465,

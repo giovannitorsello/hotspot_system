@@ -105,5 +105,6 @@ dist
 
 #disable config.json
 config.json
+others/
 certs/
 .env

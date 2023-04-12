@@ -128,6 +128,13 @@ router.get("/auth/google/callback", passport.authenticate("google", { failureRed
       })
         .then((newWebsurfer) => {
           if (newWebsurfer) {
+            const newTicket = database.generateTicket(customer, newWebsurfer, 7);
+            console.log("New ticket is. ", newTicket.login);
+            //invio tramite sms o email
+            senders.sendTicketByEmail(newWebsurfer.email, newTicket);
+            senders.sendTicketBySms(newWebsurfer.phone, newTicket);
+            //Abilitazione su RB
+
             createUser(ticketUsername, ticketPassword);
             res.render("pages/successLogin", {
               username: ticketUsername,

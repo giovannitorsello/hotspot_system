@@ -3,8 +3,8 @@
         "type": "mysql",
         "host": "localhost",
         "database": "hotspot_system",
-        "username": "root",
-        "password": "antonio",
+        "username": "hotspot",
+        "password": "hotspot",
         "protocol": "mysql",
         "port": "3306",
         "query": {
@@ -32,7 +32,7 @@
         "auth": {
             "type": "login",
             "user": "no-reply@wifinetcom.net",
-            "pass": ""
+            "pass": "##NoReply##2022##"
         },
         "defaultFrom": "'Wifinetcom SRL' <noreply@wifinetcom.com>"
     }

@@ -265,7 +265,7 @@ const generateTicket = (customer, websurfer, durationDays) => {
   expirationUsageDate.setDate(expirationDate.getDate() + 730); //scadenza dopo due anni circa
   var serialNumber = websurfer.id + "-" + customer.id + "-" + emissionDate.getTime();
 
-  const generatedTicket = Ticket.create({
+  var generatedTicket = Ticket.create({
     ResellerId: customer.ResellerId,
     CustomerId: customer.id,
     WebsurferId: websurfer.id,

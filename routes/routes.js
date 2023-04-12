@@ -47,7 +47,7 @@ router.post("/auth/register", async (req, res) => {
     if (!device.pin) res.render("pages/error");
 
     const customer = await Customer.findOne({ where: { pin: device.pin } });
-    console.log("Customer is", customer);
+    console.log("Customer is", customer.id);
 
     //Ulteriore controllo
     if (!customer) res.render("pages/error");
@@ -77,7 +77,6 @@ router.post("/auth/register", async (req, res) => {
         //invio tramite sms o email
         senders.sendTicketByEmail(webSurferFound.email, newTicket);
         senders.sendTicketBySms(webSurferFound.phone, newTicket);
-        console.log("Redirect to: ", customer.web);
         res.status(301).redirect("http://wifi.hotspot.local/login_local.html");
       }
     } else {

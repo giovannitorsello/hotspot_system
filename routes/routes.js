@@ -145,7 +145,7 @@ router.get("/auth/google/callback", passport.authenticate("google", { failureRed
     }
   } else {
     //Recupero ticket esistente
-    var ticketFound = await Ticket.findOne({ where: { WebsurferId: webSurferFound.id } });
+    var ticketFound = await Ticket.findOne({ where: { WebsurferId: socialUser.id } });
     console.log("Found ticket for user social: ", ticketFound);
     if (ticketFound.id) {
       res.render("pages/successLogin", {
@@ -154,11 +154,11 @@ router.get("/auth/google/callback", passport.authenticate("google", { failureRed
       });
     } else {
       //creazione nuovo ticket
-      const newTicket = database.generateTicket(customer, newWebsurfer, 7);
+      const newTicket = database.generateTicket(customer, socialUser, 7);
       console.log("New ticket is. ", newTicket.login);
       //invio tramite sms o email
-      senders.sendTicketByEmail(newWebsurfer.email, newTicket);
-      senders.sendTicketBySms(newWebsurfer.phone, newTicket);
+      senders.sendTicketByEmail(socialUser.email, newTicket);
+      senders.sendTicketBySms(socialUser.phone, newTicket);
       res.render("pages/successLogin", {
         username: newTicket.login,
         password: newTicket.password,

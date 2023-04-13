@@ -114,7 +114,7 @@ router.get(
   })
 );
 
-router.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/http://wifi.hotspot.local" }), async function (req, res) {
+router.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "http://wifi.hotspot.local" }), async function (req, res) {
   socialUser = await Websurfer.findOne({ where: { email: userProfile._json.email } });
   if (socialUser == null) {
     var newWebsurfer = await Websurfer.create({

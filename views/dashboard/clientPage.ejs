@@ -159,9 +159,11 @@
                                     </div>
                                 </div>
                             </section>
+                           
                             <section class="section">
                                 <div class="card">
                                     <div class="card-body">
+                                        
                                         <table class="table table-striped" id="tableClient">
                                             <thead>
                                                 <tr>
@@ -172,7 +174,7 @@
                                                     <th>COMUNE</th>
                                                     <th>FAX</th>
                                                     <th>WEB PAGE</th>
-                                                    <th>DEFAULT BANDWITH</th>
+                                                    <th>BANDWITH</th>
                                                     <th>NOTE</th>
                                                     <th>INDIRIZZO</th>
                                                     <th>TELEFONO</th>
@@ -222,11 +224,9 @@
                                                         <td>
                                                             <%= customer.email %>
                                                         </td>
-                                                        <td class="col-auto">
-                                                            <p class=" mb-0">
-                                                              <button>MODIFICA</button>
-                                                              <button>ELIMINA</button>
-                                                            </p>
+                                                        <td >
+                                                                <i class="bi bi-trash"></i>
+                                                                <i class="bi bi-pen"></i>
                                                           </td>
                                                     </tr>
                                                     <%  }) %>

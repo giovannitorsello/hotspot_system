@@ -1,4 +1,5 @@
 var config = require("./config.js").load();
+var cors = require('cors');
 const express = require("express");
 const app = express();
 const schedule = require("node-schedule");
@@ -19,7 +20,7 @@ syncModels();
 /* const job = schedule.scheduleJob('0 10 * * * *', function(){
   syncModels();
 }); */
-
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.set("view engine", "ejs");

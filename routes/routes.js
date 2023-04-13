@@ -9,7 +9,6 @@ const { ticketUsername, ticketPassword } = generateRandomCredentials();
 const createUser = require("../utils/radiusDB");
 const dateUtils = require("../utils/dateUtils");
 const axios = require("axios");
-const Swal = require("sweetalert2");
 const database = require("../database");
 var customer = {};
 var device = {};

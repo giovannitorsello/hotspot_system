@@ -7,6 +7,7 @@ const generateRandomCredentials = require("../utils/random");
 const { ticketUsername, ticketPassword } = generateRandomCredentials();
 var randomPin = require("../utils/randomPin");
 var getDataUser = require("../data/getDataUser");
+const Swal = require('sweetalert2')
 var userOBJ;
 var dataCreationTicker = {};
 var getResellerUser = require("../data/getResellerData");
@@ -40,11 +41,20 @@ routerDashboard.post("/login", (req, res) => {
         resellerID: user.ResellerId,
       };
 
-      res.redirect("dashboard");
+     
+      res.send({
+      status:"200",
+      msg: "USER FOUND",
+      user: user
+      });
     } else {
-      res.render("dashboard/authAdmin", { error: "EMAIL O PASSWORD ERRATI!" });
+      res.send({
+        status:"404",
+        msg: "Credenziali errate",
+        });
+     /*  res.render("dashboard/authAdmin", { error: "EMAIL O PASSWORD ERRATI!" }); */
     }
-  });
+  }); 
 });
 
 // HOME PAGE
@@ -203,7 +213,7 @@ routerDashboard.get("/customers", checkSession, menuMiddleware, async (req, res)
   if (req.session.user.role == "SUPERADMIN") {
   } else if (req.session.user.role == "RESELLER") {
     userOBJ = await getResellerUser(req.session.user);
-    console.log(userOBJ);
+    
     res.render("dashboard/clientPage", {
       customers: userOBJ.customerOfThisReseller,
       title: "Customers",
@@ -218,22 +228,6 @@ routerDashboard.get("/customers", checkSession, menuMiddleware, async (req, res)
     });
   } else {
   }
-
-  /* 
-    Customer.findAll().then(function (customers) {
-        if (customers) {
-            res.render('dashboard/clientPage', {
-                customers: customers,
-                title: 'Customers',
-                randomPin: randomPin
-            });
-        } else {
-            res.render('dashboard/clientPage', {
-                title: 'Customers',
-                randomPin: randomPin
-            });
-        }
-    }); */
 });
 
 routerDashboard.post("/customers/insert", checkSession, menuMiddleware, (req, res) => {
@@ -257,8 +251,14 @@ routerDashboard.post("/customers/insert", checkSession, menuMiddleware, (req, re
         pin: req.body.pin,
         defaultBandwidth: req.body.defaultBandwidth,
         ResellerId: req.session.user.resellerID,
-      }).then(function (y) {
-        if (y !== null) {
+      }).then(function (result) {
+        if (result !== null) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Do you want to continue',
+                icon: 'error',
+                confirmButtonText: 'Cool'
+              })
           res.redirect("/admin/customers");
         } else {
           res.redirect("/admin/customers");

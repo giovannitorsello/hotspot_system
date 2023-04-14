@@ -95,7 +95,7 @@ router.post("/auth/register", async (req, res) => {
     }
   } catch (error) {
     console.log("Error in /auth/register");
-    res.render("pages/error");
+    git pu
   }
 });
 

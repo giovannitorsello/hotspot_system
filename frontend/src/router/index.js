@@ -14,7 +14,36 @@ const routes = [
     component: () => import('../views/Homepage.vue')
     
   },
- 
+  {
+    path: '/customers',
+    name: 'customers',
+    component: () => import('../views/Customers.vue')
+  },
+  {
+    path: '/resellers',
+    name: 'resellers',
+    component: () => import('../views/Resellers.vue')
+  },
+  {
+    path: '/websurfers',
+    name: 'websurfers',
+    component: () => import('../views/Websurfers.vue')
+  },
+  {
+    path: '/users',
+    name: 'users',
+    component: () => import('../views/Users.vue')
+  },
+  {
+    path: '/tickets',
+    name: 'tickets',
+    component: () => import('../views/Tickets.vue')
+  },
+  {
+    path: '/radius',
+    name: 'radius',
+    component: () => import('../views/Radius.vue')
+  },
 ]
 
 const router = createRouter({

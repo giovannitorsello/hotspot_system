@@ -57,7 +57,7 @@ export default {
         axios.post('http://localhost/admin/login',{username: this.username, password: this.password}).then((response) =>{
           if(response.data.status == 200){ 
             console.log(response.data.user);
-            this.$store.commit('SET_USER',response.data.user);
+            this.$store.commit('SET_USER', response.data.user);
             if(response.data.user.role== 'RESELLER'){
               this.$router.push('dashboard');
             }

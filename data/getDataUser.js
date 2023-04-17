@@ -30,6 +30,9 @@ async function getDataUser(userLogged) {
     });
     userOBJ.websurfers = websurfers || 0;
 
+
+
+    
     const activeTickets = await Ticket.findAll({
         where: {
             state: 'active',

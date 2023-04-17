@@ -11,7 +11,7 @@
                     </div>
                 </div>
             </div>
-            <!-- MENU SECTION-->
+           
             <div class="sidebar-menu">
                 <ul class="menu">
                     <li v-for="item in checkClass" :key="item.id" :class="item.class" >
@@ -33,50 +33,7 @@ export default {
     created() {},
     data() {
         return {
-            menus: [{
-                    name: 'Home',
-                    path: '/dashboard',
-                    class:'',
-                    access: ['SUPERADMIN', 'RESELLER', 'HOTEL', 'USER'],
-                   
-                }, {
-                    name: 'Clienti',
-                    path: '/customers',
-                    class:'',
-                    access: ['SUPERADMIN', 'RESELLER'],
-                    hidden: ''
-                }, {
-                    name: 'Reseller',
-                    path: '/resellers',
-                    class:'',
-                    access: ['SUPERADMIN'],
-                
-                },
-                {
-                    name: 'Navigatore web',
-                    path: '/websurfers',
-                    class:'',
-                    access: ['SUPERADMIN', 'RESELLER', 'HOTEL', 'USER'],
-                  
-                }, {
-                    name: 'Ruoli',
-                    path: '/users',
-                    class:'',
-                    access: ['SUPERADMIN', 'RESELLER', 'HOTEL'],
-                
-                }, {
-                    name: 'Ticket',
-                    path: '/tickets',
-                    class:'',
-                    access: ['SUPERADMIN', 'RESELLER', 'HOTEL', 'USER'],
-                   
-                }, {
-                    name: 'Radius',
-                    path: '/radius',
-                    class:'',
-                    access: ['SUPERADMIN'],
-                }
-            ]
+            menus: []
         };
     },
     computed:{
@@ -86,6 +43,85 @@ export default {
           return item
         })
       }
+    },
+    created(){
+        if(this.$store.state.user.role == "RESELLER"){
+            this.menus = [{
+                    name: 'Home',
+                    path: '/dashboard',  
+                }, {
+                    name: 'Clienti',
+                    path: '/customers',
+                },
+                {
+                    name: 'Navigatore web',
+                    path: '/websurfers',
+                }, {
+                    name: 'Ruoli',
+                    path: '/users',
+                }, {
+                    name: 'Ticket',
+                    path: '/tickets',
+                }
+            ]
+        };
+        if(this.$store.state.user.role == "HOTEL"){
+            this.menus = [{
+                    name: 'Home',
+                    path: '/dashboard',
+                },
+                {
+                    name: 'Navigatore web',
+                    path: '/websurfers',
+                }, {
+                    name: 'Ruoli',
+                    path: '/users',
+                }, {
+                    name: 'Ticket',
+                    path: '/tickets',
+                }
+            ]
+        };
+        if(this.$store.state.user.role == "USER"){
+            this.menus = [{
+                    name: 'Home',
+                    path: '/dashboard',
+                },
+                {
+                    name: 'Navigatore web',
+                    path: '/websurfers',
+                },
+                 {
+                    name: 'Ticket',
+                    path: '/tickets',
+                }
+            ]
+        };
+        if(this.$store.state.user.role == "SUPERADMIN"){
+            this.menus = [{
+                    name: 'Home',
+                    path: '/dashboard',
+                },
+                {
+                    name: 'Reseller',
+                    path: '/resellers',
+                },
+                {
+                    name: 'Navigatore web',
+                    path: '/websurfers',
+                }, {
+                    name: 'Ruoli',
+                    path: '/users',
+                }, {
+                    name: 'Ticket',
+                    path: '/tickets',
+                },
+                {
+                    name: 'Radius',
+                    path: '/radius',
+                }
+            ]
+        };
     },
     props: {},
     methods: {},

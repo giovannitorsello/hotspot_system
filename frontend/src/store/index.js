@@ -1,8 +1,12 @@
 import { createStore } from 'vuex'
+import createPersistedState from "vuex-persistedstate";
+
 
 export default createStore({
+  namespaced: true,
   state: {
-    user:{}
+    user:{},
+    dataUser:{}
   },
   getters: {
   },
@@ -10,9 +14,13 @@ export default createStore({
     SET_USER(state, user) {
       state.user = user;
     },
+    SET_DATA_USER(state, dataUser){
+      state.dataUser= dataUser;
+    }
   },
   actions: {
   },
   modules: {
-  }
+  },
+  plugins: [createPersistedState()],
 })

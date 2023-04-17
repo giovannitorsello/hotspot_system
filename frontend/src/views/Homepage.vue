@@ -1,6 +1,5 @@
 
 <template>
-    <div id="app">
       <Sidebar></sidebar>
         <div id="main">
             <header class="mb-3">
@@ -11,15 +10,15 @@
             <div class="page-heading">
                 <h3>TICKET SYSTEM STATUS</h3>
                 <h4>
-                    <!--  Bentornato <%= user.username %> -->
+                    Bentornato {{ this.$store.state.user.utente }} 
                 </h4>
             </div>
             <div class="page-content">
                 <section class="row">
                     <div class="col-12 col-lg-12">
                         <div class="row" style="justify-content: center;">
-                            <!--    <% if (user.role =='RESELLER') { %> -->
-                            <div class="col-6 col-lg-2 col-md-6">
+                         
+                            <div class="col-6 col-lg-2 col-md-6" v-if="this.$store.state.user.role == 'RESELLER'">
                                 <div class="card">
                                     <div class="card-body px-3 py-4-5">
                                         <div class="row">
@@ -31,15 +30,13 @@
                                             <div class="col-md-8">
                                                 <h6 class="text-muted font-semibold">CLIENTI </h6>
                                                 <h6 class="font-extrabold mb-0">
-                                                    <!--       <%= data.customerOfThisReseller.length %> -->
+                                                  {{this.$store.state.dataUser.customerOfThisReseller.length }}
                                                 </h6>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <!--   <% } %>
-                  <% if (data==null) { %> -->
                             <div class="col-6 col-lg-2 col-md-6">
                                 <div class="card">
                                     <div class="card-body px-3 py-4-5">
@@ -50,9 +47,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-8">
-                                                <h6 class="text-muted font-semibold">NUOVI CLIENTI</h6>
+                                                <h6 class="text-muted font-semibold">NUOVI WEBSURFER</h6>
                                                 <h6 class="font-extrabold mb-0">
-                                                    <!--       <%= data.lastUserInserted %> -->
+                                                    {{this.$store.state.dataUser.lastWebsurfers != {} ? 0 : this.$store.state.dataUser.lastWebsurfers.length}}
                                                 </h6>
                                             </div>
                                         </div>
@@ -72,7 +69,7 @@
                                             <div class="col-md-8">
                                                 <h6 class="text-muted font-semibold">WEBSURFER </h6>
                                                 <h6 class="font-extrabold mb-0">
-                                                    <!--     <%= data.websurfers.length %> -->
+                                                 {{this.$store.state.dataUser.websurfers.length}}
                                                 </h6>
                                             </div>
                                         </div>
@@ -91,13 +88,7 @@
                                             <div class="col-md-8">
                                                 <h6 class="text-muted font-semibold">TICKET ATTIVI</h6>
                                                 <h6 class="font-extrabold mb-0">
-    
-    
-                                                    <!--    <% if(data.activeTickets == null){ %>
-                                    0
-                                    <% } else { %> 
-                                      <%= data.activeTickets.length %>
-                                      <% } %> -->
+                                                    {{this.$store.state.dataUser.activeTickets.length }}
     
                                                 </h6>
                                             </div>
@@ -117,13 +108,8 @@
                                             <div class="col-md-8">
                                                 <h6 class="text-muted font-semibold">TICKET SCADUTI</h6>
                                                 <h6 class="font-extrabold mb-0">
-    
-                                                    <!--     <% if(data.expiredTickets == null){ %>
-                                    0
-                                    <% } else { %> 
-                                      <%= data.expiredTickets.length %>
-                                      <% } %> -->
-    
+                                                    {{this.$store.state.dataUser.expiredTickets.length }}
+
                                                 </h6>
                                             </div>
                                         </div>
@@ -132,8 +118,7 @@
                             </div>
                         </div>
     
-                        <!--        <% if(user.role=='RESELLER' ){ %> -->
-                        <div class="row">
+                        <div class="row" v-if="this.$store.state.user.role == 'RESELLER'">
                             <div class="col-12 col-xl-12">
                                 <div class="card">
                                     <div class="card-header text-align-center">
@@ -159,61 +144,66 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <!--     <% data.customerOfThisReseller.forEach(function(reseller) { %> -->
-                                                    <tr>
+                                                   
+                                                    <tr v-for="customer in this.$store.state.dataUser.customerOfThisReseller" :key="customer.id" >
                                                         <td class="col-auto">
                                                             <p class=" mb-0">
-                                                                <!--    <%= reseller.id %> -->
+                                                                {{customer.id}}
                                                             </p>
                                                         </td>
                                                         <td class="col-auto">
                                                             <p class=" mb-0">
-                                                                <!--    <%= reseller.companyName %> -->
+
+                                                                {{customer.companyName}}
+                                                               
                                                             </p>
                                                         </td>
                                                         <td class="col-auto">
                                                             <p class=" mb-0">
-                                                                <!--     <%= reseller.fiscalCode %> -->
+                                                                {{customer.fiscalCode}}
+                                                               
                                                             </p>
                                                         </td>
                                                         <td class="col-auto">
                                                             <p class=" mb-0">
-                                                                <!--   <%= reseller.email %> -->
+                                                                {{customer.email}}
                                                             </p>
                                                         </td>
                                                         <td class="col-auto">
                                                             <p class=" mb-0">
-                                                                <!--  <%= reseller.fax %> -->
+                                                                {{customer.fax}}
                                                             </p>
                                                         </td>
                                                         <td class="col-auto">
                                                             <p class=" mb-0">
-                                                                <!--   <%= reseller.addessCompany %> -->
+                                                                {{customer.addessCompany}}
+                                                              
                                                             </p>
                                                         </td>
                                                         <td class="col-auto">
                                                             <p class=" mb-0">
-                                                                <!--   <%= reseller.note %> -->
+                                                                {{customer.note}}
                                                             </p>
                                                         </td>
                                                         <td class="col-auto">
                                                             <p class=" mb-0">
-                                                                <!--  <%= reseller.phone %> -->
+                                                                {{customer.phone}}
                                                             </p>
                                                         </td>
                                                         <td class="col-auto">
                                                             <p class=" mb-0">
-                                                                <!--  <%= reseller.web %> -->
+                                                                {{customer.web}}
                                                             </p>
                                                         </td>
                                                         <td class="col-auto">
                                                             <p class=" mb-0">
-                                                                <!--   <%= reseller.pin %> -->
+                                                                {{customer.pin}}
                                                             </p>
                                                         </td>
                                                         <td class="col-auto">
                                                             <p class=" mb-0">
-                                                                <!--    <%= reseller.defaultBandwidth %> -->
+                                                                {{customer.defaultBandwidth}}
+                                                                
                                                             </p>
                                                         </td>
                                                         <td class="col-auto">
@@ -223,7 +213,7 @@
                                                             </p>
                                                         </td>
                                                     </tr>
-                                                    <!--    <% }) %> -->
+                                                
                                                 </tbody>
                                             </table>
                                         </div>
@@ -231,17 +221,13 @@
                                 </div>
                             </div>
                         </div>
-                        <!--   <% }else{ %>
-    
-                    <% } %> -->
                         <div class="row">
                             <div class="col-12 col-xl-6">
                                 <div class="card">
                                     <div class="card-header text-align-center">
                                         <h4>ULTIMI WEBSURFER INSERITI(3 GIORNI)</h4>
                                     </div>
-                                    <!--    <% if(data.lastWebsurfers == 'NESSUN UTENTE AGGIUNTO DI RECENTE' || data.lastWebsurfers == null){ %> -->
-                                    <div class="card-body">
+                                    <div class="card-body" v-if="this.$store.state.dataUser.lastWebsurfers != {}">
                                         <div class="table-responsive">
                                             <table class="table table-hover table-lg">
                                                 <tbody>
@@ -256,8 +242,8 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <!--   <% }else{ %> -->
-                                    <div class="card-body">
+                             
+                                    <div class="card-body" v-if="this.$store.state.dataUser.lastWebsurfers == {}">
                                         <div class="table-responsive">
                                             <table class="table table-hover table-lg">
                                                 <thead>
@@ -271,34 +257,34 @@
     
                                                     </tr>
                                                 </thead>
-                                                <!--          <tbody>
-                                      <% data.lastWebsurfers.forEach(function(websurfer) { %>
-                                        <tr>
+                                                       <tbody>
+                                    
+                                        <tr v-for="websurfer in this.$store.state.dataUser.lastWebsurfers" :key="websurfer.id" >
                                             <td>
-                                                <%= websurfer.id %>
+                                                {{websurfer.id}}
+                                              
                                             </td>
                                             <td>
-                                                <%= websurfer.firstname %>
+                                                {{websurfer.firstname}}
                                             </td>
                                             <td>
-                                                <%= websurfer.lastname %>
+                                                {{websurfer.lastname}}
                                             </td>
                                             <td>
-                                                <%= websurfer.email %>
+                                                {{websurfer.email}}
                                             </td>
                                             <td>
-                                                <%= websurfer.phone %>
+                                                {{websurfer.phone}}
                                             </td>
                                             <td>
-                                                <%= websurfer.note %>
+                                                {{websurfer.note}}
                                             </td>
                                         </tr>
-                                        <% }) %>
-                                    </tbody> -->
+                                       
+                                    </tbody> 
                                             </table>
                                         </div>
                                     </div>
-                                    <!--   <% } %> -->
                                 </div>
                             </div>
     
@@ -308,15 +294,15 @@
                                     <div class="card-header">
                                         <h4>ULTIMI TICKET CREATI(3 GIORNI)</h4>
                                     </div>
-                                    <!--   <% if(data.lastTickets == 'NESSUN TICKET AGGIUNTO DI RECENTE' || data.lastTickets == null){ %> -->
-                                    <div class="card-body">
+                                  
+                                    <div class="card-body" v-if="this.$store.state.dataUser.lastTickets != {}">
                                         <div class="table-responsive">
                                             <table class="table table-hover table-lg">
                                                 <tbody>
                                                     <tr>
                                                         <td class="col-auto">
                                                             <p class=" mb-0">
-                                                                <!--   <%= data.lastTickets %> -->
+                                                                NESSUN UTENTE AGGIUNTO DI RECENTE
                                                             </p>
                                                         </td>
                                                     </tr>
@@ -324,8 +310,8 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <!--  <% }else{ %> -->
-                                    <div class="card-body">
+                                    
+                                    <div class="card-body" v-if="this.$store.state.dataUser.lastTickets == {}">
                                         <div class="table-responsive">
                                             <table class="table table-hover table-lg">
                                                 <thead>
@@ -339,10 +325,22 @@
                                                         <th>PASSWORD</th>
                                                     </tr>
                                                 </thead>
+                                                <tbody>
+                         
+                              <tr>
+                                <td v-for="ticket in this.$store.state.dataUser.lastTickets" :key="ticket.id" class="col-auto">
+                                  <p class=" mb-0">
+                                   
+                                  </p>
+                                </td>
+                              
+                              </tr>
+                             
+                          </tbody>
                                             </table>
                                         </div>
                                     </div>
-                                    <!--     <% } %> -->
+                                   
                                 </div>
                             </div>
                         </div>
@@ -350,20 +348,31 @@
                 </section>
             </div>
         </div>
-    </div>
+    
 </template>
 
 <script>
 import Sidebar from '@/components/Sidebar.vue';
+import axios from 'axios'
 export default {
   components: { Sidebar },
     name: "Dashboard",
-    created() {},
     data() {
-        return {};
+        return {
+            dashboardData:{}
+        };
     },
-    props: {},
     methods: {},
+    created(){
+     
+            axios.post('http://localhost/admin/data/dataReseller', {user: this.$store.state.user}).then((response)=>{
+                this.$store.commit('SET_DATA_USER', response.data.data);
+            })
+       
+           /*  axios.post('http://localhost/admin/data/dataReseller', {user: this.$store.state.user}).then((response)=>{
+                this.$store.commit('SET_DATA_USER', response.data.data);
+            }) */
+    }
 };
 </script>
 

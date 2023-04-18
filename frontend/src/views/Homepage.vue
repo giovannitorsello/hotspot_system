@@ -353,7 +353,6 @@
 
 <script>
 import Sidebar from '@/components/Sidebar.vue';
-import axios from 'axios'
 export default {
   components: { Sidebar },
     name: "Dashboard",
@@ -364,14 +363,7 @@ export default {
     },
     methods: {},
     created(){
-     
-            axios.post('http://localhost/admin/data/dataReseller', {user: this.$store.state.user}).then((response)=>{
-                this.$store.commit('SET_DATA_USER', response.data.data);
-            })
-       
-           /*  axios.post('http://localhost/admin/data/dataReseller', {user: this.$store.state.user}).then((response)=>{
-                this.$store.commit('SET_DATA_USER', response.data.data);
-            }) */
+        this.$store.dispatch('fetchAllData');
     }
 };
 </script>

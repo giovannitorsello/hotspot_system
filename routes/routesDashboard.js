@@ -59,7 +59,11 @@ routerDashboard.post("/login", (req, res) => {
 });
 
 routerDashboard.post("/data/dataReseller", async (req, res) => {
-    res.send({status: "200", msg: "DATA", data: await getResellerUser(req.body.user)});
+    res.send({
+        status: "200",
+        msg: "DATA",
+        data: await getResellerUser(req.body.user)
+    });
 });
 
 // HOME PAGE
@@ -126,6 +130,44 @@ routerDashboard.post("/websurfers/insert", checkSession, menuMiddleware, (req, r
         }
     });
 });
+
+routerDashboard.post("/websurfers/edit", async (req, res) => {
+    Websurfer.findOne({
+        where: {
+            id: req.body.data.id
+        }
+    }).then((websurferToUpdate) => {
+        websurferToUpdate.firstname = req.body.data.firstname;
+        websurferToUpdate.lastname = req.body.data.lastname;
+        websurferToUpdate.email = req.body.data.email;
+        websurferToUpdate.note = req.body.data.note;
+        websurferToUpdate.phone = req.body.data.phone;
+        websurferToUpdate.idSocial = req.body.data.idSocial;
+        websurferToUpdate.typeSocial = req.body.data.typeSocial;
+        websurferToUpdate.CustomerId = req.body.data.CustomerId;
+        websurferToUpdate.save().then((result) => {
+            if (result !== null) {
+                res.send({status: "200", msg: "WEBSURFER SALVATO CON SUCCESSO!"});
+            } else {
+                res.send({status: "400", msg: "CONTROLLA I CAMPI!"});
+            }
+        });
+    })
+});
+routerDashboard.post("/websurfers/delete", async (req, res) => {
+    Websurfer.findOne({
+        where: {
+            id: req.body.data.id
+        }
+    }).then((websurferToDestroy) => {
+        if (websurferToDestroy !== null) {
+            websurferToDestroy.destroy();
+            res.send({status: "200", msg: "WEBSURFER ELIMINATO CON SUCCESSO!"});
+        } else {
+            res.send({status: "400", msg: "ERRORE NELLA CANCELLAZIONE!"});
+        }
+    })
+})
 
 // RESELLER PAGE -------- TODO
 routerDashboard.get("/resellers", checkSession, menuMiddleware, (req, res) => {
@@ -228,7 +270,7 @@ routerDashboard.get("/customers", checkSession, menuMiddleware, async (req, res)
 });
 
 routerDashboard.post("/customers/insert", (req, res) => {
-   Customer.findOne({
+    Customer.findOne({
         where: {
             companyName: req.body.payload.companyName
         }
@@ -247,18 +289,18 @@ routerDashboard.post("/customers/insert", (req, res) => {
                 web: req.body.payload.web,
                 pin: req.body.payload.pin,
                 defaultBandwidth: req.body.payload.defaultBandwidth,
-                ResellerId: req.body.payload.ResellerId,
+                ResellerId: req.body.payload.ResellerId
             }).then(function (result) {
-                if(result != null){
+                if (result != null) {
                     res.send({status: "200", msg: "CLIENTE INSERITO"});
-                }else{
+                } else {
                     res.send({status: "404", msg: "CONTROLLA I DATI!"});
                 }
             });
         } else {
             res.send({status: "404", msg: "UTENTE GIA ESISTENTE"});
         }
-    }); 
+    });
 });
 
 // TICKETS

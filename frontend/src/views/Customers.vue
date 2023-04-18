@@ -5,11 +5,11 @@
                 <div class="d-flex justify-content-between">
                     <div class="logo">
                         <a href="index.html"><img src="/img/logo_ASYTECH.png" alt="Logo"
-                /></a>
+                                /></a>
                     </div>
                     <div class="toggler">
                         <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i
-                ></a>
+                                ></a>
                     </div>
                 </div>
             </div>
@@ -19,8 +19,8 @@
     <div id="main">
         <header class="mb-3">
             <a href="#" class="burger-btn d-block d-xl-none">
-            <i class="bi bi-justify fs-3"></i>
-          </a>
+                            <i class="bi bi-justify fs-3"></i>
+                          </a>
         </header>
     
         <div class="page-heading">
@@ -115,8 +115,8 @@
     
                                                     <div class="col-12 d-flex justify-content-end">
                                                         <button class="btn btn-primary me-1 mb-1" @click="submitForm()">
-                                  Inserisci
-                                </button>
+                                                  Inserisci
+                                                </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -128,7 +128,7 @@
     
                         <section class="section">
                             <v-card>
-                                <v-tabs v-model="tab" bg-color="primary">
+                                <v-tabs v-model="tab" bg-color="primary" align-with-title centered>
                                     <v-tab value="one">TUTTI</v-tab>
                                     <v-tab value="two">MODIFICA</v-tab>
                                     <v-tab value="three">ELIMINA</v-tab>
@@ -137,12 +137,8 @@
                                 <v-card-text>
                                     <v-window v-model="tab">
                                         <v-window-item value="one">
-                                          <v-text-field v-model="search" label="CERCA"></v-text-field>
-                                          <v-table  
-                                            density="compact"
-                                            :search="search"
-                                            >
-                                            
+                                            <v-text-field v-model="search" label="CERCA"></v-text-field>
+                                            <v-table density="compact" v-model="search">
                                                 <thead>
     
                                                     <tr>
@@ -162,10 +158,9 @@
                                                         <th></th>
                                                     </tr>
                                                 </thead>
-                                                
+    
                                                 <tbody>
-                                        
-                                                    <tr v-for="customer in this.$store.state.dataUser.customerOfThisReseller" :key="customer.id">
+                                                    <tr v-for="customer in customers" :key="customer.id">
                                                         <td>{{ customer.id }}</td>
                                                         <td>{{ customer.companyName }}</td>
                                                         <td>{{ customer.fiscalCode }}</td>
@@ -180,8 +175,9 @@
                                                         <td>{{ customer.pin }}</td>
                                                         <td>{{ customer.email }}</td>
                                                         <td>
-                                                            <i class="bi bi-trash" @click="openClient(this.row.id)"> </i>
-                                                            <i class="bi bi-pen"></i>
+                                                            <i class="bi bi-trash" @click="openDeleteClient(customer)"> </i>
+                                                            <i class="bi bi-pen" @click="editClient(customer)"></i>
+    
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -189,11 +185,38 @@
                                         </v-window-item>
     
                                         <v-window-item value="two">
-                                        
+                                            <v-card>
+                                                <v-card-title>
+                                                    Modifica cliente
+                                                </v-card-title>
+                                                <v-card-text>
+                                                    <v-text-field v-model="selectedCustomer.companyName" label="Denominazione"></v-text-field>
+                                                    <v-text-field v-model="selectedCustomer.fiscalCode" label="Codice fiscale"></v-text-field>
+                                                    <v-text-field v-model="selectedCustomer.vatCode" label="Partita IVA"></v-text-field>
+                                                    <v-text-field v-model="selectedCustomer.city" label="Comune"></v-text-field>
+                                                    <v-text-field v-model="selectedCustomer.fax" label="Fax"></v-text-field>
+                                                    <v-text-field v-model="selectedCustomer.web" label="Web page"></v-text-field>
+                                                    <v-text-field v-model="selectedCustomer.defaultBandwidth" label="Bandwidth"></v-text-field>
+                                                    <v-text-field v-model="selectedCustomer.note" label="Note"></v-text-field>
+                                                    <v-text-field v-model="selectedCustomer.addessCompany" label="Indirizzo"></v-text-field>
+                                                    <v-text-field v-model="selectedCustomer.phone" label="Telefono"></v-text-field>
+                                                    <v-text-field v-model="selectedCustomer.pin" label="PIN"></v-text-field>
+                                                    <v-text-field v-model="selectedCustomer.email" label="Email"></v-text-field>
+                                                </v-card-text>
+                                            </v-card>
                                         </v-window-item>
     
                                         <v-window-item value="three">
-                                            Three
+                                            <v-card>
+                                                <v-card-title>Conferma eliminazione</v-card-title>
+                                                <v-card-text>
+                                                    <p>Vuoi eliminare il cliente "{{ selectedClient.companyName }}"?</p>
+                                                </v-card-text>
+                                                <v-card-actions>
+                                                    <v-btn color="primary" @click="deleteClient(selectedClient)">Elimina</v-btn>
+                                                    <v-btn @click="selectedClient = null">Annulla</v-btn>
+                                                </v-card-actions>
+                                            </v-card>
                                         </v-window-item>
                                     </v-window>
                                 </v-card-text>
@@ -213,11 +236,12 @@ import Sidebar from "@/components/Sidebar.vue";
 export default {
     name: "Customers",
     components: { Sidebar },
-    created() {},
     data() {
         return {
-          search:'',
-            tab: null,
+            tab: 'one',
+            search: '',
+            selectedCustomer: null,
+            selectedClient: null,
             randomPin: '',
             payload: {
                 companyName: "",
@@ -234,22 +258,42 @@ export default {
             },
         };
     },
+    computed:{
+        customers() {
+      return this.$store.state.dataUser.customerOfThisReseller; // leggi lo stato dell'elenco dei dati dallo store
+    },
+    },
     methods: {
+        openDeleteClient(client) {
+      this.selectedClient = client;
+      this.tab = 'three';
+    },
+    deleteClient(client) {
+      this.$store.commit('DELETE_CUSTOMER', client.id);
+      this.selectedClient = null;
+    },
+        editClient(customer) {
+            this.selectedCustomer = customer;
+            this.tab = 'two';
+        },
         submitForm() {
             this.payload.pin = this.randomPin;
             this.payload.ResellerId = this.$store.state.user.ResellerId;
-            axios.post("http://localhost/admin/customers/insert", {
+          /*  this.$store.dispatch('addCustomer',this.payload); */
+             axios.post("http://localhost/admin/customers/insert", {
                     payload: this.payload,
                 })
                 .then((response) => {
                     if (response.data.status == 200) {
                         console.log(response.data);
                         this.$swal(response.data.msg);
+                        /* this.$store.dispatch('fetchAllData'); */
                     } else {
                         this.$swal(response.data.msg);
                     }
-                });
+                }); 
         },
+     
         createRandomPin() {
             const chars = '0123456789';
             for (let i = 0; i < 5; i++) {
@@ -257,12 +301,13 @@ export default {
                 this.randomPin += chars[randomIndex];
             }
         },
-        openClient(x){
-          console.log(x);
+        openClient(x) {
+            console.log(x);
         }
     },
     created() {
         this.createRandomPin();
-    }
+    },
+
 };
 </script>

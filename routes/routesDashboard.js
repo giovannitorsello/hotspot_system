@@ -104,25 +104,25 @@ routerDashboard.get("/websurfers", checkSession, menuMiddleware, async (req, res
     } else {}
 });
 
-routerDashboard.post("/websurfers/insert", checkSession, menuMiddleware, (req, res) => {
+routerDashboard.post("/websurfers/insert", (req, res) => {
     Websurfer.findOne({
         where: {
-            email: req.body.email
+            email: req.body.payload.email
         }
     }).then(function (newWebsurfer) {
         if (newWebsurfer === null) {
             Websurfer.create({
-                firstname: req.body.firstname,
-                lastname: req.body.lastname,
-                email: req.body.email,
-                note: req.body.note,
-                phone: req.body.phone,
-                CustomerId: req.session.customerID
-            }).then(function (y) {
-                if (y !== null) {
-                    res.redirect("/admin/websurfers");
+                firstname: req.body.payload.firstname,
+                lastname: req.body.payload.lastname,
+                email: req.body.payload.email,
+                note: req.body.payload.note,
+                phone: req.body.payload.phone,
+                CustomerId: req.body.payload.CustomerId
+            }).then(function (result){
+                if (result != null) {
+                    res.send({status: "200", msg: "WEBSURFER INSERITO", result:result});
                 } else {
-                    res.redirect("/admin/websurfers");
+                    res.send({status: "404", msg: "CONTROLLA I DATI!"});
                 }
             });
         } else {
@@ -131,20 +131,21 @@ routerDashboard.post("/websurfers/insert", checkSession, menuMiddleware, (req, r
     });
 });
 
-routerDashboard.post("/websurfers/edit", async (req, res) => {
+routerDashboard.post("/websurfers/update", async (req, res) => {
+    console.log(req.body);
     Websurfer.findOne({
         where: {
-            id: req.body.data.id
+            id: req.body.payload.id
         }
     }).then((websurferToUpdate) => {
-        websurferToUpdate.firstname = req.body.data.firstname;
-        websurferToUpdate.lastname = req.body.data.lastname;
-        websurferToUpdate.email = req.body.data.email;
-        websurferToUpdate.note = req.body.data.note;
-        websurferToUpdate.phone = req.body.data.phone;
-        websurferToUpdate.idSocial = req.body.data.idSocial;
-        websurferToUpdate.typeSocial = req.body.data.typeSocial;
-        websurferToUpdate.CustomerId = req.body.data.CustomerId;
+        websurferToUpdate.firstname = req.body.payload.firstname;
+        websurferToUpdate.lastname = req.body.payload.lastname;
+        websurferToUpdate.email = req.body.payload.email;
+        websurferToUpdate.note = req.body.payload.note;
+        websurferToUpdate.phone = req.body.payload.phone;
+        websurferToUpdate.idSocial = req.body.payload.idSocial;
+        websurferToUpdate.typeSocial = req.body.payload.typeSocial;
+        websurferToUpdate.CustomerId = req.body.payload.CustomerId;
         websurferToUpdate.save().then((result) => {
             if (result !== null) {
                 res.send({status: "200", msg: "WEBSURFER SALVATO CON SUCCESSO!"});
@@ -152,12 +153,12 @@ routerDashboard.post("/websurfers/edit", async (req, res) => {
                 res.send({status: "400", msg: "CONTROLLA I CAMPI!"});
             }
         });
-    })
+    }) 
 });
 routerDashboard.post("/websurfers/delete", async (req, res) => {
     Websurfer.findOne({
         where: {
-            id: req.body.data.id
+            id: req.body.payload.id
         }
     }).then((websurferToDestroy) => {
         if (websurferToDestroy !== null) {
@@ -223,30 +224,31 @@ routerDashboard.get("/users", checkSession, menuMiddleware, async (req, res) => 
     }); */
 });
 
-routerDashboard.post("/users/insert", checkSession, (req, res) => {
+routerDashboard.post("/users/insert", (req, res) => {
+    console.log(req.body);
     User.findOne({
         where: {
-            utente: req.body.username
+            utente: req.body.payload.utente
         }
     }).then(function (newUser) {
         if (newUser === null) {
             User.create({
-                role: req.body.role,
-                utente: req.body.username,
-                password: req.body.password,
-                ResellerId: req.session.user.resellerID,
-                CustomerId: req.body.client
-            }).then(function (x) {
-                if (x !== null) {
-                    res.redirect("/admin/users");
+                role: req.body.payload.role,
+                utente: req.body.payload.utente,
+                password: req.body.payload.password,
+                ResellerId: req.body.payload.ResellerId,
+                CustomerId: req.body.payload.CustomerId
+            }).then(function (result) {
+                if (result != null) {
+                    res.send({status: "200", msg: "UTENTE INSERITO", result:result});
                 } else {
-                    res.redirect("/users?status=ko");
+                    res.send({msg: "CONTROLLA I DATI!"});
                 }
             });
         } else {
-            res.redirect("/users?status=credentials");
+            res.send({msg: "UTENTE GIA PRESENTE"});
         }
-    });
+    }); 
 });
 
 // CUSTOMER
@@ -268,7 +270,6 @@ routerDashboard.get("/customers", checkSession, menuMiddleware, async (req, res)
         });
     } else {}
 });
-
 routerDashboard.post("/customers/insert", (req, res) => {
     Customer.findOne({
         where: {
@@ -292,7 +293,7 @@ routerDashboard.post("/customers/insert", (req, res) => {
                 ResellerId: req.body.payload.ResellerId
             }).then(function (result) {
                 if (result != null) {
-                    res.send({status: "200", msg: "CLIENTE INSERITO"});
+                    res.send({status: "200", msg: "CLIENTE INSERITO", result:result});
                 } else {
                     res.send({status: "404", msg: "CONTROLLA I DATI!"});
                 }
@@ -302,7 +303,50 @@ routerDashboard.post("/customers/insert", (req, res) => {
         }
     });
 });
-
+routerDashboard.post("/customers/delete", (req,res) =>{
+     Customer.findOne({where:{id: req.body.payload.id}}).then((result)=>{
+        if(result !== null){
+            result.destroy();
+            res.send({
+                status: "200",
+                msg: "CLIENTE ELIMINATO CON SUCCESSO!",
+              });
+        }else{
+            res.send({
+                status: "404",
+                msg: "ERRORE NELLA CANCELLAZIONE!",
+              });
+        }
+    }) 
+});
+routerDashboard.post("/customers/update", async (req, res) => {
+    Customer.findOne({
+        where: {
+            id: req.body.payload.id
+        }
+    }).then((customerToUpdate) => {
+        customerToUpdate.fiscalCode = req.body.payload.fiscalCode;
+        customerToUpdate.city = req.body.payload.city;
+        customerToUpdate.companyName = req.body.payload.companyName;
+        customerToUpdate.email = req.body.payload.email;
+        customerToUpdate.fax = req.body.payload.fax;
+        customerToUpdate.addessCompany = req.body.payload.addessCompany;
+        customerToUpdate.note = req.body.payload.note;
+        customerToUpdate.phone = req.body.payload.phone;
+        customerToUpdate.vatCode = req.body.payload.vatCode;
+        customerToUpdate.web = req.body.payload.web;
+        customerToUpdate.pin = req.body.payload.pin;
+        customerToUpdate.defaultBandwidth = req.body.payload.defaultBandwidth;
+        customerToUpdate.ResellerId = req.body.payload.ResellerId;
+        customerToUpdate.save().then((result) => {
+            if (result !== null) {
+                res.send({status: "200", msg: "CLIENTE SALVATO CON SUCCESSO!"});
+            } else {
+                res.send({status: "400", msg: "CONTROLLA I CAMPI!"});
+            }
+        });
+    })
+});
 // TICKETS
 routerDashboard.get("/tickets", checkSession, menuMiddleware, (req, res) => {
     Ticket.findAll().then(function (tickets) {

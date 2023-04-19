@@ -38,45 +38,44 @@
                                         </div>
                                         <div class="card-content">
                                             <div class="card-body">
-                                                <form class="form" method="post" action="websurfers/insert">
                                                     <div class="row">
                                                         <div class="col-md-6 col-12">
                                                             <div class="form-group">
                                                                 <label for="first-name-column">Nome</label>
-                                                                <input type="text" class="form-control" id="denominazione" name="firstname" required>
+                                                                <input type="text" class="form-control" v-model="payload.firstname">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6 col-12">
                                                             <div class="form-group">
                                                                 <label for="last-name-column">Cognome</label>
-                                                                <input type="text" class="form-control" name="lastname" required>
+                                                                <input type="text" class="form-control"  v-model="payload.lastname" >
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6 col-12">
                                                             <div class="form-group">
                                                                 <label for="city-column">Email</label>
-                                                                <input type="text" class="form-control" name="email" required>
+                                                                <input type="text" class="form-control"  v-model="payload.email" >
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6 col-12">
                                                             <div class="form-group">
                                                                 <label for="country-floating">Telefono</label>
-                                                                <input type="text" class="form-control" name="phone" required>
+                                                                <input type="text" class="form-control" v-model="payload.phone" >
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6 col-12">
                                                             <div class="form-group">
                                                                 <label for="company-column">Note</label>
-                                                                <input type="text" class="form-control" name="note" required>
+                                                                <input type="text" class="form-control"  v-model="payload.note" >
                                                             </div>
                                                         </div>
     
                                                         <div class="col-12 d-flex justify-content-end">
-                                                            <button type="submit" class="btn btn-primary me-1 mb-1">Inserisci</button>
+                                                            <button type="submit" class="btn btn-primary me-1 mb-1" @click="insertWebsurfer()">Inserisci</button>
     
                                                         </div>
                                                     </div>
-                                                </form>
+                                              
                                             </div>
                                         </div>
                                     </div>
@@ -85,7 +84,7 @@
                         </section>
                         <section class="section">
                             <v-card>
-                                <v-tabs v-model="tab" bg-color="primary" align-with-title centered>
+                                <v-tabs v-model="tab" bg-color="primary">
                                     <v-tab value="one">WEBSURFER</v-tab>
                                     <v-tab value="two">MODIFICA</v-tab>
                                     <v-tab value="three">ELIMINA</v-tab>
@@ -94,8 +93,8 @@
                                 <v-card-text>
                                     <v-window v-model="tab">
                                         <v-window-item value="one">
-                                            <v-text-field v-model="search" label="CERCA"></v-text-field>
-                                            <v-table density="compact" v-model="search">
+                                            <v-text-field  label="CERCA"></v-text-field>
+                                            <v-table>
                                                 <thead>
     
                                                     <tr>
@@ -113,21 +112,19 @@
                                                 </thead>
     
                                                 <tbody>
-                                                    <tr v-for="websurfer in this.$store.state.dataUser.websurfers" :key="websurfer.id">
+                                                    <tr v-for="websurfer in this.userDataStore.websurfers" :key="websurfer.id">
                                                         <td>{{ websurfer.id }}</td>
                                                         <td>{{ websurfer.firstname }}</td>
                                                         <td>{{ websurfer.lastname }}</td>
                                                         <td>{{ websurfer.email }}</td>
                                                         <td>{{ websurfer.phone }}</td>
                                                         <td>{{ websurfer.note }}</td>
-                                                       
                                                         <td>{{ websurfer.idSocial }}</td>
                                                         <td>{{ websurfer.typeSocial }}</td>
-                                                        <td>{{ websurfer.Customer.companyName }}</td>
+                                                        <td>{{ websurfer.CustomerId }}</td>
                                                         <td>
                                                             <i class="bi bi-trash" @click="alertDeleteWebsurfer(websurfer)"> </i>
                                                             <i class="bi bi-pen" @click="editWebsurfer(websurfer)"></i>
-    
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -145,16 +142,14 @@
                                                     <v-text-field v-model="selectedWebsurfer.email" label="EMAIL"></v-text-field>
                                                     <v-text-field v-model="selectedWebsurfer.note" label="NOTE"></v-text-field>
                                                     <v-text-field v-model="selectedWebsurfer.phone" label="TELEFONO"></v-text-field>
-                                                  
-                                                        <v-row align="center">
-                                                            <v-col align-self="last">
+                                                        <v-row>
+                                                            <v-col>
                                                                 <v-sheet class="pa-2 ma-1" align="end">
                                                                     <i class="bi bi-arrow-left ma-1" style="font-size:xx-large" @click="goBack()"></i>
                                                                     <i class="bi bi-check-circle ma-1" style="font-size:xx-large" @click="saveWebsurfer()"></i>
                                                                 </v-sheet>
                                                             </v-col>
                                                         </v-row>
-                                                  
                                                 </v-card-text>
                                             </v-card>
                                         </v-window-item>
@@ -166,7 +161,7 @@
                                                     <p>Vuoi eliminare il websurfer "{{ selectedWebsurfer.firstname }}"?</p>
                                                 </v-card-text>
                                                 <v-card-actions>
-                                                    <v-btn color="primary" @click="deleteWebsurfer()">Elimina</v-btn>
+                                                    <v-btn color="primary" @click="deleteWebsurfer(this.selectedWebsurfer)">Elimina</v-btn>
                                                     <v-btn @click="tab = 'one'">Annulla</v-btn>
                                                 </v-card-actions>
                                             </v-card>
@@ -174,12 +169,9 @@
                                     </v-window>
                                 </v-card-text>
                             </v-card>
-    
                         </section>
                     </div>
-    
                 </div>
-    
             </section>
         </div>
     
@@ -187,16 +179,23 @@
 </template>
 
 <script>
+import { useUserStore } from "@/store/counter";
 import Sidebar from '@/components/Sidebar.vue';
 import axios from 'axios';
 export default {
     name: "Websurfers",
     components: { Sidebar },
-    created() {},
+    setup(){
+        const userDataStore = useUserStore()
+
+        return { userDataStore }
+    },
+
     data() {
         return {
+            table:[],
             tab: 'one',
-            selectedWebsurfer: '',
+            selectedWebsurfer: null,
             selectedClient: null,
             payload: {
                 firstname: "",
@@ -204,13 +203,9 @@ export default {
                 email: "",
                 note: "",
                 phone: "",
-                idSocial: "",
-                typeSocial: "",
-                CustomerId: ""
             }
         };
     },
-    props: {},
     methods: {
         editWebsurfer(websurfer) {
             this.selectedWebsurfer = websurfer;
@@ -225,28 +220,46 @@ export default {
             this.tab = 'one';
         },
         saveWebsurfer(){
-            axios.post('http://localhost/admin/websurfers/edit',{
-                data:this.selectedWebsurfer
+            axios.post('http://localhost/admin/websurfers/update',{
+                payload:this.selectedWebsurfer
             }).then((response) =>{
                 if(response.data.status == 200){
+
+                    this.userDataStore.updateWebsurfer(this.selectedWebsurfer);
+                    this.tab = 'one';
                     this.$swal(response.data.msg);
-                    this.$store.dispatch('fetchAllData');
                 }else{
                     this.$swal(response.data.msg);
                 }
             })
         },
-        deleteWebsurfer(){
+        deleteWebsurfer(selectedWebsurfer){
             axios.post("http://localhost/admin/websurfers/delete", {
-                data:this.selectedWebsurfer
+                payload: selectedWebsurfer
             }).then((response) => {
                 if(response.data.status == 200){
+                    this.userDataStore.deleteWebsurfer(selectedWebsurfer.id)
+                    this.tab = 'one';
                     this.$swal(response.data.msg);
-                    this.$store.dispatch('fetchAllData');
                 }else{
                     this.$swal(response.data.msg);
                 }
             })
+        },
+        insertWebsurfer(){
+            this.payload.CustomerId = this.userDataStore.user.CustomerId
+           
+             axios.post("http://localhost/admin/websurfers/insert", {
+                payload:this.payload
+            }).then((response) => {
+                console.log(response);
+                if(response.data.status == 200){
+                    this.userDataStore.addWebsurfer(response.data.result);
+                    this.$swal(response.data.msg);
+                }else{
+                    this.$swal(response.data.msg);
+                }
+            }) 
         }
     },
 };

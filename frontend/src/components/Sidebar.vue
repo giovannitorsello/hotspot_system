@@ -15,10 +15,12 @@
             <div class="sidebar-menu">
                 <ul class="menu">
                     <li v-for="item in checkClass" :key="item.id" :class="item.class" >
-                        <a class='sidebar-link' :href="item.path">
+                        <router-link :to="item.path">
+                        <a class='sidebar-link'>
                                   <i class="bi bi-grid-fill"></i>
                             <span>{{item.name}}</span>
                             </a>
+                        </router-link>
                     </li>
                 </ul>
             </div>

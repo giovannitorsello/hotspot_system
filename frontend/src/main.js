@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from '../App.vue'
 //VUETIFY DIRECTIVES 
 import 'vuetify/styles'
@@ -17,5 +18,6 @@ import store from './store/index'
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
+const pinia = createPinia()
 
-createApp(App).use(store).use(router).use(VueSweetalert2).use(vuetify).mount('#app')
+createApp(App).use(store).use(pinia).use(router).use(VueSweetalert2).use(vuetify).mount('#app')

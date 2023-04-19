@@ -352,19 +352,24 @@
 </template>
 
 <script>
+import { useUserStore } from '@/store/counter';
 import Sidebar from '@/components/Sidebar.vue';
 export default {
   components: { Sidebar },
     name: "Dashboard",
+    setup(){
+        const userDataStore = useUserStore()
+     /*   userDataStore.fetchUserData() */
+        return { userDataStore }
+        
+    },
     data() {
         return {
             dashboardData:{}
         };
     },
     methods: {},
-    created(){
-        this.$store.dispatch('fetchAllData');
-    }
+  
 };
 </script>
 

@@ -12,7 +12,7 @@
             </div>
           </div>
         </div>
-        <Sidebar />
+        <Sidebar :state="hsComponentStore"/>
       </div>
     </div>
     <div id="main">

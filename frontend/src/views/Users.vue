@@ -12,7 +12,7 @@
             </div>
           </div>
         </div>
-        <Sidebar />
+        <Sidebar :state="hsComponentStore"/>
         <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
       </div>
     </div>
@@ -108,10 +108,10 @@
                   </div>
                   <section class="section">
                     <v-card>
-                      <v-tabs v-model="tab" bg-color="primary">
-                        <v-tab value="one">TUTTI</v-tab>
-                        <v-tab value="two">MODIFICA</v-tab>
-                        <v-tab value="three">ELIMINA</v-tab>
+                      <v-tabs v-model="tab" bg-color="#435ebe">
+                        <v-tab value="one" color="white" >TUTTI</v-tab>
+                        <v-tab value="two" color="white" >MODIFICA</v-tab>
+                        <v-tab value="three" color="white">ELIMINA</v-tab>
                       </v-tabs>
 
                       <v-card-text>
@@ -125,8 +125,8 @@
                                   <th>RUOLO</th>
                                   <th>USERNAME</th>
                                   <th>PASSWORD</th>
-                                  <th>RESELLER</th>
-                                  <th>CLIENTE</th>
+                                  <th>RIVENDITORE</th>
+                                  <th>HOTEL</th>
 
                                   <th></th>
                                 </tr>
@@ -145,8 +145,10 @@
                                   </td>
                                   <td>{{ user.utente }}</td>
                                   <td>{{ user.password }}</td>
-                                  <td>{{ user.ResellerId }}</td>
-                                  <td>{{ user.CustomerId }}</td>
+                                  <td>{{ user }}</td>
+
+                                  <td>{{ user.Customer.companyName }}</td>
+
                                   <td>
                                     <i class="bi bi-trash" @click="openDeleteUser(user)"> </i>
                                     <i class="bi bi-pen" @click="editUser(user)"></i>
@@ -184,8 +186,8 @@
                                 <p>Vuoi eliminare il cliente "{{ selectedUser.utente }}"?</p>
                               </v-card-text>
                               <v-card-actions>
-                                <v-btn color="primary" @click="deleteClient(selectedClient)">Elimina</v-btn>
-                                <v-btn @click="selectedClient = null">Annulla</v-btn>
+                                <v-btn color="primary" @click="deleteUser(selectedUser)">Elimina</v-btn>
+                                <v-btn @click="selectedUser = null">Annulla</v-btn>
                               </v-card-actions>
                             </v-card>
                           </v-window-item>
@@ -257,6 +259,17 @@
             }
           });
       },
+      deleteUser(user){
+        axios.post('/admin/users/delete', {payload: user}).then((response) =>{
+          if(response.data.status == 200){
+            this.hsComponentStore.deleteUser(user.id);
+            this.tab="one";
+            this.$swal(response.data.msg);
+          }else{
+            this.$swal(response.data.msd);
+          }
+        })
+      }
     },
   };
 </script>

@@ -12,7 +12,7 @@
             </div>
           </div>
         </div>
-        <Sidebar />
+        <Sidebar :state="hsComponentStore" />
       </div>
     </div>
     <div id="main">
@@ -125,12 +125,12 @@
 
               <section class="section">
                 <v-card>
-                  <v-tabs v-model="tab" bg-color="primary">
-                    <v-tab value="one">TUTTI</v-tab>
-                    <v-tab value="two">MODIFICA</v-tab>
-                    <v-tab value="three">ELIMINA</v-tab>
-                  </v-tabs>
-
+                 
+                  <v-tabs v-model="tab" bg-color="#435ebe">
+                        <v-tab value="one" color="white" >TUTTI</v-tab>
+                        <v-tab value="two" color="white" >MODIFICA</v-tab>
+                        <v-tab value="three" color="white">ELIMINA</v-tab>
+                      </v-tabs>
                   <v-card-text>
                     <v-window v-model="tab">
                       <v-window-item value="one">
@@ -193,8 +193,8 @@
                             <v-text-field v-model="selectedCustomer.phone" label="Telefono"></v-text-field>
                             <v-text-field v-model="selectedCustomer.pin" label="PIN"></v-text-field>
                             <v-text-field v-model="selectedCustomer.email" label="Email"></v-text-field>
-                            <v-row align="center">
-                              <v-col align-self="last">
+                            <v-row>
+                              <v-col>
                                 <v-sheet class="pa-2 ma-1" align="end">
                                   <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="goBack()"></i>
                                   <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="saveWebsurfer(selectedCustomer)"></i>

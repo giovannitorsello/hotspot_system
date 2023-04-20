@@ -251,6 +251,23 @@ routerDashboard.post("/users/insert", (req, res) => {
     }); 
 });
 
+routerDashboard.post("/users/delete", (req,res) =>{
+    User.findOne({where:{id: req.body.payload.id}}).then((result)=>{
+       if(result !== null){
+           result.destroy();
+           res.send({
+               status: "200",
+               msg: "USER ELIMINATO CON SUCCESSO!",
+             });
+       }else{
+           res.send({
+               status: "404",
+               msg: "ERRORE NELLA CANCELLAZIONE!",
+             });
+       }
+   }) 
+});
+
 // CUSTOMER
 routerDashboard.get("/customers", checkSession, menuMiddleware, async (req, res) => {
     if (req.session.user.role == "SUPERADMIN") {} else if (req.session.user.role == "RESELLER") {

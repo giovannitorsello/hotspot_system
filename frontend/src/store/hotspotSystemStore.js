@@ -51,6 +51,11 @@ export const hsStore = defineStore({
         return t.id !== id;
       });
     },
+    deleteUser(id){
+      this.userOfAllCustomers= this.userOfAllCustomers.filter((t)=> {
+        return t.id !== id;
+      })
+    },
     updateCustomer(toUpdate) {
       var oldCustomer = this.customerOfThisReseller.findIndex((x) => x.item == toUpdate.id);
       var newCustomer = this.customerOfThisReseller[oldCustomer];

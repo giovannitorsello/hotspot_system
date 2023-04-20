@@ -30,10 +30,13 @@
 </template>
 
 <script>
-  import axios from "axios";
+import { hsStore } from "@/store/hotspotSystemStore.js";
   export default {
     name: "Sidebar",
-    created() {},
+   setup(){
+    const hsComponentStore = hsStore();
+      return { hsComponentStore };
+   },
     data() {
       return {
         menus: [],
@@ -48,7 +51,8 @@
       },
     },
     created() {
-      if (this.$store.state.user.role == "RESELLER") {
+      switch(this.hsComponentStore.user.role){
+        case "RESELLER":
         this.menus = [
           {
             name: "Home",
@@ -71,8 +75,8 @@
             path: "/tickets",
           },
         ];
-      }
-      if (this.$store.state.user.role == "HOTEL") {
+        break;
+        case "HOTEL":
         this.menus = [
           {
             name: "Home",
@@ -91,8 +95,8 @@
             path: "/tickets",
           },
         ];
-      }
-      if (this.$store.state.user.role == "USER") {
+        break;
+        case "USER":
         this.menus = [
           {
             name: "Home",
@@ -107,8 +111,8 @@
             path: "/tickets",
           },
         ];
-      }
-      if (this.$store.state.user.role == "SUPERADMIN") {
+        break;
+        case "SUPERADMIN":
         this.menus = [
           {
             name: "Home",
@@ -135,9 +139,10 @@
             path: "/radius",
           },
         ];
+          break;
       }
     },
-    props: {},
+    
     methods: {},
   };
 </script>

@@ -12,7 +12,7 @@
             </div>
           </div>
         </div>
-        <Sidebar />
+        <Sidebar :state="hsComponentStore"/>
       </div>
     </div>
     <div id="main">
@@ -82,11 +82,11 @@
               </section>
               <section class="section">
                 <v-card>
-                  <v-tabs v-model="tab" bg-color="primary">
-                    <v-tab value="one">WEBSURFER</v-tab>
-                    <v-tab value="two">MODIFICA</v-tab>
-                    <v-tab value="three">ELIMINA</v-tab>
-                  </v-tabs>
+                  <v-tabs v-model="tab" bg-color="#435ebe">
+                        <v-tab value="one" color="white" >TUTTI</v-tab>
+                        <v-tab value="two" color="white" >MODIFICA</v-tab>
+                        <v-tab value="three" color="white">ELIMINA</v-tab>
+                      </v-tabs>
 
                   <v-card-text>
                     <v-window v-model="tab">

@@ -9,14 +9,17 @@ import "vuetify/styles";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
+import {VDataTable } from "vuetify/labs/VDataTable";
 
 const vuetify = createVuetify({
-  components,
+  components:{
+    ...components,
+    VDataTable,
+  },
   directives,
 });
 
 import router from "./router/index";
-import store from "./store/index";
 
 import VueSweetalert2 from "vue-sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
@@ -28,4 +31,4 @@ axios.defaults.baseURL = process.env.VUE_APP_API_ENDPOINT;
 //$axios.defaults.headers.common["Authorization"] = AUTH_TOKEN;
 //$axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
 
-createApp(App).use(store).use(pinia).use(router).use(VueSweetalert2).use(vuetify).mount("#app");
+createApp(App).use(pinia).use(router).use(VueSweetalert2).use(vuetify).mount("#app");

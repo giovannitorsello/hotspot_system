@@ -73,22 +73,25 @@ async function getResellerUser(userLogged) {
         },
     ]
     });
-    userOBJ.lastWebsurfers = lastWebsurfers.length ? lastWebsurfers : 'NESSUN UTENTE AGGIUNTO DI RECENTE';
-    // ULTIMI TICKET INSERITI DEGLI CLIENTI DEL RESELLER (3 GIORNI)
+    userOBJ.lastWebsurfers = lastWebsurfers || null;
+    // ULTIMI TICKET INSERITI DAI CLIENTI DEL RESELLER (3 GIORNI)
     const lastTickets = await Ticket.findAll({
-      include: [
-        {
+        where: {
+            createdAt: {
+              [Op.gte]: yestardayAgo,
+            },
+          },
+        include: [
+          {
             model: Customer,
             where: {
-                ResellerId: userLogged.ResellerId,
-                createdAt: {
-                  [Op.gte]: yestardayAgo
-              }
-            }
-        },
-    ] 
-    });
-    userOBJ.lastTickets = lastTickets.length ? lastTickets : 'NESSUN TICKET AGGIUNTO DI RECENTE';
+              ResellerId: userLogged.ResellerId,
+            },
+          },
+        ],
+        
+      });
+    userOBJ.lastTickets = lastTickets || null;
     // TICKET ATTIVI DI TUTTI I CLIENTI
     const activeTickets = await Ticket.findAll({
       where:{

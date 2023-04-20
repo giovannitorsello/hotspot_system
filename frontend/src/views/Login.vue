@@ -48,10 +48,10 @@
     },
 
     methods: {
-      checkCredentials() {
-        this.hsComponentStore.fetchUserProfile(this.username, this.password);
+      async checkCredentials() {
+        await this.hsComponentStore.fetchUserProfile(this.username, this.password);
 
-        if (this.hsComponentStore.user != "") {
+        if (this.hsComponentStore.user && this.hsComponentStore.user.id && this.hsComponentStore.user.id>0) {
           this.$router.push("dashboard");
         } else {
           this.$swal("Credenziali errate!");

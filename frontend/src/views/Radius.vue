@@ -12,7 +12,7 @@
             </div>
           </div>
         </div>
-        <Sidebar :state="hsComponentStore"/>
+        <Sidebar/>
         <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
       </div>
     </div>

@@ -10,61 +10,20 @@
         <v-window-item value="one">
           <v-text-field v-model="search" label="CERCA"></v-text-field>
           <v-data-table
-          :headers="headers"
-            :items="hsComponentStore.customerOfThisReseller"
+            :headers="this.header"
+            :items="this.hsComponentStore.customerOfThisReseller"
             :search="search"
-            :page.sync="page"
+            v-model:page.sync="page"
             :items-per-page="itemsPerPage"
-            :hide-default-header="true" :hide-default-footer="true" 
-            disable-pagination>
+            :hide-default-header="true"
+            :hide-default-footer="true"
+            disable-pagination
+          >
+            <template v-slot:[`item.actions`]="{ item }">
+              <i class="bi bi-trash" @click="openDeleteClient(item.raw)"> </i>
+              <i class="bi bi-pen" @click="editClient(item.raw)"></i>
+            </template>
           </v-data-table>
-        <div :hidden="true">
- <!--    <v-table density="compact">
-                         <thead>
-                           <tr>
-                             <th>ID</th>
-                             <th>DENOMINAZIONE</th>
-                             <th>CODICE FISCALE</th>
-                             <th>PARTITA IVA</th>
-                             <th>COMUNE</th>
-                             <th>FAX</th>
-                             <th>WEB PAGE</th>
-                             <th>BANDWITH</th>
-                             <th>NOTE</th>
-                             <th>INDIRIZZO</th>
-                             <th>TELEFONO</th>
-                             <th>PIN</th>
-                             <th>EMAIL</th>
-                             <th></th>
-                           </tr>
-                         </thead>
-                         <tbody>
-                           <tr v-for="customer in hsComponentStore.customerOfThisReseller" :key="customer.id">
-                             <td>{{ customer.id }}</td>
-                             <td>{{ customer.companyName }}</td>
-                             <td>{{ customer.fiscalCode }}</td>
-                             <td>{{ customer.vatCode }}</td>
-                             <td>{{ customer.city }}</td>
-                             <td>{{ customer.fax }}</td>
-                             <td>{{ customer.web }}</td>
-                             <td>{{ customer.defaultBandwidth }}</td>
-                             <td>{{ customer.note }}</td>
-                             <td>{{ customer.addessCompany }}</td>
-                             <td>{{ customer.phone }}</td>
-                             <td>{{ customer.pin }}</td>
-                             <td>{{ customer.email }}</td>
-                             <td>
-                               <i class="bi bi-trash" @click="openDeleteClient(customer)"> </i>
-                               <i class="bi bi-pen" @click="editClient(customer)"></i>
-                             </td>
-                           </tr>
-                         </tbody>
-                       </v-table> -->
-
-
-          
-        </div>
-         
         </v-window-item>
         <v-window-item value="two">
           <v-card>
@@ -161,29 +120,34 @@
 
 <script>
 import { hsStore } from "@/store/hotspotSystemStore.js";
+import axios from "axios";
 export default {
-  name: "Test",
-  created() {},
+  name: "TableCustomer",
   setup() {
     const hsComponentStore = hsStore();
     return { hsComponentStore };
   },
   data() {
     return {
-      items: [],
       search: "",
       tab: "one",
-      headers: [
-        { text: "ID", value: "id",label:"ID",align:'left' },
-        { text: "NOME", value: "companyName" },
-        { text: "EMAIL", value: "email" },
-        { text: "PIN", value: "pin" },
-        { text: "WEB", value: "web" },
-        
-        { text: "P.IVA", value: "vatCode" },
+      header: [
+        { title: "ID", key: "id" },
+        { title: "NOME", key: "companyName" },
+        { title: "CODICE FISCALE", key: "fiscalCode" },
+        { title: "CITTA", key: "city" },
+        { title: "FAX", key: "fax" },
+        { title: "INDIRIZZO", key: "addessCompany" },
+        { title: "NOTE", key: "note" },
+        { title: "TELEFONO", key: "phone" },
+        { title: "P.IVA", key: "vatCode" },
+        { title: "WEB", key: "web" },
+        { title: "PIN", key: "pin" },
+        { title: "Reseller", key: "ResellerId" },
+        { title: "Actions", key: "actions" },
       ],
       page: 1,
-      itemsPerPage: 1,
+      itemsPerPage: 10,
     };
   },
   computed: {
@@ -195,8 +159,48 @@ export default {
     },
   },
   props: {},
-  methods: {},
+  methods: {
+    goBack() {
+      this.selectedCustomer = "";
+      this.tab = "one";
+    },
+    openDeleteClient(client) {
+      this.selectedClient = client;
+      this.tab = "three";
+    },
+    deleteClient(client) {
+      axios
+        .post("/admin/customers/delete", {
+          payload: client,
+        })
+        .then((response) => {
+          if (response.data.status == 200) {
+            this.hsComponentStore.deleteCustomer(client.id);
+            this.tab = "one";
+            this.$swal(response.data.msg);
+          } else {
+            this.$swal(response.data.msg);
+          }
+        });
+    },
+    saveWebsurfer(selectedCustomer) {
+      axios
+        .post("/admin/customers/update", {
+          payload: selectedCustomer,
+        })
+        .then((response) => {
+          if (response.data.status == 200) {
+            this.hsComponentStore.updateCustomer(selectedCustomer);
+            this.$swal(response.data.msg);
+          } else {
+            this.$swal(response.data.msg);
+          }
+        });
+    },
+    editClient(customer) {
+      this.selectedCustomer = customer;
+      this.tab = "two";
+    },
+  },
 };
 </script>
-
-<style lang="scss" scoped></style>

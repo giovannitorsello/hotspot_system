@@ -15,6 +15,12 @@ const routes = [
     
   },
   {
+    path: '/home',
+    name: 'dashboardHotel',
+    component: () => import('../views/DashboardHotel.vue')
+    
+  },
+  {
     path: '/customers',
     name: 'customers',
     component: () => import('../views/Customers.vue')

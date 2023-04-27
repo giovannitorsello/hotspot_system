@@ -118,9 +118,9 @@ routerDashboard.post("/websurfers/insert", (req, res) => {
                 note: req.body.payload.note,
                 phone: req.body.payload.phone,
                 CustomerId: req.body.payload.CustomerId
-            }).then(function (result){
+            }).then(function (result) {
                 if (result != null) {
-                    res.send({status: "200", msg: "WEBSURFER INSERITO", result:result});
+                    res.send({status: "200", msg: "WEBSURFER INSERITO", result: result});
                 } else {
                     res.send({status: "404", msg: "CONTROLLA I DATI!"});
                 }
@@ -153,7 +153,7 @@ routerDashboard.post("/websurfers/update", async (req, res) => {
                 res.send({status: "400", msg: "CONTROLLA I CAMPI!"});
             }
         });
-    }) 
+    })
 });
 routerDashboard.post("/websurfers/delete", async (req, res) => {
     Websurfer.findOne({
@@ -240,7 +240,7 @@ routerDashboard.post("/users/insert", (req, res) => {
                 CustomerId: req.body.payload.CustomerId
             }).then(function (result) {
                 if (result != null) {
-                    res.send({status: "200", msg: "UTENTE INSERITO", result:result});
+                    res.send({status: "200", msg: "UTENTE INSERITO", result: result});
                 } else {
                     res.send({msg: "CONTROLLA I DATI!"});
                 }
@@ -248,24 +248,22 @@ routerDashboard.post("/users/insert", (req, res) => {
         } else {
             res.send({msg: "UTENTE GIA PRESENTE"});
         }
-    }); 
+    });
 });
 
-routerDashboard.post("/users/delete", (req,res) =>{
-    User.findOne({where:{id: req.body.payload.id}}).then((result)=>{
-       if(result !== null){
-           result.destroy();
-           res.send({
-               status: "200",
-               msg: "USER ELIMINATO CON SUCCESSO!",
-             });
-       }else{
-           res.send({
-               status: "404",
-               msg: "ERRORE NELLA CANCELLAZIONE!",
-             });
-       }
-   }) 
+routerDashboard.post("/users/delete", (req, res) => {
+    User.findOne({
+        where: {
+            id: req.body.payload.id
+        }
+    }).then((result) => {
+        if (result !== null) {
+            result.destroy();
+            res.send({status: "200", msg: "USER ELIMINATO CON SUCCESSO!"});
+        } else {
+            res.send({status: "404", msg: "ERRORE NELLA CANCELLAZIONE!"});
+        }
+    })
 });
 
 // CUSTOMER
@@ -310,7 +308,7 @@ routerDashboard.post("/customers/insert", (req, res) => {
                 ResellerId: req.body.payload.ResellerId
             }).then(function (result) {
                 if (result != null) {
-                    res.send({status: "200", msg: "CLIENTE INSERITO", result:result});
+                    res.send({status: "200", msg: "CLIENTE INSERITO", result: result});
                 } else {
                     res.send({status: "404", msg: "CONTROLLA I DATI!"});
                 }
@@ -320,21 +318,19 @@ routerDashboard.post("/customers/insert", (req, res) => {
         }
     });
 });
-routerDashboard.post("/customers/delete", (req,res) =>{
-     Customer.findOne({where:{id: req.body.payload.id}}).then((result)=>{
-        if(result !== null){
-            result.destroy();
-            res.send({
-                status: "200",
-                msg: "CLIENTE ELIMINATO CON SUCCESSO!",
-              });
-        }else{
-            res.send({
-                status: "404",
-                msg: "ERRORE NELLA CANCELLAZIONE!",
-              });
+routerDashboard.post("/customers/delete", (req, res) => {
+    Customer.findOne({
+        where: {
+            id: req.body.payload.id
         }
-    }) 
+    }).then((result) => {
+        if (result !== null) {
+            result.destroy();
+            res.send({status: "200", msg: "CLIENTE ELIMINATO CON SUCCESSO!"});
+        } else {
+            res.send({status: "404", msg: "ERRORE NELLA CANCELLAZIONE!"});
+        }
+    })
 });
 routerDashboard.post("/customers/update", async (req, res) => {
     Customer.findOne({
@@ -386,16 +382,43 @@ routerDashboard.get("/tickets", checkSession, menuMiddleware, (req, res) => {
     });
 });
 
-routerDashboard.post("/ticket/insert", checkSession, (req, res) => {
-    // console.log(req.body);
-    /*   Ticket.findAll().then(function (tickets) {
-            if (tickets) {
-              
-                res.render('dashboard/ticketPage',{tickets: tickets});
-            } else {
-                res.render('dashboard/ticketPage');
-            }
-        }); */
+routerDashboard.post("/tickets/insert", (req, res) => {
+    console.log(req.body);
+    var date = new Date();
+    date.setDate(date.getDate() + 7);
+    Ticket.create({
+        emissionDate: Date.now(),
+        firstUse: Date.now(),
+        expirationDate: date,
+        expirationUsageDate: date,
+        durationDays: 7,
+        login: req.body.payload.credentials.ticketUsername,
+        password: req.body.payload.credentials.ticketPassword,
+        pinAzienda: req.body.payload.customer.pin,
+        ResellerId: req.body.payload.user.ResellerId,
+        CustomerId: req.body.payload.customer.id,
+        WebsurferId: req.body.payload.websurfer.id
+    }).then((result) => {
+        if(result != null){
+            res.send({status:"200", msg:"TICKET INSERITO CON SUCCESSO", result:result});
+        }else{
+            res.send({status:"400", msg:"ERRORE NELLA CREAZIONE DEL TICKET"});
+        }
+    });
+});
+routerDashboard.post("/tickets/delete",(req, res) => {
+  Ticket.findOne({
+    where:{
+        id:req.body.payload.id
+    }
+  }).then((result)=>{
+    if (result !== null) {
+        result.destroy();
+        res.send({status: "200", msg: "TICKET ELIMINATO CON SUCCESSO!"});
+    } else {
+        res.send({status: "404", msg: "ERRORE NELLA CANCELLAZIONE!"});
+    }
+  })
 });
 
 // RADIUS

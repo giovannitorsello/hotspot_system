@@ -6,9 +6,6 @@
           <div class="logo">
             <a href="/dashboard"><img src="/img/logo_ASYTECH.png" alt="Logo" /></a>
           </div>
-          <div class="toggler">
-            <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
-          </div>
         </div>
       </div>
 
@@ -80,20 +77,9 @@ import { hsStore } from "@/store/hotspotSystemStore.js";
         this.menus = [
           {
             name: "Home",
-            path: "/dashboard",
+            path: "/home",
           },
-          {
-            name: "Navigatore web",
-            path: "/websurfers",
-          },
-          {
-            name: "Ruoli",
-            path: "/users",
-          },
-          {
-            name: "Ticket",
-            path: "/tickets",
-          },
+  
         ];
         break;
         case "USER":

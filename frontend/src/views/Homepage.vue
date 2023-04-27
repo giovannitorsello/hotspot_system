@@ -53,7 +53,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!--   <% } %> -->
+                         
                             <div class="col-6 col-lg-2 col-md-6">
                                 <div class="card">
                                     <div class="card-body px-3 py-4-5">
@@ -114,7 +114,7 @@
                         </div>
                         <div class="row mb-6">
                           <TableClient />
-                        
+        
                         </div>
     
                         <div class="row">
@@ -240,8 +240,7 @@ export default {
     },
     data() {
         return {
-            tab: 'one',
-            
+            tab: 'one',      
         };
     },
     methods: {},

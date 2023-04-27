@@ -40,7 +40,6 @@
                       <div class="card-header">
                         <h4 class="card-title">INSERISCI CLIENTE</h4>
                       </div>
-
                       <div class="card-content">
                         <div class="card-body">
                           <div class="row">

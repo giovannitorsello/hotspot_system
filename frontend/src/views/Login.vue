@@ -42,8 +42,8 @@
     },
     data() {
       return {
-        username: "reseller",
-        password: "reseller",
+        username: "antonio",
+        password: "antonio",
       };
     },
 
@@ -52,7 +52,11 @@
         await this.hsComponentStore.fetchUserProfile(this.username, this.password);
 
         if (this.hsComponentStore.user && this.hsComponentStore.user.id && this.hsComponentStore.user.id>0) {
-          this.$router.push("dashboard");
+          if(this.hsComponentStore.user.role == 'HOTEL'){
+            this.$router.push("home");
+          }else{
+            this.$router.push("dashboard");
+          }
         } else {
           this.$swal("Credenziali errate!");
         }

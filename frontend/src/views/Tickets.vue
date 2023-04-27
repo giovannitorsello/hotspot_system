@@ -30,7 +30,7 @@
         <h3>TICKET</h3>
       </div>
 
-      <section id="multiple-column-form" v-if="tab == 'five'">
+      <section id="multiple-column-form">
         <div class="row match-height">
           <div class="col-12">
             <div class="card">
@@ -39,96 +39,57 @@
               </div>
               <div class="card-content">
                 <div class="card-body">
-                  <form class="form" method="post" action="ticket/insert">
-                    <div class="row">
-                      <!-- <input type="hidden" class="form-control" name="resellerID" value=<%=dataCreationTicker.user.ResellerId %>> -->
-                      <div class="col-md-6 col-12">
-                        <div class="form-group">
-                          <label for="first-name-column">DATA INIZIO </label>
-                          <input
-                            type="date"
-                            class="form-control"
-                            name="emission"
-                            required
-                          />
-                        </div>
-                      </div>
-                      <div class="col-md-6 col-12">
-                        <div class="form-group">
-                          <label for="first-name-column">DATA FINE </label>
-                          <input
-                            type="date"
-                            class="form-control"
-                            name="exirration"
-                            required
-                          />
-                        </div>
-                      </div>
-                      <!--   <div class="col-md-6 col-12">
-                                                    <div class="form-group">
-                                                        <label for="first-name-column">LOGIN</label>
-                                                        <input type="text" class="form-control" disabled value=<%=username %>>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 col-12">
-                                                    <div class="form-group">
-                                                        <label for="first-name-column">PASSWORD</label>
-                                                        <input type="text" class="form-control" disabled value=<%=password %>>
-                                                    </div>
-                                                </div> -->
-
-                      <div class="col-md-6 col-12">
-                        <div class="form-group">
-                          <label for="first-name-column">STATE</label>
-                          <select class="form-select" name="role" required>
-                            <option value="active">ATTIVO</option>
-                            <option value="disabled">DISATTIVO</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div class="col-md-6 col-12">
-                        <div class="form-group">
-                          <label for="first-name-column">PIN AZIENDA</label>
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="pinAgency"
-                            name="pinAzienda"
-                          />
-                        </div>
-                      </div>
-                      <div class="col-md-6 col-12">
-                        <div class="form-group">
-                          <label for="first-name-column">NOTE</label>
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="denominazione"
-                            name="webSurfer"
-                            required
-                          />
-                        </div>
-                      </div>
-                      <div class="col-md-6 col-12">
-                        <div class="form-group">
-                          <label for="first-name-column">SERIALE</label>
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="denominazione"
-                            name="webSurfer"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <div class="col-12 d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary me-1 mb-1">
-                          Inserisci
-                        </button>
-                      </div>
+                  <div class="col-md-6 col-12">
+                    <div class="form-group">
+                      <label for="first-name-column"
+                        >SELEZIONA STRUTTURA: {{ payload.customer }}</label>
+                      <fieldset class="form-group">
+                        <select v-model="payload.customer" class="form-select">
+                          <option
+                            v-for="customer in hsComponentStore.customerOfThisReseller"
+                            :value="customer"
+                            :key="customer.id"
+                          >
+                            {{ customer.companyName }}
+                          </option>
+                        </select>
+                      </fieldset>
                     </div>
-                  </form>
+                  </div>
+                  <div class="col-md-6 col-12" v-if="payload.customer != ''">
+                    <div class="form-group">
+                      <label for="first-name-column"
+                        >SELEZIONA CLIENTE: {{ payload.websurfer }}</label
+                      >
+                      <fieldset class="form-group">
+                        <select
+                          v-model="payload.websurfer"
+                          class="form-select"
+                        >
+                          <template
+                            v-for="websurfer in hsComponentStore.websurfers"
+                            :key="websurfer.id"
+                          >
+                            <option
+                              v-if="websurfer.CustomerId == payload.customer.id"
+                              :value="websurfer"
+                            >
+                              {{ websurfer.firstname }}
+                            </option>
+                          </template>
+                        </select>
+                      </fieldset>
+                    </div>
+                  </div>
+                  <div class="col-12 d-flex justify-content-end">
+                    <button
+                      type="submit"
+                      class="btn btn-primary me-1 mb-1"
+                      @click="insertTicket()"
+                    >
+                      Inserisci
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -147,10 +108,9 @@
                       <v-card>
                         <v-tabs v-model="tab" bg-color="#435ebe">
                           <v-tab value="one" color="white">TUTTI</v-tab>
-                          <v-tab value="two" color="white">MODIFICA</v-tab>
-                          <v-tab value="three" color="white">ELIMINA</v-tab>
+                        <!--   <v-tab value="two" color="white">MODIFICA</v-tab>
+                          <v-tab value="three" color="white">ELIMINA</v-tab> -->
                         </v-tabs>
-
                         <v-card-text>
                           <v-window v-model="tab">
                             <v-window-item value="one">
@@ -166,15 +126,8 @@
                                 disable-pagination
                               >
                                 <template v-slot:[`item.actions`]="{ item }">
-                                  <i
-                                    class="bi bi-trash"
-                                    @click="deleteWebsurfer(item.raw)"
-                                  >
+                                  <i class="bi bi-trash" @click="deleteTicket(item.raw)">
                                   </i>
-                                  <i
-                                    class="bi bi-pen"
-                                    @click="editWebsurfer(item.raw)"
-                                  ></i>
                                 </template>
                               </v-data-table>
                             </v-window-item>
@@ -259,7 +212,6 @@
                                 </v-card-text>
                               </v-card>
                             </v-window-item>
-
                             <v-window-item value="three">
                               <v-card>
                                 <v-card-title
@@ -297,9 +249,12 @@
   </div>
 </template>
 
+
 <script>
 import { hsStore } from "@/store/hotspotSystemStore.js";
 import Sidebar from "@/components/Sidebar.vue";
+import axios from "axios";
+import generateRandomCredentials from "@/utils/random";
 export default {
   name: "Tickets",
   components: { Sidebar },
@@ -309,37 +264,60 @@ export default {
   },
   data() {
     return {
-      tab: "one",
+      tab: "",
+      hotel: "",
       selectedTicket: "",
       search: "",
+
       header: [
         { title: "ID", key: "id" },
-        { title: "NOME", key: "firstname" },
-        { title: "EMAIL", key: "email" },
-        { title: "PIN", key: "lastname" },
-        { title: "WEB", key: "phone" },
-        { title: "P.IVA", key: "idSocial" },
+        { title: "DATA EMISSIONE", key: "emissionDate" },
+        { title: "DATA SCADENZA", key: "expirationDate" },
+        { title: "LOGIN", key: "login" },
+        { title: "PASSWORD", key: "password" },
+        { title: "HOTEL", key: "CustomerId" },
+        { title: "UTENTE", key: "WebsurferId" },
         { title: "Actions", key: "actions" },
       ],
       page: 1,
       itemsPerPage: 10,
-      payload: {},
+      payload: {
+      customer:'',
+      websurfer:'',
+      user:'',
+      },
     };
   },
   props: {},
+
   methods: {
-    goBack() {
-      this.selectedTicket = "";
-      this.tab = "one";
+    insertTicket() {
+      this.payload.user= this.hsComponentStore.user;
+      this.payload.credentials= generateRandomCredentials();
+      axios
+        .post("/admin/tickets/insert", {
+          payload: this.payload,
+        })
+        .then((response) => {
+          console.log(response);
+          if (response.data.status == 200) {
+            this.hsComponentStore.addTicket(response.data.result);
+            this.$swal(response.data.msg); 
+          } else {
+            this.$swal(response.data.msg); 
+          } 
+        });
     },
-    openDeleteTicket(ticket) {
-      this.selectedTicket = ticket;
-      this.tab = "three";
-    },
-    editTicket(ticket) {
-      this.selectedTicket = ticket;
-      this.tab = "two";
+    deleteTicket(ticket) {
+      axios.post("/admin/tickets/delete", { payload: ticket }).then((response) => {
+        if (response.data.status == 200) {
+          this.hsComponentStore.deleteTicket(ticket.id);
+          this.$swal(response.data.msg);
+        } else {
+          this.$swal(response.data.msg);
+        }
+      });
     },
   },
 };
-</script>
+</script> 

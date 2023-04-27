@@ -142,15 +142,13 @@
                       <v-card-text>
                         <v-window v-model="tab">
                           <v-window-item value="one">
-                            <v-text-field label="CERCA"></v-text-field>
+                            <v-text-field v-model="search" label="CERCA"></v-text-field>
                             <v-data-table
                               :headers="header"
                               :items="hsComponentStore.userOfAllCustomers"
                               :search="search"
                               v-model:page.sync="page"
                               :items-per-page="itemsPerPage"
-                              :hide-default-header="true"
-                              :hide-default-footer="true"
                               disable-pagination
                             >
                               <template v-slot:[`item.role`]="{ item }">

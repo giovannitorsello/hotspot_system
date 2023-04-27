@@ -93,7 +93,24 @@
                                 />
                               </div>
                             </div>
-
+                            <div class="col-md-6 col-12">
+                              <div class="form-group">
+                                <label>SELEZIONA STRUTTURA:{{ payload.CustomerId }}
+                                  </label>
+                                <fieldset class="form-group">
+                                  <select v-model="payload.CustomerId" class="form-select">
+                                    <template
+                                      v-for="customer in hsComponentStore.customerOfThisReseller"
+                                      :key="customer.id"
+                                    >
+                                      <option :value="customer.id">
+                                        {{ customer.companyName }}
+                                      </option>
+                                    </template>
+                                  </select>
+                                </fieldset>
+                              </div>
+                            </div>
                             <div class="col-12 d-flex justify-content-end">
                               <button
                                 type="submit"
@@ -110,111 +127,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section">
-                <v-card>
-                  <v-tabs v-model="tab" bg-color="#435ebe">
-                    <v-tab value="one" color="white">TUTTI</v-tab>
-                    <v-tab value="two" color="white">MODIFICA</v-tab>
-                    <v-tab value="three" color="white">ELIMINA</v-tab>
-                  </v-tabs>
-
-                  <v-card-text>
-                    <v-window v-model="tab">
-                      <v-window-item value="one">
-                        <v-text-field label="CERCA"></v-text-field>
-
-                        <v-data-table
-                          :headers="header"
-                          :items="hsComponentStore.websurfers"
-                          :search="search"
-                          v-model:page.sync="page"
-                          :items-per-page="itemsPerPage"
-                          :hide-default-header="true"
-                          :hide-default-footer="true"
-                          disable-pagination
-                        >
-                          <template v-slot:[`item.actions`]="{ item }">
-                            <i
-                              class="bi bi-trash"
-                              @click="deleteWebsurfer(item.raw)"
-                            >
-                            </i>
-                            <i
-                              class="bi bi-pen"
-                              @click="editWebsurfer(item.raw)"
-                            ></i>
-                          </template>
-                        </v-data-table>
-                      </v-window-item>
-
-                      <v-window-item value="two">
-                        <v-card>
-                          <v-card-title> Modifica WEBSURFER </v-card-title>
-                          <v-card-text>
-                            <v-text-field
-                              v-model="selectedWebsurfer.firstname"
-                              label="NOME"
-                            ></v-text-field>
-                            <v-text-field
-                              v-model="selectedWebsurfer.lastname"
-                              label="COGNOME"
-                            ></v-text-field>
-                            <v-text-field
-                              v-model="selectedWebsurfer.email"
-                              label="EMAIL"
-                            ></v-text-field>
-                            <v-text-field
-                              v-model="selectedWebsurfer.note"
-                              label="NOTE"
-                            ></v-text-field>
-                            <v-text-field
-                              v-model="selectedWebsurfer.phone"
-                              label="TELEFONO"
-                            ></v-text-field>
-                            <v-row>
-                              <v-col>
-                                <v-sheet class="pa-2 ma-1" align="end">
-                                  <i
-                                    class="bi bi-arrow-left ma-1"
-                                    style="font-size: xx-large"
-                                    @click="goBack()"
-                                  ></i>
-                                  <i
-                                    class="bi bi-check-circle ma-1"
-                                    style="font-size: xx-large"
-                                    @click="saveWebsurfer()"
-                                  ></i>
-                                </v-sheet>
-                              </v-col>
-                            </v-row>
-                          </v-card-text>
-                        </v-card>
-                      </v-window-item>
-
-                      <v-window-item value="three">
-                        <v-card>
-                          <v-card-title>Conferma eliminazione</v-card-title>
-                          <v-card-text>
-                            <p>
-                              Vuoi eliminare il websurfer "{{
-                                selectedWebsurfer.firstname
-                              }}"?
-                            </p>
-                          </v-card-text>
-                          <v-card-actions>
-                            <v-btn
-                              color="primary"
-                              @click="deleteWebsurfer(this.selectedWebsurfer)"
-                              >Elimina</v-btn
-                            >
-                            <v-btn @click="tab = 'one'">Annulla</v-btn>
-                          </v-card-actions>
-                        </v-card>
-                      </v-window-item>
-                    </v-window>
-                  </v-card-text>
-                </v-card>
-              </section>
+             <TableWebsurfer />
             </div>
           </div>
         </section>
@@ -225,114 +138,28 @@
 
 <script>
 import { hsStore } from "@/store/hotspotSystemStore.js";
+import TableWebsurfer from "@/components/TableWebsurfer.vue";
 import Sidebar from "@/components/Sidebar.vue";
-import axios from "axios";
 export default {
   name: "Websurfers",
-  components: { Sidebar },
+  components: { Sidebar,TableWebsurfer },
   setup() {
     const hsComponentStore = hsStore();
     return { hsComponentStore };
   },
   data() {
     return {
-      table: [],
-      tab: "one",
-      selectedWebsurfer: null,
-      selectedClient: null,
-      search: "",
-      header: [
-        { title: "ID", key: "id" },
-        { title: "NOME", key: "firstname" },
-        { title: "COGNOME", key: "lastname" },
-        { title: "EMAIL", key: "email" },
-        { title: "NOTE", key: "note" },
-        { title: "TELEFONO", key: "phone" },
-        { title: "SOCIAL ID", key: "idSocial" },
-        { title: "SOCIAL", key: "typeSocial" },
-        { title: "ID_HOTEL", key: "CustomerId" },
-
-        { title: "Actions", key: "actions" },
-      ],
-      page: 1,
-      itemsPerPage: 10,
       payload: {
         firstname: "",
         lastname: "",
         email: "",
         note: "",
         phone: "",
+        CustomerId:""
       },
     };
   },
-  computed: {
-    totalRecords() {
-      return this.hsComponentStore.customerOfThisReseller.length;
-    },
-    pageCount() {
-      return this.totalRecords / this.itemsPerPage;
-    },
-  },
   methods: {
-    editWebsurfer(websurfer) {
-      this.selectedWebsurfer = websurfer;
-      this.tab = "two";
-    },
-    alertDeleteWebsurfer(websurfer) {
-      this.selectedWebsurfer = websurfer;
-      this.tab = "three";
-    },
-    goBack() {
-      this.selectedWebsurfer = "";
-      this.tab = "one";
-    },
-    saveWebsurfer() {
-      axios
-        .post("/admin/websurfers/update", {
-          payload: this.selectedWebsurfer,
-        })
-        .then((response) => {
-          if (response.data.status == 200) {
-            this.hsComponentStore.updateWebsurfer(this.selectedWebsurfer);
-            this.tab = "one";
-            this.$swal(response.data.msg);
-          } else {
-            this.$swal(response.data.msg);
-          }
-        });
-    },
-    deleteWebsurfer(selectedWebsurfer) {
-      axios
-        .post("/admin/websurfers/delete", {
-          payload: selectedWebsurfer,
-        })
-        .then((response) => {
-          if (response.data.status == 200) {
-            this.hsComponentStore.deleteWebsurfer(selectedWebsurfer.id);
-            this.tab = "one";
-            this.$swal(response.data.msg);
-          } else {
-            this.$swal(response.data.msg);
-          }
-        });
-    },
-    insertWebsurfer() {
-      this.payload.CustomerId = this.hsComponentStore.user.CustomerId;
-
-      axios
-        .post("/admin/websurfers/insert", {
-          payload: this.payload,
-        })
-        .then((response) => {
-          console.log(response);
-          if (response.data.status == 200) {
-            this.hsComponentStore.addWebsurfer(response.data.result);
-            this.$swal(response.data.msg);
-          } else {
-            this.$swal(response.data.msg);
-          }
-        });
-    },
   },
 };
 </script>

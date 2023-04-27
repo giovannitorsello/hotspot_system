@@ -41,6 +41,9 @@ export const hsStore = defineStore({
     addUser(newUser) {
       this.userOfAllCustomers.push(newUser);
     },
+    addTicket(newTicket){
+      this.ticketsOfAllCustomers.push(newTicket);
+    },
     deleteCustomer(id) {
       this.customerOfThisReseller = this.customerOfThisReseller.filter((t) => {
         return t.id !== id;
@@ -53,6 +56,11 @@ export const hsStore = defineStore({
     },
     deleteUser(id){
       this.userOfAllCustomers= this.userOfAllCustomers.filter((t)=> {
+        return t.id !== id;
+      })
+    },
+    deleteTicket(id){
+      this.ticketsOfAllCustomers= this.ticketsOfAllCustomers.filter((t)=> {
         return t.id !== id;
       })
     },

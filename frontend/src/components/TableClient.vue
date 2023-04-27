@@ -15,7 +15,7 @@
             :search="search"
             v-model:page.sync="page"
             :items-per-page="itemsPerPage"
-            :hide-default-header="true"
+            
             :hide-default-footer="true"
             disable-pagination
           >
@@ -107,8 +107,7 @@
             </v-card-text>
             <v-card-actions>
               <v-btn color="primary" @click="deleteClient(selectedClient)"
-                >Elimina</v-btn
-              >
+                >Elimina</v-btn>
               <v-btn @click="selectedClient = null">Annulla</v-btn>
             </v-card-actions>
           </v-card>

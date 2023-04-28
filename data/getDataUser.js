@@ -7,33 +7,22 @@ yestardayAgo.setDate(yestardayAgo.getDate() - 3);
 async function getDataUser(userLogged) {
     const userOBJ = {};
 
-
-    //SE E SUPERADMIN TROVA TUTTI I RESELLER
-    if(userLogged.role== "SUPERADMIN"){
-      const reseller = await Reseller.findAll()
-    };
-
-    //SE E UN RESELLER TROVA I SUOI CLIENTI
-    if (userLogged.role == "RESELLER") { 
-     const customerOfThisReseller = await Customer.findAll({
-        where:{
-          ResellerId: userLogged.resellerID
-        }
-      });
-      userOBJ.customerOfThisReseller = customerOfThisReseller || null;
-    };
-
     const websurfers = await Websurfer.findAll({
         where: {
-            CustomerId: userLogged.customerID
+            CustomerId: userLogged.CustomerId
         }
     });
     userOBJ.websurfers = websurfers || 0;
 
-
+    const tickets = await Ticket.findAll({
+        where:{
+            CustomerId:userLogged.CustomerId
+        }
+    })
+    userOBJ.tickets = tickets || 0;
 
     
-    const activeTickets = await Ticket.findAll({
+    /* const activeTickets = await Ticket.findAll({
         where: {
             state: 'active',
             CustomerId: userLogged.customerID
@@ -74,7 +63,7 @@ async function getDataUser(userLogged) {
                 CustomerId: userLogged.customerID,
             },
       });
-      userOBJ.userOfAllCustomers = userOfAllCustomers || '';
+      userOBJ.userOfAllCustomers = userOfAllCustomers || ''; */
 
     return userOBJ;
 }

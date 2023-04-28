@@ -48,7 +48,7 @@ import { hsStore } from "@/store/hotspotSystemStore.js";
       },
     },
     created() {
-      switch(this.hsComponentStore.user.role){
+      switch(this.hsComponentStore.user.info.role){
         case "RESELLER":
         this.menus = [
           {

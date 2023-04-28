@@ -4,6 +4,7 @@
       <v-tab value="one" color="white">TUTTI</v-tab>
       <v-tab value="two" color="white">MODIFICA</v-tab>
       <v-tab value="three" color="white">ELIMINA</v-tab>
+      <v-tab value="four" color="white">TICKET</v-tab>
     </v-tabs>
 
     <v-card-text>
@@ -23,6 +24,7 @@
             <template v-slot:[`item.actions`]="{ item }">
               <i class="bi bi-trash" @click="deleteWebsurfer(item.raw)"> </i>
               <i class="bi bi-pen" @click="editWebsurfer(item.raw)"></i>
+              
             </template>
           </v-data-table>
         </v-window-item>
@@ -64,11 +66,15 @@
                       style="font-size: xx-large"
                       @click="saveWebsurfer()"
                     ></i>
+                    <i class="bi bi-plus-circle ma-1"
+                    style="font-size: xx-large"
+                    ></i>
                   </v-sheet>
                 </v-col>
               </v-row>
             </v-card-text>
           </v-card>
+         
         </v-window-item>
 
         <v-window-item value="three">
@@ -89,6 +95,12 @@
             </v-card-actions>
           </v-card>
         </v-window-item>
+
+        <v-window-item value="four">
+          <v-card>
+            <TableTicket />
+          </v-card>
+        </v-window-item>
       </v-window>
     </v-card-text>
   </v-card>
@@ -97,12 +109,14 @@
 <script>
 import { hsStore } from "@/store/hotspotSystemStore.js";
 import axios from "axios";
+import TableTicket from "@/components/TableTicket.vue";
 export default {
   name: "TableWebsurfer",
   setup() {
     const hsComponentStore = hsStore();
     return { hsComponentStore };
   },
+  components: {TableTicket},
   data() {
     return {
       search: "",
@@ -199,23 +213,7 @@ export default {
           }
         });
     },
-    insertWebsurfer() {
-     
-
-      axios
-        .post("/admin/websurfers/insert", {
-          payload: this.payload,
-        })
-        .then((response) => {
-          console.log(response);
-          if (response.data.status == 200) {
-            this.hsComponentStore.addWebsurfer(response.data.result);
-            this.$swal(response.data.msg);
-          } else {
-            this.$swal(response.data.msg);
-          }
-        });
-    },
+  
   },
 };
 </script>

@@ -4,7 +4,10 @@ import axios from "axios";
 export const hsStore = defineStore({
   id: "hotspotSystemStore",
   state: () => ({
-    user: {},
+    user: {
+      info:{},
+      data:{}
+    },
     customerOfThisReseller: [],
     websurfers: [],
     ticketsOfAllCustomers: [],
@@ -18,8 +21,14 @@ export const hsStore = defineStore({
   actions: {
     async fetchUserProfile(username, password) {
       const res = await axios.post("/admin/login", { username: username, password: password });
-      this.user = res.data.user;
-      this.fetchUserData();
+      this.user.info = res.data.user;
+      if(res.data.user.role == 'HOTEL'){
+        
+        this.fetchHotelData();
+      }else{
+        this.fetchUserData();
+      }
+      
     },
     async fetchUserData() {
       const res = await axios.post("/admin/data/dataReseller", { user: this.user });
@@ -31,6 +40,14 @@ export const hsStore = defineStore({
       this.lastTickets = res.data.data.lastTickets;
       this.activeTickets = res.data.data.activeTickets;
       this.expiredTickets = res.data.data.expiredTickets;
+    },
+    async fetchHotelData(){
+      const res = await axios.post("/admin/data/dataHotel", {user: this.user.info});
+      this.user.data.websurfers= res.data.data.websurfers;
+      this.user.data.tickets= res.data.data.tickets;
+      console.log(res);
+     
+    
     },
     addCustomer(newItem) {
       this.customerOfThisReseller.push(newItem);

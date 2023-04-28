@@ -237,6 +237,7 @@ Websurfer.hasOne(Ticket);
 Websurfer.belongsTo(Customer);
 Ticket.belongsTo(Customer);
 User.belongsTo(Customer);
+Ticket.belongsTo(Websurfer);
 
 const connectToDatabase = async () => {
   try {

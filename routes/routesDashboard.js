@@ -2,25 +2,16 @@ const express = require("express");
 const routerDashboard = express.Router();
 const session = require("express-session");
 const {Customer,User,Ticket,Websurfer} = require("../database");
+const createUser = require("../utils/radiusDB");
 const {Op} = require('sequelize');
+const senders= require("../utils/senders");
 const generateRandomCredentials = require("../utils/random");
 const {ticketUsername, ticketPassword} = generateRandomCredentials();
 var getDataUser = require("../data/getDataUser");
 var getResellerUser = require("../data/getResellerData");
 var userOBJ;
-var dataCreationTicker = {};
-
-
-function checkSession(req, res, next) {
-    if (! req.session.user) {
-        res.redirect("/admin");
-    } else {
-        next();
-    }
-}
 
 // AUTH PAGE
-
 routerDashboard.post("/login", (req, res) => {
     User.findOne({
         where: {
@@ -29,15 +20,6 @@ routerDashboard.post("/login", (req, res) => {
         }
     }).then(function (user) {
         if (user != null) {
-            dataCreationTicker.user = user;
-            req.session.user = {
-                username: user.utente,
-                role: user.role,
-                customerID: user.CustomerId,
-                resellerID: user.ResellerId
-            };
-
-
             res.send({status: "200", msg: "USER FOUND", user: user});
         } else {
             res.send({status: "404", msg: "Credenziali errate"});
@@ -45,6 +27,7 @@ routerDashboard.post("/login", (req, res) => {
     });
 });
 
+// DATA PER L'UTENTE RESELLER
 routerDashboard.post("/data/dataReseller", async (req, res) => {
     res.send({
         status: "200",
@@ -52,6 +35,8 @@ routerDashboard.post("/data/dataReseller", async (req, res) => {
         data: await getResellerUser(req.body.user)
     });
 });
+
+// DATA PER GLI HOTEL
 routerDashboard.post("/data/datahotel", async (req, res) => {
     res.send({
         status: "200",
@@ -59,7 +44,8 @@ routerDashboard.post("/data/datahotel", async (req, res) => {
         data: await getDataUser(req.body.user)
     });
 });
-// WEBSURFER PAGE
+
+// INSERIMENTO WEBSURFER E RELATIVO TICKET
 routerDashboard.post("/websurfers/insert",  async (req, res) => {
     var date= new Date();
     date.setDate(date.getDate() + 7);
@@ -98,12 +84,20 @@ routerDashboard.post("/websurfers/insert",  async (req, res) => {
                         WebsurferId: result.id
                     }).then((newTicket) => {
                         if(newTicket != null){
+                            //INSERIMENTO NEL DB DEL RADIUS
+                            createUser(ticketUsername,ticketPassword);
+                            //INVIO SMS E EMAIL
+                            senders.sendTicketByEmail(result.email, newTicket);
+                            senders.sendTicketBySms(result.phone, newTicket);
+                            //RISPOSTA SERVER CON IL NUOVO WEBSURFER E IL TICKET
                             res.send({status: "200", msg: "WEBSURFER INSERITO", newWebsurfer: result, newTicket: newTicket});
                         }else{
+
                             res.send({status:"400", msg:"ERRORE NELLA CREAZIONE DEL TICKET"});
                         }
                     });
                 } else {
+                    //EMAIL GIA PRESENTE NEL DATABASE
                     res.send({status:"400", msg:"WEBSURFER GIA ESISTENTE"});
                 }
             });
@@ -114,9 +108,8 @@ routerDashboard.post("/websurfers/insert",  async (req, res) => {
 });
 
 
-
+//AGGIORNAMENTO WEBSURFER
 routerDashboard.post("/websurfers/update", async (req, res) => {
-  
     Websurfer.findOne({
         where: {
             id: req.body.payload.id
@@ -139,6 +132,7 @@ routerDashboard.post("/websurfers/update", async (req, res) => {
         });
     })
 });
+//ELIMINAZIONE WEBSURFER
 routerDashboard.post("/websurfers/delete", async (req, res) => {
     Websurfer.findOne({
         where: {
@@ -156,7 +150,7 @@ routerDashboard.post("/websurfers/delete", async (req, res) => {
 
 
 // USER PAGE -----------TODO
-routerDashboard.get("/users", checkSession,  async (req, res) => {
+routerDashboard.get("/users", async (req, res) => {
     if (req.session.user.role == "SUPERADMIN") {} else if (req.session.user.role == "RESELLER") {
         userOBJ = await getResellerUser(req.session.user);
        
@@ -176,7 +170,7 @@ routerDashboard.get("/users", checkSession,  async (req, res) => {
         });
     } else {}
 });
-
+// INSERIMENTO USER
 routerDashboard.post("/users/insert", (req, res) => {
 
     User.findOne({
@@ -203,7 +197,7 @@ routerDashboard.post("/users/insert", (req, res) => {
         }
     });
 });
-
+//ELIMINAZIONE USER
 routerDashboard.post("/users/delete", (req, res) => {
     User.findOne({
         where: {

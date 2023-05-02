@@ -49,10 +49,17 @@
 
     methods: {
       async checkCredentials() {
+
+        
+
+
+
         await this.hsComponentStore.fetchUserProfile(this.username, this.password);
 
-        if (this.hsComponentStore.user.info && this.hsComponentStore.user.info.id && this.hsComponentStore.user.info.id>0) {
+      if (this.hsComponentStore.user.info && this.hsComponentStore.user.info.id && this.hsComponentStore.user.info.id>0) {
+       
           if(this.hsComponentStore.user.info.role == 'HOTEL'){
+
             this.$router.push("home");
           }else{
             this.$router.push("dashboard");
@@ -60,19 +67,6 @@
         } else {
           this.$swal("Credenziali errate!");
         }
-
-        /* axios.post('/admin/login',{username: this.username, password: this.password}).then((response) =>{
-              if(response.data.status == 200){ 
-                console.log(response.data.user);
-                this.$store.commit('SET_USER', response.data.user);
-                if(response.data.user.role== 'RESELLER'){
-                  this.$router.push('dashboard');
-                }
-                
-              }else{
-                this.$swal("Credenziali errate!");
-              }
-            }) */
       },
     },
   };

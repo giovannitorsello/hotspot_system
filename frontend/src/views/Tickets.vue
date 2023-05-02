@@ -6,8 +6,7 @@
           <div class="d-flex justify-content-between">
             <div class="logo">
               <a href="dashboard"
-                ><img src="/img/logo_ASYTECH.png" alt="Logo"
-              /></a>
+                ><img src="/img/logo_ASYTECH.png" alt="Logo" /></a>
             </div>
             <div class="toggler">
               <a href="#" class="sidebar-hide d-xl-none d-block"
@@ -42,7 +41,8 @@
                   <div class="col-md-6 col-12">
                     <div class="form-group">
                       <label for="first-name-column"
-                        >SELEZIONA STRUTTURA: {{ payload.customer }}</label>
+                        >SELEZIONA STRUTTURA: {{ payload.customer }}</label
+                      >
                       <fieldset class="form-group">
                         <select v-model="payload.customer" class="form-select">
                           <option
@@ -62,10 +62,7 @@
                         >SELEZIONA CLIENTE: {{ payload.websurfer }}</label
                       >
                       <fieldset class="form-group">
-                        <select
-                          v-model="payload.websurfer"
-                          class="form-select"
-                        >
+                        <select v-model="payload.websurfer" class="form-select">
                           <template
                             v-for="websurfer in hsComponentStore.websurfers"
                             :key="websurfer.id"
@@ -108,8 +105,7 @@
                       <v-card>
                         <v-tabs v-model="tab" bg-color="#435ebe">
                           <v-tab value="one" color="white">TUTTI</v-tab>
-                        <!--   <v-tab value="two" color="white">MODIFICA</v-tab>
-                          <v-tab value="three" color="white">ELIMINA</v-tab> -->
+                        
                         </v-tabs>
                         <v-card-text>
                           <v-window v-model="tab">
@@ -126,7 +122,10 @@
                                 disable-pagination
                               >
                                 <template v-slot:[`item.actions`]="{ item }">
-                                  <i class="bi bi-trash" @click="deleteTicket(item.raw)">
+                                  <i
+                                    class="bi bi-trash"
+                                    @click="deleteTicket(item.raw)"
+                                  >
                                   </i>
                                 </template>
                               </v-data-table>
@@ -268,7 +267,6 @@ export default {
       hotel: "",
       selectedTicket: "",
       search: "",
-
       header: [
         { title: "ID", key: "id" },
         { title: "DATA EMISSIONE", key: "emissionDate" },
@@ -282,41 +280,40 @@ export default {
       page: 1,
       itemsPerPage: 10,
       payload: {
-      customer:'',
-      websurfer:'',
-      user:'',
+        customer: "",
+        websurfer: "",
+        user: "",
       },
     };
   },
-  props: {},
-
   methods: {
     insertTicket() {
-      this.payload.user= this.hsComponentStore.user;
-      this.payload.credentials= generateRandomCredentials();
+      this.payload.user = this.hsComponentStore.user;
+      this.payload.credentials = generateRandomCredentials();
       axios
         .post("/admin/tickets/insert", {
           payload: this.payload,
         })
         .then((response) => {
-          console.log(response);
           if (response.data.status == 200) {
             this.hsComponentStore.addTicket(response.data.result);
-            this.$swal(response.data.msg); 
+            this.$swal(response.data.msg);
           } else {
-            this.$swal(response.data.msg); 
-          } 
+            this.$swal(response.data.msg);
+          }
         });
     },
     deleteTicket(ticket) {
-      axios.post("/admin/tickets/delete", { payload: ticket }).then((response) => {
-        if (response.data.status == 200) {
-          this.hsComponentStore.deleteTicket(ticket.id);
-          this.$swal(response.data.msg);
-        } else {
-          this.$swal(response.data.msg);
-        }
-      });
+      axios
+        .post("/admin/tickets/delete", { payload: ticket })
+        .then((response) => {
+          if (response.data.status == 200) {
+            this.hsComponentStore.deleteTicket(ticket.id);
+            this.$swal(response.data.msg);
+          } else {
+            this.$swal(response.data.msg);
+          }
+        });
     },
   },
 };

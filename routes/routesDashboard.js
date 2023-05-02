@@ -61,9 +61,9 @@ routerDashboard.post("/data/datahotel", async (req, res) => {
 });
 // WEBSURFER PAGE
 routerDashboard.post("/websurfers/insert",  async (req, res) => {
-    console.log(req.body);
     var date= new Date();
     date.setDate(date.getDate() + 7);
+    //FETCH PIN OF AGENCY
     var pinAzienda= await Customer.findOne({
         where:{
             id: req.body.user.info.CustomerId,
@@ -82,8 +82,7 @@ routerDashboard.post("/websurfers/insert",  async (req, res) => {
                 note: req.body.payload.note,
                 phone: req.body.payload.phone,
                 CustomerId: req.body.user.info.CustomerId,
-            }).then(async (cv  ) => {
-                console.log(result);
+            }).then(async (result) => {
                 if (result != null) {
                     await Ticket.create({
                         emissionDate: Date.now(),
@@ -99,14 +98,13 @@ routerDashboard.post("/websurfers/insert",  async (req, res) => {
                         WebsurferId: result.id
                     }).then((newTicket) => {
                         if(newTicket != null){
-                            res.send({status: "200", msg: "WEBSURFER INSERITO", result: result});
+                            res.send({status: "200", msg: "WEBSURFER INSERITO", newWebsurfer: result, newTicket: newTicket});
                         }else{
                             res.send({status:"400", msg:"ERRORE NELLA CREAZIONE DEL TICKET"});
                         }
                     });
-                   
                 } else {
-                 
+                    res.send({status:"400", msg:"WEBSURFER GIA ESISTENTE"});
                 }
             });
         } else {
@@ -118,7 +116,7 @@ routerDashboard.post("/websurfers/insert",  async (req, res) => {
 
 
 routerDashboard.post("/websurfers/update", async (req, res) => {
-    console.log(req.body);
+  
     Websurfer.findOne({
         where: {
             id: req.body.payload.id
@@ -161,7 +159,7 @@ routerDashboard.post("/websurfers/delete", async (req, res) => {
 routerDashboard.get("/users", checkSession,  async (req, res) => {
     if (req.session.user.role == "SUPERADMIN") {} else if (req.session.user.role == "RESELLER") {
         userOBJ = await getResellerUser(req.session.user);
-        console.log(userOBJ);
+       
         res.render("dashboard/userPage", {
             role: req.session.user.role,
             users: userOBJ.userOfAllCustomers,
@@ -180,7 +178,7 @@ routerDashboard.get("/users", checkSession,  async (req, res) => {
 });
 
 routerDashboard.post("/users/insert", (req, res) => {
-    console.log(req.body);
+
     User.findOne({
         where: {
             utente: req.body.payload.utente
@@ -301,8 +299,12 @@ routerDashboard.post("/customers/update", async (req, res) => {
 
 
 // TICKETS
-routerDashboard.post("/tickets/insert", (req, res) => {
-    console.log(req.body);
+routerDashboard.post("/tickets/insert", async (req, res) => {
+     var pinAzienda= await Customer.findOne({
+        where:{
+            id: req.body.payload.websurfer.CustomerId,
+        }
+    });
     var date = new Date();
     date.setDate(date.getDate() + 7);
     Ticket.create({
@@ -313,9 +315,9 @@ routerDashboard.post("/tickets/insert", (req, res) => {
         durationDays: 7,
         login: req.body.payload.credentials.ticketUsername,
         password: req.body.payload.credentials.ticketPassword,
-        pinAzienda: req.body.payload.customer.pin,
-        ResellerId: req.body.payload.user.ResellerId,
-        CustomerId: req.body.payload.customer.id,
+        pinAzienda: pinAzienda.pin,
+        ResellerId: req.body.payload.operator.ResellerId,
+        CustomerId: req.body.payload.operator.CustomerId,
         WebsurferId: req.body.payload.websurfer.id
     }).then((result) => {
         if(result != null){
@@ -323,7 +325,7 @@ routerDashboard.post("/tickets/insert", (req, res) => {
         }else{
             res.send({status:"400", msg:"ERRORE NELLA CREAZIONE DEL TICKET"});
         }
-    });
+    }); 
 });
 routerDashboard.post("/tickets/delete",(req, res) => {
   Ticket.findOne({

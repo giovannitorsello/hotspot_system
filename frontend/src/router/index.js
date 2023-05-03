@@ -20,6 +20,11 @@ const routes = [
     
   },
   {
+    path: '/ticket',
+    name: 'ticketHotel',
+    component: () => import('../views/TicketHotel.vue')
+  },
+  {
     path: '/customers',
     name: 'customers',
     component: () => import('../views/Customers.vue')
@@ -50,7 +55,6 @@ const routes = [
     component: () => import('../views/Radius.vue')
   },
 ]
-
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes

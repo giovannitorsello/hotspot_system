@@ -109,13 +109,10 @@
                           <template v-slot:[`item.actions`]="{ item }">
                             <i
                               class="bi bi-trash"
-                              @click="deleteWebsurfer(item.raw)"
+                              @click.stop="deleteWebsurfer(item.raw)"
                             >
                             </i>
-                            <i
-                              class="bi bi-pen"
-                              @click="editWebsurfer(item.raw)"
-                            ></i>
+                           
                           </template>
                         </v-data-table>
                       </v-window-item>
@@ -163,7 +160,6 @@
                           </v-card-text>
                         </v-card>
                       </v-window-item>
-
                       <v-window-item value="three">
                         <v-card>
                           <v-data-table
@@ -291,6 +287,7 @@ export default {
         return false;
       }
     },
+
     enableTabs() {
       if (this.selectedWebsurfer != null && this.tab != "one") {
         return false;
@@ -298,14 +295,17 @@ export default {
         return true;
       }
     },
+
     filterTicket() {
       return this.hsComponentStore.user.data.tickets.filter(
         (ticket) => ticket.WebsurferId == this.selectedWebsurfer.id
       );
     },
   },
+  
   methods: {
     onRowClick(cellData, item) {
+      console.log(item);
       this.selectedWebsurfer = item.item.raw;
       this.tab = "two";
     },
@@ -314,10 +314,6 @@ export default {
 
       this.hidden = true;
       this.tab = "two";
-    },
-    alertDeleteWebsurfer(websurfer) {
-      this.selectedWebsurfer = websurfer;
-      this.tab = "three";
     },
     goBack() {
       this.selectedWebsurfer = "";
@@ -346,7 +342,6 @@ export default {
         .then((response) => {
           if (response.data.status == 200) {
             this.hsComponentStore.deleteWebsurfer(selectedWebsurfer.id);
-            this.tab = "one";
             this.$swal(response.data.msg);
           } else {
             this.$swal(response.data.msg);

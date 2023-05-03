@@ -22,12 +22,10 @@ export const hsStore = defineStore({
     getters: {},
     actions: {
         async fetchUserProfile(username, password) {
-
             const res = await axios.post("/admin/login", {
                 username: username,
                 password: password
             });
-            console.log(res);
             this.user.info = res.data.user;
             if (res.data.user.role == 'HOTEL') {
                 this.fetchHotelData();
@@ -35,7 +33,6 @@ export const hsStore = defineStore({
                 this.fetchUserData();
             }
         },
-
         async fetchUserData() {
             const res = await axios.post("/admin/data/dataReseller", {user: this.user.info});
             this.customerOfThisReseller = res.data.data.customerOfThisReseller;
@@ -65,7 +62,6 @@ export const hsStore = defineStore({
           this.websurfers.push(newWebsurfer);
         }  
         },
-
         addUser(newUser) {
             this.userOfAllCustomers.push(newUser);
         },
@@ -83,11 +79,17 @@ export const hsStore = defineStore({
                 return t.id !== id;
             });
         },
-
         deleteWebsurfer(id) {
-            this.websurfers = this.websurfers.filter((t) => {
-                return t.id !== id;
-            });
+            if (this.user.info.role == 'HOTEL') {
+                this.user.data.websurfers =  this.user.data.websurfers.filter((t) => {
+                    return t.id !== id;
+                });
+            } else {
+                this.websurfers = this.websurfers.filter((t) => {
+                    return t.id !== id;
+                });
+            }
+          
         },
 
         deleteUser(id) {
@@ -120,6 +122,6 @@ export const hsStore = defineStore({
             var newWebsurfer = this.websurfers[oldWebsurfer];
             newWebsurfer = toUpdate;
             this.websurfers[oldWebsurfer] = newWebsurfer;
-        }
+        },        
     }
 });

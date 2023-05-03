@@ -21,7 +21,13 @@
           </li>
         </ul>
       </div>
-      <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
+     
+      <div class="sidebar-footer">
+        <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
+        <router-link to="/">
+        <button class="sidebar-logout btn" @click="logout">ESCI</button>
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -79,6 +85,10 @@ import { hsStore } from "@/store/hotspotSystemStore.js";
             name: "Home",
             path: "/home",
           },
+          {
+            name: "Ticket",
+            path: "/ticket",
+          },
   
         ];
         break;
@@ -129,6 +139,35 @@ import { hsStore } from "@/store/hotspotSystemStore.js";
       }
     },
     
-    methods: {},
+    methods: {
+      
+    },
   };
 </script>
+<style scoped>
+.sidebar-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 30px;
+}
+
+.sidebar-logout {
+  display: block;
+  width: 100%;
+  text-align: center;
+  border: 1px solid black;
+  background: none;
+  padding: 0;
+  font-size: 1.3rem;
+  color: black;
+}
+
+.sidebar-logout:hover {
+  color: #1d2124;
+  cursor: pointer;
+}
+.sidebar-wrapper{
+  box-shadow: 0px 0px 7px 2px;
+}
+</style>

@@ -1,17 +1,13 @@
 const express = require("express");
 const routerDashboard = express.Router();
-const session = require("express-session");
 const {Customer,User,Ticket,Websurfer} = require("../database");
 const createUser = require("../utils/radiusDB");
-const {Op} = require('sequelize');
 const senders= require("../utils/senders");
-const generateRandomCredentials = require("../utils/random");
-const {ticketUsername, ticketPassword} = generateRandomCredentials();
 var getDataUser = require("../data/getDataUser");
 var getResellerUser = require("../data/getResellerData");
 var userOBJ;
 
-// AUTH PAGE
+//AUTH PAGE
 routerDashboard.post("/login", (req, res) => {
     User.findOne({
         where: {
@@ -26,7 +22,6 @@ routerDashboard.post("/login", (req, res) => {
         }
     });
 });
-
 // DATA PER L'UTENTE RESELLER
 routerDashboard.post("/data/dataReseller", async (req, res) => {
     res.send({
@@ -44,9 +39,10 @@ routerDashboard.post("/data/datahotel", async (req, res) => {
         data: await getDataUser(req.body.user)
     });
 });
-
 // INSERIMENTO WEBSURFER E RELATIVO TICKET
 routerDashboard.post("/websurfers/insert",  async (req, res) => {
+    const generateRandomCredentials = require("../utils/random");
+    var {ticketUsername, ticketPassword} = generateRandomCredentials();
     var date= new Date();
     date.setDate(date.getDate() + 7);
     //FETCH PIN OF AGENCY
@@ -55,22 +51,24 @@ routerDashboard.post("/websurfers/insert",  async (req, res) => {
             id: req.body.user.info.CustomerId,
         }
     });
-     Websurfer.findOne({
+    console.log(req.body);
+    await Websurfer.findOne({
         where: {
             email: req.body.payload.email
         }
-    }).then(async (newWebsurfer) => {
+    }).then((newWebsurfer) => {
+        console.log(newWebsurfer);
         if (newWebsurfer === null) {
-            await Websurfer.create({
+            Websurfer.create({
                 firstname: req.body.payload.firstname,
                 lastname: req.body.payload.lastname,
                 email: req.body.payload.email,
                 note: req.body.payload.note,
                 phone: req.body.payload.phone,
                 CustomerId: req.body.user.info.CustomerId,
-            }).then(async (result) => {
+            }).then((result) => {
                 if (result != null) {
-                    await Ticket.create({
+                    Ticket.create({
                         emissionDate: Date.now(),
                         firstUse: Date.now(),
                         expirationDate: date,
@@ -88,7 +86,8 @@ routerDashboard.post("/websurfers/insert",  async (req, res) => {
                             createUser(ticketUsername,ticketPassword);
                             //INVIO SMS E EMAIL
                             senders.sendTicketByEmail(result.email, newTicket);
-                            senders.sendTicketBySms(result.phone, newTicket);
+                           // senders.sendTicketBySms(result.phone, newTicket);
+
                             //RISPOSTA SERVER CON IL NUOVO WEBSURFER E IL TICKET
                             res.send({status: "200", msg: "WEBSURFER INSERITO", newWebsurfer: result, newTicket: newTicket});
                         }else{
@@ -98,16 +97,15 @@ routerDashboard.post("/websurfers/insert",  async (req, res) => {
                     });
                 } else {
                     //EMAIL GIA PRESENTE NEL DATABASE
-                    res.send({status:"400", msg:"WEBSURFER GIA ESISTENTE"});
+                    res.send({status:"400", msg:""});
                 }
             });
         } else {
-            res.send("PROBLEMA A CARICARE LE RISORSE DEL SERVER");
+            res.send({status:"400", msg:"WEBSURFER GIA ESISTENTE"});
         }
+      
     });   
 });
-
-
 //AGGIORNAMENTO WEBSURFER
 routerDashboard.post("/websurfers/update", async (req, res) => {
     Websurfer.findOne({
@@ -290,8 +288,6 @@ routerDashboard.post("/customers/update", async (req, res) => {
         });
     })
 });
-
-
 // TICKETS
 routerDashboard.post("/tickets/insert", async (req, res) => {
      var pinAzienda= await Customer.findOne({

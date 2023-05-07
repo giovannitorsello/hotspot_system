@@ -52,12 +52,13 @@
         await this.hsComponentStore.fetchUserProfile(this.username, this.password);
 
         if (this.hsComponentStore.user.info && this.hsComponentStore.user.info.id && this.hsComponentStore.user.info.id > 0) {
-          if (this.hsComponentStore.user.info.role == "HOTEL") {
-            this.$router.push("home");
-          } else {
-            this.$router.push("dashboard");
-          }
+          if (this.hsComponentStore.user.info.role == "SUPERADMIN") this.$router.push("superadmin/dashboard");
+
+          if (this.hsComponentStore.user.info.role == "RESELLER") this.$router.push("reseller/dashboard");
+
+          if (this.hsComponentStore.user.info.role == "HOTEL") this.$router.push("customer/dashboard");
         } else {
+          this.$router.push("/");
           this.$swal("Credenziali errate!");
         }
       },

@@ -143,6 +143,9 @@ export const hsStore = defineStore({
       if (!res.data || !res.data.ticket) return {};
       return res.data.ticket;
     },
+    async fetchStatisticsSuperadmin() {},
+    async fetchStatisticsReseller(reseller) {},
+    async fetchStatisticsCustomer(customer) {},
     async fetchUserData() {
       const res = await axios.post("/admin/data/dataReseller", { user: this.user.info });
       this.customerOfThisReseller = res.data.data.customerOfThisReseller;
@@ -154,7 +157,6 @@ export const hsStore = defineStore({
       this.activeTickets = res.data.data.activeTickets;
       this.expiredTickets = res.data.data.expiredTickets;
     },
-
     async fetchHotelData() {
       const res = await axios.post("/admin/data/dataHotel", { user: this.user.info });
       this.user.data.websurfers = res.data.data.websurfers;

@@ -5,7 +5,8 @@
       "request": "launch",
       "name": "Server API Hotspot System",
       "runtimeVersion": "16",
-      "program": "${workspaceFolder}/index.js"
+      "program": "${workspaceFolder}/server/index.js",
+      "cwd": "${workspaceFolder}/server"
     }
   ]
 }

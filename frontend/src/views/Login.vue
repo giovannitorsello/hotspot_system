@@ -42,26 +42,19 @@
     },
     data() {
       return {
-        username: "antonio",
-        password: "antonio",
+        username: "hotel",
+        password: "hotel",
       };
     },
 
     methods: {
       async checkCredentials() {
-
-        
-
-
-
         await this.hsComponentStore.fetchUserProfile(this.username, this.password);
 
-      if (this.hsComponentStore.user.info && this.hsComponentStore.user.info.id && this.hsComponentStore.user.info.id>0) {
-       
-          if(this.hsComponentStore.user.info.role == 'HOTEL'){
-
+        if (this.hsComponentStore.user.info && this.hsComponentStore.user.info.id && this.hsComponentStore.user.info.id > 0) {
+          if (this.hsComponentStore.user.info.role == "HOTEL") {
             this.$router.push("home");
-          }else{
+          } else {
             this.$router.push("dashboard");
           }
         } else {

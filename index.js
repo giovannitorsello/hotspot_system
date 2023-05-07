@@ -1,5 +1,5 @@
 var config = require("./config.js").load();
-var cors = require('cors');
+var cors = require("cors");
 const express = require("express");
 const app = express();
 const schedule = require("node-schedule");
@@ -11,6 +11,7 @@ const bodyParser = require("body-parser");
 const passportConfig = require("./utils/passport");
 const routes = require("./routes/routes");
 const routesDashboard = require("./routes/routesDashboard");
+const routesApiData = require("./routes/routesApiData");
 const { sequelize, connectToDatabase, syncModels } = require("./database");
 
 connectToDatabase();
@@ -26,6 +27,7 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/public/assets"));
 app.use("/", routes);
+app.use("/", routesApiData);
 app.use("/admin", routesDashboard);
 
 app.use(passport.initialize());

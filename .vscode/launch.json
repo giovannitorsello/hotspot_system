@@ -3,7 +3,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch test",
+      "name": "Server API Hotspot System",
       "runtimeVersion": "16",
       "program": "${workspaceFolder}/index.js"
     }

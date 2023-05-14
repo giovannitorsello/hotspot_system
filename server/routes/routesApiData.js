@@ -62,9 +62,21 @@ router.post("/api/data/getWebsurfersByCustomer", async function (req, res) {
 });
 
 router.post("/api/data/getUsersByCustomer", async function (req, res) {
-  if (!req.body || !req.body.customer || !req.body.customer.id) res.send({ status: "404", msg: "No customer data present", state: "error", websurfers: {} });
+  if (!req.body || !req.body.customer || !req.body.customer.id) res.send({ status: "404", msg: "No customer data present", state: "error", users: {} });
   const customer = req.body.customer;
   var users = await database.getUsersByCustomer(customer);
+  res.send({
+    status: "200",
+    msg: "Success.",
+    state: "ok",
+    users: users,
+  });
+});
+
+router.post("/api/data/getUsersByReseller", async function (req, res) {
+  if (!req.body || !req.body.reseller || !req.body.reseller.id) res.send({ status: "404", msg: "No reseller data present", state: "error", users: {} });
+  const reseller = req.body.reseller;
+  var users = await database.getUsersByReseller(reseller);
   res.send({
     status: "200",
     msg: "Success.",

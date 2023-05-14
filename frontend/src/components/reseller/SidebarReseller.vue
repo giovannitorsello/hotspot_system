@@ -68,12 +68,12 @@
           path: "/reseller/websurfers",
         },
         {
-          name: "Ruoli",
-          path: "/reseller/users",
-        },
-        {
           name: "Ticket",
           path: "/reseller/tickets",
+        },
+        {
+          name: "Utenti",
+          path: "/reseller/users",
         },
       ];
     },

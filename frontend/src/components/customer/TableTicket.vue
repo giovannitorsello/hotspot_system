@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-tabs v-model="tab" bg-color="#435ebe">
-      <v-tab value="one" color="white">TUTTI</v-tab>
+      <v-tab value="one" color="white">Ticket Hotel</v-tab>
       <!--   <v-tab value="two" color="white">MODIFICA</v-tab>
                           <v-tab value="three" color="white">ELIMINA</v-tab> -->
     </v-tabs>
@@ -10,15 +10,19 @@
         <v-window-item value="one">
           <v-text-field label="CERCA"></v-text-field>
           <v-data-table
-            :headers="headerField"
-            :items="hsComponentStore.ticketsOfAllCustomers"
+            :headers="header"
+            :items="hsComponentStore.ticketsActiveOfSelectedCustomer"
             :search="search"
             :page.sync="page"
             :items-per-page="itemsPerPage"
             :hide-default-header="true"
             :hide-default-footer="true"
             disable-pagination
+            @click:row="selectTicket"
           >
+            <template v-slot:[`item.bandwidthProfile`]="{ item }">
+              {{ getBandwidthProfileName(item) }}
+            </template>
             <template v-slot:[`item.actions`]="{ item }">
               <i class="bi bi-trash" @click="deleteTicket(item.raw)"> </i>
             </template>
@@ -88,43 +92,17 @@
           { title: "ID", key: "id" },
           { title: "DATA EMISSIONE", key: "emissionDate" },
           { title: "DATA SCADENZA", key: "expirationDate" },
+          { title: "DURATA IN GIORNI", key: "durationDays" },
+          { title: "PROFILO BANDA", key: "bandwidthProfile" },
           { title: "LOGIN", key: "login" },
           { title: "PASSWORD", key: "password" },
-          { title: "HOTEL", key: "CustomerId" },
-          { title: "UTENTE", key: "WebsurferId" },
           { title: "Actions", key: "actions" },
         ],
         page: 1,
         itemsPerPage: 10,
       };
     },
-    computed: {
-      headerField() {
-        if (this.hsComponentStore.user.role == "HOTEL") {
-          var header = [
-            { title: "ID", key: "id" },
-            { title: "DATA EMISSIONE", key: "emissionDate" },
-            { title: "DATA SCADENZA", key: "expirationDate" },
-            { title: "LOGIN", key: "login" },
-            { title: "PASSWORD", key: "password" },
-            { title: "UTENTE", key: "WebsurferId" },
-            { title: "Actions", key: "actions" },
-          ];
-        } else {
-          var header = [
-            { title: "ID", key: "id" },
-            { title: "DATA EMISSIONE", key: "emissionDate" },
-            { title: "DATA SCADENZA", key: "expirationDate" },
-            { title: "LOGIN", key: "login" },
-            { title: "PASSWORD", key: "password" },
-            { title: "HOTEL", key: "CustomerId" },
-            { title: "UTENTE", key: "WebsurferId" },
-            { title: "Actions", key: "actions" },
-          ];
-        }
-        return header;
-      },
-    },
+    computed: {},
     props: {},
     methods: {
       insertTicket() {
@@ -153,6 +131,19 @@
             this.$swal(response.data.msg);
           }
         });
+      },
+      selectTicket(row, object) {
+        var ticketId = object.item.columns.id;
+        //recover websurfer object for this ticket
+        var activeTickets = this.hsComponentStore.ticketsActiveOfSelectedCustomer;
+        var webSurfers = this.hsComponentStore.websurfersOfSelectedCustomer;
+        var selectedTicket = activeTickets.find((elem) => elem.id == ticketId);
+        var webSurfer = webSurfers.find((elem) => elem.id == selectedTicket.WebsurferId);
+        //recover websurfer object for this ticket
+        console.log("Selected ticket is is:", selectedTicket);
+        console.log("Websurfer of this ticket is: ", webSurfer);
+        var msg = webSurfer.firstname + " " + webSurfer.lastname;
+        this.$swal("Ticket appartenente a " + msg);
       },
     },
   };

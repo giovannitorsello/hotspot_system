@@ -18,7 +18,6 @@
             disable-pagination
             @click:row="selectTicket"
           >
-            <!-- TODO SHOW PROFILE NAME OF BANDWIDTH -->
             <template v-slot:[`item.bandwidthProfile`]="{ item }">
               {{ getBandwidthProfileName(item) }}
             </template>

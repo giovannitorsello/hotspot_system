@@ -1,4 +1,4 @@
-const { Sequelize, QueryTypes } = require("sequelize");
+const { Sequelize, QueryTypes, Op } = require("sequelize");
 var config = require("./config.js").load();
 const generateRandomCredentials = require("./utils/random");
 const createRadiusUser = require("./utils/radiusDB");
@@ -351,21 +351,28 @@ const getWebSurfersByCustomer = async (customer) => {
 
 const getUsersByCustomer = async (customer) => {
   if (!customer || !customer.id) return {};
-  var users = await User.findAll({ where: { CustomerId: customer.id } });
+  var users = await User.findAll({ where: { [Op.and]: { CustomerId: customer.id, role: "HOTEL" } } });
   return users;
 };
 
 const getCustomerByUser = async (user) => {
-  if (!user || !user.id) return {};
+  if (!user || !user.id || !user.role || user.role !== "HOTEL") return {};
   var customer = await Customer.findOne({ where: { id: user.CustomerId } });
   return customer;
 };
 
 const getResellerByUser = async (user) => {
-  if (!user || !user.id) return {};
-  var reseller = await Reseller.findOne({ where: { id: user.CustomerId } });
+  if (!user || !user.id || !user.role || user.role !== "RESELLER") return {};
+  var reseller = await Reseller.findOne({ where: { id: user.ResellerId } });
   return reseller;
 };
+
+const getUsersByReseller = async (reseller) => {
+  if (!reseller || !reseller.id) return {};
+  var users = await User.findAll({ where: { [Op.and]: { ResellerId: reseller.id, role: "RESELLER" } } });
+  return users;
+};
+
 const getTicketsByCustomer = async (customer) => {
   if (!customer || !customer.id) return {};
   var tickets = await Ticket.findAll({ where: { CustomerId: customer.id } });
@@ -443,6 +450,20 @@ const getCustomersByFulltextSearch = async (searchString) => {
   return customer;
 };
 
+const deleteCustomerWebSurfers = async (customer) => {
+  if (!customer || !customer.id) return;
+  const sql = "DELETE FROM websurfer WHERE CustomerId=" + customer.id + ";";
+  const deletedData = await sequelize.query(sql, { type: QueryTypes.DELETE });
+  return deletedData;
+};
+
+const deleteCustomerTickets = async (customer) => {
+  if (!customer || !customer.id) return;
+  const sql = "DELETE FROM ticket WHERE CustomerId=" + customer.id + ";";
+  const deletedData = await sequelize.query(sql, { type: QueryTypes.DELETE });
+  return deletedData;
+};
+
 const deleteWebSurferTickets = async (websurfer) => {
   if (!websurfer || !websurfer.id) return;
   const sql = "DELETE FROM ticket WHERE WebsurferId=" + websurfer.id + ";";
@@ -463,6 +484,7 @@ module.exports = {
   generateTicket: generateTicket,
   getResellers: getResellers,
   getResellerByUser: getResellerByUser,
+  getUsersByReseller: getUsersByReseller,
   getCustomerByUser: getCustomerByUser,
   getCustomersByReseller: getCustomersByReseller,
   getWebSurfersByCustomer: getWebSurfersByCustomer,
@@ -475,4 +497,6 @@ module.exports = {
   getTicketsByCustomer: getTicketsByCustomer,
   getUsersByCustomer: getUsersByCustomer,
   deleteWebSurferTickets: deleteWebSurferTickets,
+  deleteCustomerWebSurfers: deleteCustomerWebSurfers,
+  deleteCustomerTickets: deleteCustomerTickets,
 };

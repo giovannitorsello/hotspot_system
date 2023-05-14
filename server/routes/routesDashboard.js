@@ -20,47 +20,52 @@ routerDashboard.post("/login", (req, res) => {
     },
   }).then(async function (user) {
     if (user != null) {
-      //Case superadmin (Wifinetcom). send resellers
-      if (user.role === "SUPERADMIN") {
-        var resellers = await db.getResellers();
-        res.send({ status: "200", msg: "Login ok.", state: "ok", user: user, resellers: resellers });
-      }
+      try {
+        //Case superadmin (Wifinetcom). send resellers
+        if (user.role === "SUPERADMIN") {
+          var resellers = await db.getResellers();
+          res.send({ status: "200", msg: "Login ok.", state: "ok", user: user, resellers: resellers });
+        }
 
-      //Case reseller send user, customers
-      if (user.role === "RESELLER") {
-        var reseller = await db.getResellerByUser(user);
-        var customers = await db.getCustomersByReseller(reseller);
-        res.send({
-          status: "200",
-          msg: "Login ok.",
-          state: "ok",
-          user: user,
-          reseller: reseller,
-          customers: customers,
-        });
-      }
+        //Case reseller send user, customers
+        if (user.role === "RESELLER") {
+          var reseller = await db.getResellerByUser(user);
+          var customers = await db.getCustomersByReseller(reseller);
+          res.send({
+            status: "200",
+            msg: "Login ok.",
+            state: "ok",
+            user: user,
+            reseller: reseller,
+            customers: customers,
+          });
+        }
 
-      //Case hotel send user, customer (no websurfer, tickets)
-      if (user.role === "HOTEL") {
-        var customer = await db.getCustomerByUser(user);
-        //var websurfers = db.getWebsurfersByCustomer(customer);
-        //var tickets = db.getTicketsByCustomer(customer);
-        res.send({
-          status: "200",
-          msg: "Login ok.",
-          state: "ok",
-          user: user,
-          customer: customer,
-          //websurfers: websurfers,
-          //tickets: tickets,
-        });
-      }
-      //Case user
-      if (user.role === "USER") {
-        //TODO
+        //Case hotel send user, customer (no websurfer, tickets)
+        if (user.role === "HOTEL") {
+          var customer = await db.getCustomerByUser(user);
+          //var websurfers = db.getWebsurfersByCustomer(customer);
+          //var tickets = db.getTicketsByCustomer(customer);
+          res.send({
+            status: "200",
+            msg: "Login ok.",
+            state: "ok",
+            user: user,
+            customer: customer,
+            //websurfers: websurfers,
+            //tickets: tickets,
+          });
+        }
+        //Case user
+        if (user.role === "USER") {
+          //TODO
+        }
+      } catch (error) {
+        console.log(error);
+        res.send({ status: "404", msg: "Login error." });
       }
     } else {
-      res.send({ status: "404", msg: "Login incorrect" });
+      res.send({ status: "404", msg: "Login incorrect." });
     }
   });
 });
@@ -311,12 +316,16 @@ routerDashboard.post("/customers/delete", (req, res) => {
     where: {
       id: req.body.payload.id,
     },
-  }).then((result) => {
-    if (result !== null) {
-      result.destroy();
-      res.send({ status: "200", msg: "CLIENTE ELIMINATO CON SUCCESSO!" });
+  }).then(async (customer) => {
+    if (customer !== null) {
+      //Delete all websurfers and tickets
+      resDelWebsurfer = await db.deleteCustomerWebSurfers(customer);
+      resDelTickers = await db.deleteCustomerTickets(customer);
+      //finally destroy customer
+      customer.destroy();
+      res.send({ status: "200", msg: "CLIENTE ELIMINATO" });
     } else {
-      res.send({ status: "404", msg: "ERRORE NELLA CANCELLAZIONE!" });
+      res.send({ status: "404", msg: "ERRORE NELLA CANCELLAZIONE DEL CLIENTE" });
     }
   });
 });

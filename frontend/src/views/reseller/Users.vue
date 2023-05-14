@@ -118,13 +118,9 @@
                         <v-window v-model="tab">
                           <v-window-item value="one">
                             <v-text-field v-model="search" label="CERCA"></v-text-field>
-                            <v-data-table :headers="header" :items="hsComponentStore.userOfAllCustomers" :search="search" v-model:page.sync="page" :items-per-page="itemsPerPage" disable-pagination>
+                            <v-data-table :headers="header" :items="hsComponentStore.usersOfSelectedReseller" :search="search" :page.sync="page" :items-per-page="itemsPerPage" disable-pagination>
                               <template v-slot:[`item.role`]="{ item }">
-                                <span class="badge bg-primary" v-if="item.raw.role == 'RESELLER'">{{ item.raw.role }}</span>
-
-                                <span class="badge bg-success" v-if="item.raw.role == 'HOTEL'">{{ item.raw.role }}</span>
-
-                                <span class="badge bg-dark" v-if="item.raw.role == 'USER'">{{ item.raw.role }}</span>
+                                <span class="badge bg-primary">{{ item.raw.role }}</span>
                               </template>
                               <template v-slot:[`item.actions`]="{ item }">
                                 <i class="bi bi-trash" @click="deleteWebsurfer(item.raw)"> </i>
@@ -201,8 +197,6 @@
           { title: "RUOLO", key: "role" },
           { title: "USERNAME", key: "utente" },
           { title: "PASSWORD", key: "password" },
-          { title: "RESELLER _ID", key: "ResellerId" },
-          { title: "CUSTOMER_ID", key: "CustomerId" },
           { title: "Actions", key: "actions" },
         ],
         page: 1,
@@ -231,7 +225,6 @@
       },
 
       insertUser() {
-        this.payload.CustomerId = this.hsComponentStore.$state.user.CustomerId;
         this.payload.ResellerId = this.hsComponentStore.$state.user.ResellerId;
         axios
           .post("/admin/users/insert", {

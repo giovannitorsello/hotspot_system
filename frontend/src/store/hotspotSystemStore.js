@@ -27,7 +27,8 @@ export const hsStore = defineStore({
     customersOfSelectedReseller: [],
     websurfersOfSelectedCustomer: [],
     usersOfSelectedCustomer: [],
-    ticketsOfSelectedCustomer: [],
+    usersOfSelectedReseller: [],
+
     ticketsActiveOfSelectedCustomer: [],
     ticketsExpiredOfSelectedCustomer: [],
   }),
@@ -60,7 +61,8 @@ export const hsStore = defineStore({
         this.loggedUser = res.data.user;
         this.loggedReseller = res.data.reseller;
         this.loggedCustomer = {};
-        this.customersOfSelectedReseller = this.fetchCustomersByReseller();
+        this.customersOfSelectedReseller = await this.fetchCustomersByReseller(this.loggedReseller);
+        this.usersOfSelectedReseller = await this.fetchUsersByReseller(this.loggedReseller);
         console.log("Logged reseller is:", res.data.reseller);
       }
       if (res.data.user.role === "HOTEL") {
@@ -69,16 +71,12 @@ export const hsStore = defineStore({
         this.loggedReseller = {};
         this.websurfersOfSelectedCustomer = await this.fetchWebsurfersByCustomer(res.data.customer);
 
-        //SECTION TICKETS
-        // TO REMOVE
-        this.ticketsOfSelectedCustomer = await this.fetchTicketsByCustomer(res.data.customer);
-
-        //USE THIS
+        //SECTION TICKETS CUSTOMER
         this.ticketsActiveOfSelectedCustomer = await this.fetchActiveTicketsByCustomer(res.data.customer);
         this.ticketsExpiredOfSelectedCustomer = await this.fetchExpiredTicketsByCustomer(res.data.customer);
-        //SECTION TICKETS
+        //SECTION TICKETS CUSTOMER
 
-        this.usersOfSelectedCustomer = await this.fetchUserByCustomer(res.data.customer);
+        this.usersOfSelectedCustomer = await this.fetchUsersByCustomer(res.data.customer);
         console.log("Logged customer is:", res.data.customer);
         //To remove
         this.fetchHotelData();
@@ -119,9 +117,15 @@ export const hsStore = defineStore({
       if (!res.data || !res.data.websurfers) return {};
       return res.data.websurfers;
     },
-    async fetchUserByCustomer(customer) {
+    async fetchUsersByCustomer(customer) {
       if (!customer || !customer.id) return {};
       const res = await axios.post("/api/data/getUsersByCustomer", { customer: customer });
+      if (!res.data || !res.data.users) return {};
+      return res.data.users;
+    },
+    async fetchUsersByReseller(reseller) {
+      if (!reseller || !reseller.id) return {};
+      const res = await axios.post("/api/data/getUsersByReseller", { reseller: reseller });
       if (!res.data || !res.data.users) return {};
       return res.data.users;
     },
@@ -229,12 +233,14 @@ export const hsStore = defineStore({
     },
 
     deleteTicket(id) {
-      if (this.user.info.role == "HOTEL") {
-        this.ticketsOfSelectedCustomer = this.ticketsOfSelectedCustomer.filter((t) => {
+      if (this.user.info.role == "RESELLER") {
+        this.ticketsOfAllCustomers = this.ticketsOfAllCustomers.filter((t) => {
           return t.id !== id;
         });
-      } else {
-        this.ticketsOfAllCustomers = this.ticketsOfAllCustomers.filter((t) => {
+      }
+
+      if (this.user.info.role == "HOTEL") {
+        this.ticketsActiveOfSelectedCustomer = this.ticketsActiveOfSelectedCustomer.filter((t) => {
           return t.id !== id;
         });
       }

@@ -67,9 +67,7 @@
                                   </div>
                                 </div>
                               </div>
-                            
-                             
-                           
+
                               <div class="col-12 d-flex justify-content-end">
                                 <button type="submit" class="btn btn-primary me-1 mb-1" @click="insertUser()">INSERISCI</button>
                               </div>
@@ -90,7 +88,7 @@
                         <v-window v-model="tab">
                           <v-window-item value="one">
                             <v-text-field v-model="search" label="CERCA"></v-text-field>
-                            <v-data-table :headers="header" :items="hsComponentStore.usersOfSelectedCustomer" :search="search" v-model:page.sync="page" :items-per-page="itemsPerPage" disable-pagination>
+                            <v-data-table :headers="header" :items="hsComponentStore.usersOfSelectedCustomer" :search="search" :page.sync="page" :items-per-page="itemsPerPage" disable-pagination>
                               <template v-slot:[`item.role`]="{ item }">
                                 <span class="badge bg-primary" v-if="item.raw.role == 'RESELLER'">{{ item.raw.role }}</span>
 
@@ -119,7 +117,7 @@
                                       <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="goBack()"></i>
                                       <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="saveWebsurfer(selectedCustomer)"></i>
                                     </v-sheet>
-                                   </v-col>
+                                  </v-col>
                                 </v-row>
                               </v-card-text>
                             </v-card>
@@ -202,7 +200,7 @@
         this.payload.ResellerId = this.hsComponentStore.$state.user.ResellerId;
         axios
           .post("/admin/users/insert", {
-            payload: this.payload, 
+            payload: this.payload,
           })
           .then((response) => {
             if (response.data.status == 200) {

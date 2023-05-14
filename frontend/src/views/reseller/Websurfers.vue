@@ -97,6 +97,7 @@
 </template>
 
 <script>
+  import axios from "axios";
   import { hsStore } from "@/store/hotspotSystemStore.js";
   import TableWebsurfer from "@/components/reseller/TableWebsurfer.vue";
   import SidebarReseller from "@/components/reseller/SidebarReseller.vue";
@@ -119,6 +120,14 @@
         },
       };
     },
-    methods: {},
+    methods: {
+      insertWebsurfer(){
+        axios.post("/admin/websurfers/insert",this.payload).then((result) =>{
+          if(result != null){
+            
+          }
+        })
+      }
+    },
   };
 </script>

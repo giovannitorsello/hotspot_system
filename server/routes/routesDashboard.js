@@ -55,7 +55,6 @@ routerDashboard.post("/login", (req, res) => {
           //tickets: tickets,
         });
       }
-
       //Case user
       if (user.role === "USER") {
         //TODO
@@ -86,16 +85,10 @@ routerDashboard.post("/data/datahotel", async (req, res) => {
 
 // INSERIMENTO WEBSURFER E RELATIVO TICKET
 routerDashboard.post("/websurfers/insert", async (req, res) => {
-  const generateRandomCredentials = require("../../utils/random");
+  const generateRandomCredentials = require("../utils/random");
   var { ticketUsername, ticketPassword } = generateRandomCredentials();
   var date = new Date();
   date.setDate(date.getDate() + 7);
-  //FETCH PIN OF AGENCY
-  var pinAzienda = await Customer.findOne({
-    where: {
-      id: req.body.user.info.CustomerId,
-    },
-  });
   console.log(req.body);
   await Websurfer.findOne({
     where: {
@@ -110,20 +103,22 @@ routerDashboard.post("/websurfers/insert", async (req, res) => {
         email: req.body.payload.email,
         note: req.body.payload.note,
         phone: req.body.payload.phone,
-        CustomerId: req.body.user.info.CustomerId,
+        CustomerId: req.body.user.id,
       }).then((result) => {
         if (result != null) {
           Ticket.create({
+            state: "active",
             emissionDate: Date.now(),
             firstUse: Date.now(),
             expirationDate: date,
             expirationUsageDate: date,
-            durationDays: 7,
+            durationDays: req.body.payload.durationDays,
+            bandwidthProfile: req.body.payload.bandwidthProfile,
             login: ticketUsername,
             password: ticketPassword,
-            pinAzienda: pinAzienda.pin,
-            ResellerId: req.body.user.info.ResellerId,
-            CustomerId: req.body.user.info.CustomerId,
+            pinAzienda: req.body.user.pin,
+            ResellerId: req.body.user.ResellerId,
+            CustomerId: req.body.user.id,
             WebsurferId: result.id,
           }).then((newTicket) => {
             if (newTicket != null) {
@@ -149,6 +144,7 @@ routerDashboard.post("/websurfers/insert", async (req, res) => {
     }
   });
 });
+
 //AGGIORNAMENTO WEBSURFER
 routerDashboard.post("/websurfers/update", async (req, res) => {
   Websurfer.findOne({
@@ -175,16 +171,37 @@ routerDashboard.post("/websurfers/update", async (req, res) => {
 });
 //ELIMINAZIONE WEBSURFER
 routerDashboard.post("/websurfers/delete", async (req, res) => {
+  if (!req.body.websurfer || !req.body.websurfer.id) {
+    res.send({ status: "400", msg: "/websurfer/delete error no valid data." });
+    return;
+  }
+
+  var websurfer = req.body.websurfer;
   Websurfer.findOne({
     where: {
-      id: req.body.payload.id,
+      id: websurfer.id,
     },
   }).then((websurferToDestroy) => {
+    //Delete all tickets of Web surfers
     if (websurferToDestroy !== null) {
-      websurferToDestroy.destroy();
-      res.send({ status: "200", msg: "WEBSURFER ELIMINATO CON SUCCESSO!" });
+      db.deleteWebSurferTickets(websurfer)
+        .then((deletedData) => {
+          websurferToDestroy
+            .destroy()
+            .then((result) => {
+              res.send({ status: "200", msg: "WEBSURFER ELIMINATO" });
+            })
+            .catch((error) => {
+              console.log("Error in websurfer delete", error);
+              res.send({ status: "400", msg: "ERRORE NELLA CANCELLAZIONE WEBSURFER" });
+            });
+        })
+        .catch((errorTicketDelete) => {
+          console.log("Error in websurfer delete", errorTicketDelete);
+          res.send({ status: "400", msg: "ERRORE NELLA CANCELLAZIONE TICKET WEBSURFER" });
+        });
     } else {
-      res.send({ status: "400", msg: "ERRORE NELLA CANCELLAZIONE!" });
+      res.send({ status: "400", msg: "ERRORE NELLA CANCELLAZIONE DEL WEBSURFER" });
     }
   });
 });
@@ -303,6 +320,7 @@ routerDashboard.post("/customers/delete", (req, res) => {
     }
   });
 });
+
 routerDashboard.post("/customers/update", async (req, res) => {
   Customer.findOne({
     where: {
@@ -353,6 +371,8 @@ routerDashboard.post("/tickets/insert", async (req, res) => {
     login: req.body.payload.credentials.ticketUsername,
     password: req.body.payload.credentials.ticketPassword,
     pinAzienda: pinAzienda.pin,
+    state: "active",
+    serialNumber: "",
     ResellerId: req.body.payload.operator.ResellerId,
     CustomerId: req.body.payload.operator.CustomerId,
     WebsurferId: req.body.payload.websurfer.id,
@@ -364,6 +384,7 @@ routerDashboard.post("/tickets/insert", async (req, res) => {
     }
   });
 });
+
 routerDashboard.post("/tickets/delete", (req, res) => {
   Ticket.findOne({
     where: {

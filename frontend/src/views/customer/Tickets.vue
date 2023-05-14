@@ -17,59 +17,10 @@
       </div>
     </div>
     <div id="main">
-      <header class="mb-3">
-        <a href="#" class="burger-btn d-block d-xl-none">
-          <i class="bi bi-justify fs-3"></i>
-        </a>
-      </header>
+     
       <div class="page-heading">
         <h3>TICKET</h3>
       </div>
-
-      <section id="multiple-column-form">
-        <div class="row match-height">
-          <div class="col-12">
-            <div class="card">
-              <div class="card-header">
-                <h4 class="card-title">INSERISCI NUOVO TICKET</h4>
-              </div>
-              <div class="card-content">
-                <div class="card-body">
-                  <div class="col-md-6 col-12">
-                    <div class="form-group">
-                      <label for="first-name-column">SELEZIONA STRUTTURA: {{ payload.customer }}</label>
-                      <fieldset class="form-group">
-                        <select v-model="payload.customer" class="form-select">
-                          <option v-for="customer in hsComponentStore.customerOfThisReseller" :value="customer" :key="customer.id">
-                            {{ customer.companyName }}
-                          </option>
-                        </select>
-                      </fieldset>
-                    </div>
-                  </div>
-                  <div class="col-md-6 col-12" v-if="payload.customer != ''">
-                    <div class="form-group">
-                      <label for="first-name-column">SELEZIONA CLIENTE: {{ payload.websurfer }}</label>
-                      <fieldset class="form-group">
-                        <select v-model="payload.websurfer" class="form-select">
-                          <template v-for="websurfer in hsComponentStore.websurfers" :key="websurfer.id">
-                            <option v-if="websurfer.CustomerId == payload.customer.id" :value="websurfer">
-                              {{ websurfer.firstname }}
-                            </option>
-                          </template>
-                        </select>
-                      </fieldset>
-                    </div>
-                  </div>
-                  <div class="col-12 d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary me-1 mb-1" @click="insertTicket()">Inserisci</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <div class="page-content">
         <section class="row">
@@ -89,7 +40,7 @@
                               <v-text-field label="CERCA"></v-text-field>
                               <v-data-table
                                 :headers="header"
-                                :items="hsComponentStore.ticketsOfAllCustomers"
+                                :items="hsComponentStore.ticketsOfSelectedCustomer"
                                 :search="search"
                                 :page.sync="page"
                                 :items-per-page="itemsPerPage"
@@ -98,7 +49,7 @@
                                 disable-pagination
                               >
                                 <template v-slot:[`item.actions`]="{ item }">
-                                  <i class="bi bi-trash" @click="deleteTicket(item.raw)"> </i>
+                                  <i class="bi bi-trash" title="ELIMINA" @click="deleteTicket(item.raw)"> </i>
                                 </template>
                               </v-data-table>
                             </v-window-item>
@@ -123,8 +74,8 @@
                                   <v-row>
                                     <v-col>
                                       <v-sheet class="pa-2 ma-1" align="end">
-                                        <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="goBack()"></i>
-                                        <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="saveWebsurfer(selectedCustomer)"></i>
+                                        <i class="bi bi-arrow-left ma-1" title="INDIETRO" style="font-size: xx-large" @click="goBack()"></i>
+                                        <i class="bi bi-check-circle ma-1" title="SALVA" style="font-size: xx-large" @click="saveWebsurfer(selectedCustomer)"></i>
                                       </v-sheet>
                                     </v-col>
                                   </v-row>
@@ -182,7 +133,6 @@
           { title: "DATA SCADENZA", key: "expirationDate" },
           { title: "LOGIN", key: "login" },
           { title: "PASSWORD", key: "password" },
-          { title: "HOTEL", key: "CustomerId" },
           { title: "UTENTE", key: "WebsurferId" },
           { title: "Actions", key: "actions" },
         ],

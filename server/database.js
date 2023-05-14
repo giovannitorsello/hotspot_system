@@ -1,4 +1,4 @@
-const Sequelize = require("sequelize");
+const { Sequelize, QueryTypes } = require("sequelize");
 var config = require("./config.js").load();
 const generateRandomCredentials = require("./utils/random");
 const createRadiusUser = require("./utils/radiusDB");
@@ -223,6 +223,10 @@ const Ticket = sequelize.define(
       type: Sequelize.INTEGER,
       allowNull: true,
     },
+    bandwidthProfile: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
     login: {
       type: Sequelize.STRING,
       allowNull: true,
@@ -242,10 +246,6 @@ const Ticket = sequelize.define(
     state: {
       type: Sequelize.STRING,
       allowNull: true,
-    },
-    pinAzienda: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
     },
   },
   { tableName: "ticket" }
@@ -349,6 +349,12 @@ const getWebSurfersByCustomer = async (customer) => {
   return websurfers;
 };
 
+const getUsersByCustomer = async (customer) => {
+  if (!customer || !customer.id) return {};
+  var users = await User.findAll({ where: { CustomerId: customer.id } });
+  return users;
+};
+
 const getCustomerByUser = async (user) => {
   if (!user || !user.id) return {};
   var customer = await Customer.findOne({ where: { id: user.CustomerId } });
@@ -359,6 +365,11 @@ const getResellerByUser = async (user) => {
   if (!user || !user.id) return {};
   var reseller = await Reseller.findOne({ where: { id: user.CustomerId } });
   return reseller;
+};
+const getTicketsByCustomer = async (customer) => {
+  if (!customer || !customer.id) return {};
+  var tickets = await Ticket.findAll({ where: { CustomerId: customer.id } });
+  return tickets;
 };
 
 const getActiveTicketsByCustomer = async (customer) => {
@@ -432,6 +443,13 @@ const getCustomersByFulltextSearch = async (searchString) => {
   return customer;
 };
 
+const deleteWebSurferTickets = async (websurfer) => {
+  if (!websurfer || !websurfer.id) return;
+  const sql = "DELETE FROM ticket WHERE WebsurferId=" + websurfer.id + ";";
+  const deletedData = await sequelize.query(sql, { type: QueryTypes.DELETE });
+  return deletedData;
+};
+
 module.exports = {
   sequelize: sequelize,
   Websurfer: Websurfer,
@@ -454,4 +472,7 @@ module.exports = {
   getCustomerWebSurferTicketMergedDataByReseller: getCustomerWebSurferTicketMergedDataByReseller,
   generateTicketForNewWebsurfer: generateTicketForNewWebsurfer,
   getCustomersByFulltextSearch: getCustomersByFulltextSearch,
+  getTicketsByCustomer: getTicketsByCustomer,
+  getUsersByCustomer: getUsersByCustomer,
+  deleteWebSurferTickets: deleteWebSurferTickets,
 };

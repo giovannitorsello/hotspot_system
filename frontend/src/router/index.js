@@ -61,7 +61,7 @@ const routes = [
   {
     path: "/customer/ticket",
     name: "ticketCustomer",
-    component: () => import("../views/customer/TicketCustomer.vue"),
+    component: () => import("../views/customer/Tickets.vue"),
   },
 
   {
@@ -74,11 +74,7 @@ const routes = [
     name: "customerUsers",
     component: () => import("../views/customer/Users.vue"),
   },
-  {
-    path: "/customer/tickets",
-    name: "customerTickets",
-    component: () => import("../views/customer/Tickets.vue"),
-  },
+
 ];
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),

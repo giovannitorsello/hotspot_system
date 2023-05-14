@@ -60,16 +60,16 @@
           path: "/customer/dashboard",
         },
         {
-          name: "Navigatore web",
+          name: "Inserisci Ospite",
           path: "/customer/websurfers",
         },
         {
-          name: "Ruoli",
-          path: "/customer/users",
+          name: "Gestione Ticket",
+          path: "/customer/ticket",
         },
         {
-          name: "Ticket",
-          path: "/customer/Tickets",
+          name: "Credenziali Accesso",
+          path: "/customer/users",
         },
       ];
     },

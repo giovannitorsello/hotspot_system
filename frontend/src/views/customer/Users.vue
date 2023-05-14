@@ -67,36 +67,9 @@
                                   </div>
                                 </div>
                               </div>
-                              <div class="col-md-4">
-                                <label>Ruolo</label>
-                              </div>
-                              <div class="col-md-8">
-                                <fieldset class="form-group">
-                                  <select v-model="payload.role" class="form-select">
-                                    <option disabled value="">Seleziona privilegi</option>
-                                    <option>HOTEL</option>
-                                    <option>USER</option>
-                                  </select>
-                                </fieldset>
-                              </div>
-                              <!--   <% if(role == "RESELLER"){ %>
-                                                                        <div class="col-md-4">
-                                                                            <label>Cliente</label>
-                                                                        </div>
-                                                                        
-                                                                        <div class="col-md-8">
-                                                                            <fieldset class="form-group">
-                                                                                <select class="form-select" name="client"
-                                                                                    required>
-                                                                                    <% clients.forEach(function(client) { %>
-                                                                                        <option value=<%=client.id %>> <%=
-                                                                                                client.companyName %>
-                                                                                        </option>
-                                                                                        <% }) %>
-                                                                                </select>
-                                                                            </fieldset>
-                                                                        </div>
-                                                                        <% } %> -->
+                            
+                             
+                           
                               <div class="col-12 d-flex justify-content-end">
                                 <button type="submit" class="btn btn-primary me-1 mb-1" @click="insertUser()">INSERISCI</button>
                               </div>
@@ -113,12 +86,11 @@
                         <v-tab value="two" color="white">MODIFICA</v-tab>
                         <v-tab value="three" color="white">ELIMINA</v-tab>
                       </v-tabs>
-
                       <v-card-text>
                         <v-window v-model="tab">
                           <v-window-item value="one">
                             <v-text-field v-model="search" label="CERCA"></v-text-field>
-                            <v-data-table :headers="header" :items="hsComponentStore.userOfAllCustomers" :search="search" v-model:page.sync="page" :items-per-page="itemsPerPage" disable-pagination>
+                            <v-data-table :headers="header" :items="hsComponentStore.usersOfSelectedCustomer" :search="search" v-model:page.sync="page" :items-per-page="itemsPerPage" disable-pagination>
                               <template v-slot:[`item.role`]="{ item }">
                                 <span class="badge bg-primary" v-if="item.raw.role == 'RESELLER'">{{ item.raw.role }}</span>
 
@@ -127,8 +99,7 @@
                                 <span class="badge bg-dark" v-if="item.raw.role == 'USER'">{{ item.raw.role }}</span>
                               </template>
                               <template v-slot:[`item.actions`]="{ item }">
-                                <i class="bi bi-trash" @click="deleteWebsurfer(item.raw)"> </i>
-                                <i class="bi bi-pen" @click="editWebsurfer(item.raw)"></i>
+                                <i class="bi bi-trash" title="ELIMINA" @click="deleteWebsurfer(item.raw)"> </i>
                               </template>
                             </v-data-table>
                           </v-window-item>
@@ -148,7 +119,7 @@
                                       <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="goBack()"></i>
                                       <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="saveWebsurfer(selectedCustomer)"></i>
                                     </v-sheet>
-                                  </v-col>
+                                   </v-col>
                                 </v-row>
                               </v-card-text>
                             </v-card>
@@ -201,15 +172,13 @@
           { title: "RUOLO", key: "role" },
           { title: "USERNAME", key: "utente" },
           { title: "PASSWORD", key: "password" },
-          { title: "RESELLER _ID", key: "ResellerId" },
-          { title: "CUSTOMER_ID", key: "CustomerId" },
           { title: "Actions", key: "actions" },
         ],
         page: 1,
         itemsPerPage: 10,
         payload: {
           utente: "",
-          role: "",
+          role: "USER",
           password: "",
           CustomerId: "",
         },
@@ -220,7 +189,6 @@
         this.selectedUser = "";
         this.tab = "one";
       },
-
       openDeleteUser(user) {
         this.selectedUser = user;
         this.tab = "three";
@@ -229,13 +197,12 @@
         this.selectedUser = user;
         this.tab = "two";
       },
-
       insertUser() {
         this.payload.CustomerId = this.hsComponentStore.$state.user.CustomerId;
         this.payload.ResellerId = this.hsComponentStore.$state.user.ResellerId;
         axios
           .post("/admin/users/insert", {
-            payload: this.payload,
+            payload: this.payload, 
           })
           .then((response) => {
             if (response.data.status == 200) {

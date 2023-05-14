@@ -49,15 +49,27 @@ router.post("/api/data/getCustomerByUser", function (req, res) {
   });
 });
 
-router.post("/api/data/getWebsurfersByCustomer", function (req, res) {
+router.post("/api/data/getWebsurfersByCustomer", async function (req, res) {
   if (!req.body || !req.body.customer || !req.body.customer.id) res.send({ status: "404", msg: "No customer data present", state: "error", websurfers: {} });
   const customer = req.body.customer;
-  var websurfers = database.getWebSurfersByCustomer(customer);
+  var websurfers = await database.getWebSurfersByCustomer(customer);
   res.send({
     status: "200",
     msg: "Success.",
     state: "ok",
     websurfers: websurfers,
+  });
+});
+
+router.post("/api/data/getUsersByCustomer", async function (req, res) {
+  if (!req.body || !req.body.customer || !req.body.customer.id) res.send({ status: "404", msg: "No customer data present", state: "error", websurfers: {} });
+  const customer = req.body.customer;
+  var users = await database.getUsersByCustomer(customer);
+  res.send({
+    status: "200",
+    msg: "Success.",
+    state: "ok",
+    users: users,
   });
 });
 
@@ -73,10 +85,10 @@ router.post("/api/data/getCustomersByReseller", function (req, res) {
   });
 });
 
-router.post("/api/data/getTicketsByCustomer", function (req, res) {
+router.post("/api/data/getTicketsByCustomer", async function (req, res) {
   if (!req.body || !req.body.customer || !req.body.customer.id) res.send({ status: "404", msg: "No customer data present", state: "error", tickets: {} });
   const customer = req.body.customer;
-  var tickets = database.getTicketsByCustomer(customer);
+  var tickets = await database.getTicketsByCustomer(customer);
   res.send({
     status: "200",
     msg: "Success.",
@@ -97,10 +109,10 @@ router.post("/api/data/getTicketsByWebsurfer", function (req, res) {
   });
 });
 
-router.post("/api/data/getActiveTicketsByCustomer", function (req, res) {
+router.post("/api/data/getActiveTicketsByCustomer", async function (req, res) {
   if (!req.body || !req.body.customer || !req.body.customer.id) res.send({ status: "404", msg: "No customer data present", state: "error", tickets: {} });
   const customer = req.body.customer;
-  var tickets = database.getActiveTicketsByCustomer(customer);
+  var tickets = await database.getActiveTicketsByCustomer(customer);
   res.send({
     status: "200",
     msg: "Success.",
@@ -109,10 +121,10 @@ router.post("/api/data/getActiveTicketsByCustomer", function (req, res) {
   });
 });
 
-router.post("/api/data/getExpiredTicketsByCustomer", function (req, res) {
+router.post("/api/data/getExpiredTicketsByCustomer", async function (req, res) {
   if (!req.body || !req.body.customer || !req.body.customer.id) res.send({ status: "404", msg: "No customer data present", state: "error", tickets: {} });
   const customer = req.body.customer;
-  var tickets = database.getExpiredTicketsByCustomer(customer);
+  var tickets = await database.getExpiredTicketsByCustomer(customer);
   res.send({
     status: "200",
     msg: "Success.",

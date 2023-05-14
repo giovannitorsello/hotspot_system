@@ -10,6 +10,7 @@ import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import {VDataTable } from "vuetify/labs/VDataTable";
+import piniaPluginPersistedState from "pinia-plugin-persistedstate"
 
 const vuetify = createVuetify({
   components:{
@@ -25,6 +26,8 @@ import VueSweetalert2 from "vue-sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 
 const pinia = createPinia();
+
+pinia.use(piniaPluginPersistedState);
 
 //Set BaseURL for Axios from .env file
 axios.defaults.baseURL = process.env.VUE_APP_API_ENDPOINT;

@@ -47,6 +47,12 @@
                             </div>
                             <div class="col-md-6 col-12">
                               <div class="form-group">
+                                <label for="last-name-column">Durata in giorni</label>
+                                <input type="text" class="form-control" v-model="payload.durationDays" />
+                              </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                              <div class="form-group">
                                 <label for="city-column">Email</label>
                                 <input type="text" class="form-control" v-model="payload.email" />
                               </div>
@@ -65,15 +71,20 @@
                             </div>
                             <div class="col-md-6 col-12">
                               <div class="form-group">
-                                <label>SELEZIONA STRUTTURA:{{ payload.CustomerId }} </label>
                                 <fieldset class="form-group">
-                                  <select v-model="payload.CustomerId" class="form-select">
-                                    <template v-for="customer in hsComponentStore.customerOfThisReseller" :key="customer.id">
-                                      <option :value="customer.id">
-                                        {{ customer.companyName }}
-                                      </option>
-                                    </template>
-                                  </select>
+                                  <v-select
+                                    label="SELEZIONA BANDA:"
+                                    :items="plans"
+                                    v-model="bandwidthProfile"
+                                    item-text="name"
+                                    item-title="name"
+                                    item-value="name"
+                                    single-line
+                                    return-object
+                                  ></v-select>
+                                  <!--select v-model="idBandwidth" :change="selectBandwithProfile" class="form-select">
+                                    <option v-for="plan in plans" :key="plan.id" :value="plan.id">{{ plan.name }}: {{ plan.download }}Kb - {{ plan.upload }}Kb</option>
+                                  </!--select-->
                                 </fieldset>
                               </div>
                             </div>
@@ -87,7 +98,7 @@
                   </div>
                 </div>
               </section>
-              <TableWebsurfer />
+              <TableWebsurferCustomer />
             </div>
           </div>
         </section>
@@ -97,18 +108,21 @@
 </template>
 
 <script>
+  import axios from "axios";
   import { hsStore } from "@/store/hotspotSystemStore.js";
-  import TableWebsurfer from "@/components/customer/TableWebsurfer.vue";
+  import TableWebsurferCustomer from "@/components/customer/TableWebsurferCustomer.vue";
   import SidebarCustomer from "@/components/customer/SidebarCustomer.vue";
   export default {
     name: "Websurfers",
-    components: { SidebarCustomer, TableWebsurfer },
+    components: { SidebarCustomer, TableWebsurferCustomer },
     setup() {
       const hsComponentStore = hsStore();
       return { hsComponentStore };
     },
     data() {
       return {
+        plans: [],
+        bandwidthProfile: {},
         payload: {
           firstname: "",
           lastname: "",
@@ -116,9 +130,50 @@
           note: "",
           phone: "",
           CustomerId: "",
+          bandwidthProfile: "",
+          durationDays: 7,
         },
       };
     },
-    methods: {},
+    created() {
+      const data = this.hsComponentStore.loggedCustomer.bandwidthProfiles;
+      var normalizedJSONString = data.replace(/'/g, '"');
+      try {
+        this.plans = JSON.parse(normalizedJSONString);
+      } catch (error) {
+        console.log(error);
+        //Charge default values
+        this.plans = [
+          { id: "0", name: "slow", download: "500", upload: "500" },
+          { id: "1", name: "base", download: "1000", upload: "1000" },
+          { id: "2", name: "premium", download: "2000", upload: "2000" },
+          { id: "3", name: "professional", download: "3000", upload: "3000" },
+        ];
+      }
+      //Default value at start
+      this.bandwidthProfile = this.plans[0];
+    },
+
+    methods: {
+      insertWebsurfer() {
+        console.log("Websurfer bandwith plan is", this.bandwidthProfile);
+        //translate in string value:
+        this.payload.bandwidthProfile = JSON.stringify(this.bandwidthProfile);
+
+        axios
+          .post("/admin/websurfers/insert", {
+            payload: this.payload,
+            user: this.hsComponentStore.loggedCustomer,
+          })
+          .then((response) => {
+            if (response.data.status == 200) {
+              this.hsComponentStore.addWebsurfer(response.data.newWebsurfer);
+              this.$swal(response.data.msg);
+            } else {
+              this.$swal(response.data.msg);
+            }
+          });
+      },
+    },
   };
 </script>

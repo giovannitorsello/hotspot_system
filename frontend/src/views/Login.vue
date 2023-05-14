@@ -42,8 +42,8 @@
     },
     data() {
       return {
-        username: "hotel",
-        password: "hotel",
+        username: "hotel1",
+        password: "hotel1",
       };
     },
 

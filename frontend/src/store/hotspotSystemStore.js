@@ -26,6 +26,7 @@ export const hsStore = defineStore({
     resellersOfSelectedSuperadmin: [],
     customersOfSelectedReseller: [],
     websurfersOfSelectedCustomer: [],
+    usersOfSelectedCustomer: [],
     ticketsOfSelectedCustomer: [],
     ticketsActiveOfSelectedCustomer: [],
     ticketsExpiredOfSelectedCustomer: [],
@@ -66,7 +67,18 @@ export const hsStore = defineStore({
         this.loggedUser = res.data.user;
         this.loggedCustomer = res.data.customer;
         this.loggedReseller = {};
-        this.websurfersOfSelectedCustomer = this.fetchWebsurfersByCustomer(this.loggedCustomer);
+        this.websurfersOfSelectedCustomer = await this.fetchWebsurfersByCustomer(res.data.customer);
+
+        //SECTION TICKETS
+        // TO REMOVE
+        this.ticketsOfSelectedCustomer = await this.fetchTicketsByCustomer(res.data.customer);
+
+        //USE THIS
+        this.ticketsActiveOfSelectedCustomer = await this.fetchActiveTicketsByCustomer(res.data.customer);
+        this.ticketsExpiredOfSelectedCustomer = await this.fetchExpiredTicketsByCustomer(res.data.customer);
+        //SECTION TICKETS
+
+        this.usersOfSelectedCustomer = await this.fetchUserByCustomer(res.data.customer);
         console.log("Logged customer is:", res.data.customer);
         //To remove
         this.fetchHotelData();
@@ -106,6 +118,12 @@ export const hsStore = defineStore({
       const res = await axios.post("/api/data/getWebsurfersByCustomer", { customer: customer });
       if (!res.data || !res.data.websurfers) return {};
       return res.data.websurfers;
+    },
+    async fetchUserByCustomer(customer) {
+      if (!customer || !customer.id) return {};
+      const res = await axios.post("/api/data/getUsersByCustomer", { customer: customer });
+      if (!res.data || !res.data.users) return {};
+      return res.data.users;
     },
     async fetchTicketsByCustomer(customer) {
       if (!customer || !customer.id) return {};
@@ -169,7 +187,7 @@ export const hsStore = defineStore({
 
     addWebsurfer(newWebsurfer) {
       if (this.user.info.role == "HOTEL") {
-        this.user.data.websurfers.push(newWebsurfer);
+        this.websurfersOfSelectedCustomer.push(newWebsurfer);
       } else {
         this.websurfers.push(newWebsurfer);
       }
@@ -191,9 +209,10 @@ export const hsStore = defineStore({
         return t.id !== id;
       });
     },
+
     deleteWebsurfer(id) {
       if (this.user.info.role == "HOTEL") {
-        this.user.data.websurfers = this.user.data.websurfers.filter((t) => {
+        this.websurfersOfSelectedCustomer = this.websurfersOfSelectedCustomer.filter((t) => {
           return t.id !== id;
         });
       } else {
@@ -211,7 +230,7 @@ export const hsStore = defineStore({
 
     deleteTicket(id) {
       if (this.user.info.role == "HOTEL") {
-        this.user.data.tickets = this.user.data.tickets.filter((t) => {
+        this.ticketsOfSelectedCustomer = this.ticketsOfSelectedCustomer.filter((t) => {
           return t.id !== id;
         });
       } else {
@@ -235,4 +254,5 @@ export const hsStore = defineStore({
       this.websurfers[oldWebsurfer] = newWebsurfer;
     },
   },
+  persist: true,
 });

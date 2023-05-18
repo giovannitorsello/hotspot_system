@@ -42,7 +42,7 @@ routerDashboard.post("/login", (req, res) => {
         }
 
         //Case hotel send user, customer (no websurfer, tickets)
-        if (user.role === "HOTEL") {
+        if (user.role === "CUSTOMER") {
           var customer = await db.getCustomerByUser(user);
           //var websurfers = db.getWebsurfersByCustomer(customer);
           //var tickets = db.getTicketsByCustomer(customer);
@@ -79,7 +79,7 @@ routerDashboard.post("/data/dataReseller", async (req, res) => {
   });
 });
 
-// DATA PER GLI HOTEL
+// DATA PER
 routerDashboard.post("/data/datahotel", async (req, res) => {
   res.send({
     status: "200",
@@ -223,7 +223,7 @@ routerDashboard.get("/users", async (req, res) => {
       title: "Users",
       clients: userOBJ.customerOfThisReseller,
     });
-  } else if (req.session.user.role == "HOTEL") {
+  } else if (req.session.user.role == "CUSTOMER") {
     userOBJ = await getDataUser(req.session.user);
     res.render("dashboard/userPage", {
       role: req.session.user.role,

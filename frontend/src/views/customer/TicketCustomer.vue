@@ -94,7 +94,7 @@
                                 :headers="header"
                                 :items="this.activeTickets"
                                 :search="search"
-                                v-model:page.sync="page"
+                                :page.sync="page"
                                 :items-per-page="itemsPerPage"
                                 :hide-default-header="true"
                                 :hide-default-footer="true"
@@ -111,7 +111,7 @@
                                 :headers="header"
                                 :items="this.expiredTickets"
                                 :search="search"
-                                v-model:page.sync="page"
+                                :page.sync="page"
                                 :items-per-page="itemsPerPage"
                                 :hide-default-header="true"
                                 :hide-default-footer="true"
@@ -139,7 +139,7 @@
 </template>
 
 <script>
-  import { hsStore } from "@/store/hotspotSystemStore.js";
+  import { hsStoreCustomer } from "@/store/storeCustomer.js";
   import Sidebar from "@/components/customer/SidebarCustomer.vue";
   import axios from "axios";
   import generateRandomCredentials from "@/utils/random";
@@ -147,7 +147,7 @@
     name: "TicketHotel",
     components: { SidebarCustomer },
     setup() {
-      const hsComponentStore = hsStore();
+      const hsComponentStore = hsStoreCustomer();
       return { hsComponentStore };
     },
     data() {

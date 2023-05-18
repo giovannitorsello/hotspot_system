@@ -109,14 +109,14 @@
 
 <script>
   import axios from "axios";
-  import { hsStore } from "@/store/hotspotSystemStore.js";
+  import { hsStoreCustomer } from "@/store/storeCustomer.js";
   import TableWebsurferCustomer from "@/components/customer/TableWebsurferCustomer.vue";
   import SidebarCustomer from "@/components/customer/SidebarCustomer.vue";
   export default {
     name: "Websurfers",
     components: { SidebarCustomer, TableWebsurferCustomer },
     setup() {
-      const hsComponentStore = hsStore();
+      const hsComponentStore = hsStoreCustomer();
       return { hsComponentStore };
     },
     data() {

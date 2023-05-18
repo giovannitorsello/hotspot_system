@@ -74,7 +74,7 @@
                                 <fieldset class="form-group">
                                   <select v-model="payload.role" class="form-select">
                                     <option disabled value="">Seleziona privilegi</option>
-                                    <option>HOTEL</option>
+                                    <option>CUSTOMER</option>
                                     <option>USER</option>
                                   </select>
                                 </fieldset>
@@ -177,14 +177,14 @@
 </template>
 
 <script>
-  import { hsStore } from "@/store/hotspotSystemStore.js";
+  import { hsStoreReseller } from "@/store/storeReseller.js";
   import axios from "axios";
   import SidebarReseller from "@/components/reseller/SidebarReseller.vue";
   export default {
     name: "Users",
     components: { SidebarReseller },
     setup() {
-      const hsComponentStore = hsStore();
+      const hsComponentStore = hsStoreReseller();
       return { hsComponentStore };
     },
     data() {

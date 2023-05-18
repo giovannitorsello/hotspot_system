@@ -33,11 +33,11 @@
 </template>
 
 <script>
-  import { hsStore } from "@/store/hotspotSystemStore.js";
+  import { hsStoreSuperadmin } from "@/store/storeSuperadmin.js";
   export default {
     name: "SidebarSuperadmin",
     setup() {
-      const hsComponentStore = hsStore();
+      const hsComponentStore = hsStoreSuperadmin();
       return { hsComponentStore };
     },
     data() {

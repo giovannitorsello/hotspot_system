@@ -33,12 +33,18 @@
 </template>
 
 <script>
-  import { hsStore } from "@/store/hotspotSystemStore.js";
+  import axios from "axios";
+  import { hsStoreSuperadmin } from "@/store/storeSuperadmin.js";
+  import { hsStoreReseller } from "@/store/storeReseller.js";
+  import { hsStoreCustomer } from "@/store/storeCustomer.js";
+
   export default {
     name: "App",
     setup() {
-      const hsComponentStore = hsStore();
-      return { hsComponentStore };
+      const storeSuperadmin = hsStoreSuperadmin();
+      const storeReseller = hsStoreReseller();
+      const storeCustomer = hsStoreCustomer();
+      return { storeSuperadmin, storeReseller, storeCustomer };
     },
     data() {
       return {
@@ -49,14 +55,22 @@
 
     methods: {
       async checkCredentials() {
-        await this.hsComponentStore.fetchUserProfile(this.username, this.password);
-
-        if (this.hsComponentStore.user.info && this.hsComponentStore.user.info.id && this.hsComponentStore.user.info.id > 0) {
-          if (this.hsComponentStore.user.info.role == "SUPERADMIN") this.$router.push("superadmin/dashboard");
-
-          if (this.hsComponentStore.user.info.role == "RESELLER") this.$router.push("reseller/dashboard");
-
-          if (this.hsComponentStore.user.info.role == "HOTEL") this.$router.push("customer/dashboard");
+        const res = await axios.post("/api/login", {
+          username: this.username,
+          password: this.password,
+        });
+        console.log(res.data);
+        if (res.data.user.role === "SUPERADMIN") {
+          this.storeSuperadmin.init(res.data.user);
+          this.$router.push("superadmin/dashboard");
+          //console.log("Logged reseller is:", res.data.reseller);
+        } else if (res.data.user.role === "RESELLER") {
+          this.storeReseller.init(res.data.user);
+          this.$router.push("reseller/dashboard");
+          //console.log("Logged reseller is:", res.data.reseller);
+        } else if (res.data.user.role === "CUSTOMER") {
+          this.storeCustomer.init(res.data.user);
+          this.$router.push("customer/dashboard");
         } else {
           this.$router.push("/");
           this.$swal("Credenziali errate!");

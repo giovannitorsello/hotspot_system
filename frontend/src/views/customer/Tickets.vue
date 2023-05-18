@@ -93,7 +93,7 @@
                                   <p>Vuoi eliminare il ticket n."{{ selectedTicket.id }}"?</p>
                                 </v-card-text>
                                 <v-card-actions>
-                                  <v-btn color="primary" @click="deleteUser(selectedUser)">Elimina</v-btn>
+                                  <v-btn color="primary" @click="deleteTicket(selectedTicket)">Elimina</v-btn>
                                   <v-btn @click="goBack()">Annulla</v-btn>
                                 </v-card-actions>
                               </v-card>
@@ -114,7 +114,7 @@
 </template>
 
 <script>
-  import { hsStore } from "@/store/hotspotSystemStore.js";
+  import { hsStoreCustomer } from "@/store/storeCustomer.js";
   import SidebarCustomer from "@/components/customer/SidebarCustomer.vue";
   import axios from "axios";
   import generateRandomCredentials from "@/utils/random";
@@ -122,7 +122,7 @@
     name: "Tickets",
     components: { SidebarCustomer },
     setup() {
-      const hsComponentStore = hsStore();
+      const hsComponentStore = hsStoreCustomer();
       return { hsComponentStore };
     },
     data() {

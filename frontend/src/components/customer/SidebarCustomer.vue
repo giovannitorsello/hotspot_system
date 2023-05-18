@@ -33,11 +33,11 @@
 </template>
 
 <script>
-  import { hsStore } from "@/store/hotspotSystemStore.js";
+  import { hsStoreCustomer } from "@/store/storeCustomer.js";
   export default {
     name: "Sidebar",
     setup() {
-      const hsComponentStore = hsStore();
+      const hsComponentStore = hsStoreCustomer();
       return { hsComponentStore };
     },
     data() {
@@ -66,6 +66,10 @@
         {
           name: "Gestione Ticket",
           path: "/customer/ticket",
+        },
+        {
+          name: "Dispositivi",
+          path: "/customer/devices",
         },
         {
           name: "Credenziali Accesso",

@@ -71,12 +71,12 @@
 </template>
 
 <script>
-  import { hsStore } from "@/store/hotspotSystemStore.js";
+  import { hsStoreReseller } from "@/store/storeReseller.js";
   import generateRandomCredentials from "@/utils/random";
   export default {
     name: "TableTicket",
     setup() {
-      const hsComponentStore = hsStore();
+      const hsComponentStore = hsStoreReseller();
       return { hsComponentStore };
     },
     data() {
@@ -90,7 +90,7 @@
           { title: "DATA SCADENZA", key: "expirationDate" },
           { title: "LOGIN", key: "login" },
           { title: "PASSWORD", key: "password" },
-          { title: "HOTEL", key: "CustomerId" },
+          { title: "CUSTOMER", key: "CustomerId" },
           { title: "UTENTE", key: "WebsurferId" },
           { title: "Actions", key: "actions" },
         ],
@@ -98,33 +98,7 @@
         itemsPerPage: 10,
       };
     },
-    computed: {
-      headerField() {
-        if (this.hsComponentStore.user.role == "HOTEL") {
-          var header = [
-            { title: "ID", key: "id" },
-            { title: "DATA EMISSIONE", key: "emissionDate" },
-            { title: "DATA SCADENZA", key: "expirationDate" },
-            { title: "LOGIN", key: "login" },
-            { title: "PASSWORD", key: "password" },
-            { title: "UTENTE", key: "WebsurferId" },
-            { title: "Actions", key: "actions" },
-          ];
-        } else {
-          var header = [
-            { title: "ID", key: "id" },
-            { title: "DATA EMISSIONE", key: "emissionDate" },
-            { title: "DATA SCADENZA", key: "expirationDate" },
-            { title: "LOGIN", key: "login" },
-            { title: "PASSWORD", key: "password" },
-            { title: "HOTEL", key: "CustomerId" },
-            { title: "UTENTE", key: "WebsurferId" },
-            { title: "Actions", key: "actions" },
-          ];
-        }
-        return header;
-      },
-    },
+    computed: {},
     props: {},
     methods: {
       insertTicket() {

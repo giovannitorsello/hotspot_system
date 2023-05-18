@@ -72,13 +72,13 @@
 </template>
 
 <script>
-  import { hsStore } from "@/store/hotspotSystemStore.js";
+  import { hsStoreCustomer } from "@/store/storeCustomer.js";
   import axios from "axios";
   import TableTicketCustomer from "@/components/customer/TableTicketCustomer.vue";
   export default {
     name: "TableWebsurfer",
     setup() {
-      const hsComponentStore = hsStore();
+      const hsComponentStore = hsStoreCustomer();
       return { hsComponentStore };
     },
     components: { TableTicketCustomer },

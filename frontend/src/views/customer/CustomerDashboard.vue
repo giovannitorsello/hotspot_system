@@ -99,14 +99,14 @@
   </div>
 </template>
 <script>
-  import { hsStore } from "@/store/hotspotSystemStore.js";
+  import { hsStoreCustomer } from "@/store/storeCustomer.js";
   import SidebarCustomer from "@/components/customer/SidebarCustomer.vue";
   import TableWebsurferCustomer from "@/components/customer/TableTicketCustomer.vue";
   export default {
     components: { SidebarCustomer, TableWebsurferCustomer },
     name: "CustomerDashboard",
     setup() {
-      const hsComponentStore = hsStore();
+      const hsComponentStore = hsStoreCustomer();
       return { hsComponentStore };
     },
     data() {

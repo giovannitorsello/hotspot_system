@@ -87,37 +87,6 @@ const Customer = sequelize.define(
       type: Sequelize.STRING,
       allowNull: true,
     },
-    pin: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    },
-    defaultBandwidth: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    },
-    bandwidthProfiles: {
-      type: Sequelize.TEXT,
-      /*get: function () {
-        if (this.getDataValue("value")) return JSON.parse(this.getDataValue("value"));
-        else return {};
-      },
-      set: function (value) {
-        this.setDataValue("value", JSON.stringify(value));
-      },*/
-      allowNull: true,
-    },
-    websurferCustomFields: {
-      type: Sequelize.TEXT,
-      allowNull: true,
-    },
-    preAuthLandingPage: {
-      type: Sequelize.TEXT,
-      allowNull: true,
-    },
-    postAuthLandingPage: {
-      type: Sequelize.TEXT,
-      allowNull: true,
-    },
   },
   { tableName: "customer" }
 );
@@ -165,18 +134,6 @@ const Reseller = sequelize.define(
       type: Sequelize.STRING,
       allowNull: true,
     },
-    pin: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    },
-    profile: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    },
-    defaultBandwidth: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    },
   },
   { tableName: "reseller" }
 );
@@ -185,7 +142,7 @@ const User = sequelize.define(
   "User",
   {
     role: {
-      type: Sequelize.ENUM("SUPERADMIN", "RESELLER", "HOTEL", "USER"),
+      type: Sequelize.ENUM("SUPERADMIN", "RESELLER", "CUSTOMER"),
       allowNull: false,
     },
     password: {
@@ -198,6 +155,58 @@ const User = sequelize.define(
     },
   },
   { tableName: "user" }
+);
+
+const Device = sequelize.define(
+  "Device",
+  {
+    description: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+    addressSetup: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    ipv4Management: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    ipv6Management: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    deviceAuthProperties: {
+      //Contains alla auth data, management ports, js drivers plugin etc
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+    api_key: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    defaultBandwidth: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    bandwidthProfiles: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+    websurferCustomFields: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+    preAuthLandingPage: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+    postAuthLandingPage: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+  },
+  { tableName: "device" }
 );
 
 const Ticket = sequelize.define(
@@ -254,6 +263,8 @@ const Ticket = sequelize.define(
 Reseller.hasMany(Customer);
 Reseller.hasMany(Ticket);
 Reseller.hasMany(User);
+Reseller.hasMany(Device);
+Customer.hasMany(Device);
 Customer.hasMany(Ticket);
 Customer.hasMany(User);
 Customer.hasMany(Websurfer);
@@ -274,7 +285,7 @@ const connectToDatabase = async () => {
 
 const syncModels = async () => {
   try {
-    await sequelize.sync({ force: false });
+    await sequelize.sync({ force: false, alter: true });
     console.log("Sincronizzazione con il database avvenuta con successo.");
   } catch (error) {
     console.error("Errore durante la sincronizzazione con il database:", error);
@@ -343,6 +354,12 @@ const getCustomersByReseller = async (reseller) => {
   return customers;
 };
 
+const getDevicesByReseller = async (reseller) => {
+  if (!reseller || !reseller.id) return {};
+  var devices = await Device.findAll({ where: { ResellerId: reseller.id } });
+  return devices;
+};
+
 const getWebSurfersByCustomer = async (customer) => {
   if (!customer || !customer.id) return {};
   var websurfers = await Websurfer.findAll({ where: { CustomerId: customer.id } });
@@ -351,12 +368,12 @@ const getWebSurfersByCustomer = async (customer) => {
 
 const getUsersByCustomer = async (customer) => {
   if (!customer || !customer.id) return {};
-  var users = await User.findAll({ where: { [Op.and]: { CustomerId: customer.id, role: "HOTEL" } } });
+  var users = await User.findAll({ where: { [Op.and]: { CustomerId: customer.id, role: "CUSTOMER" } } });
   return users;
 };
 
 const getCustomerByUser = async (user) => {
-  if (!user || !user.id || !user.role || user.role !== "HOTEL") return {};
+  if (!user || !user.id || !user.role || user.role !== "CUSTOMER") return {};
   var customer = await Customer.findOne({ where: { id: user.CustomerId } });
   return customer;
 };
@@ -371,6 +388,12 @@ const getUsersByReseller = async (reseller) => {
   if (!reseller || !reseller.id) return {};
   var users = await User.findAll({ where: { [Op.and]: { ResellerId: reseller.id, role: "RESELLER" } } });
   return users;
+};
+
+const getDevicesByCustomer = async (customer) => {
+  if (!customer || !customer.id) return {};
+  var devices = await Device.findAll({ where: { CustomerId: customer.id } });
+  return devices;
 };
 
 const getTicketsByCustomer = async (customer) => {
@@ -473,11 +496,12 @@ const deleteWebSurferTickets = async (websurfer) => {
 
 module.exports = {
   sequelize: sequelize,
-  Websurfer: Websurfer,
+  Reseller: Reseller,
   Customer: Customer,
+  Websurfer: Websurfer,
   User: User,
   Ticket: Ticket,
-  Reseller: Reseller,
+  Device: Device,
   connectToDatabase: connectToDatabase,
   syncModels: syncModels,
   resumeExpiredTicket: resumeExpiredTicket,
@@ -485,8 +509,10 @@ module.exports = {
   getResellers: getResellers,
   getResellerByUser: getResellerByUser,
   getUsersByReseller: getUsersByReseller,
+  getDevicesByReseller: getDevicesByReseller,
   getCustomerByUser: getCustomerByUser,
   getCustomersByReseller: getCustomersByReseller,
+  getDevicesByCustomer: getDevicesByCustomer,
   getWebSurfersByCustomer: getWebSurfersByCustomer,
   getActiveTicketsByCustomer: getActiveTicketsByCustomer,
   getExpiredTicketsByCustomer: getExpiredTicketsByCustomer,

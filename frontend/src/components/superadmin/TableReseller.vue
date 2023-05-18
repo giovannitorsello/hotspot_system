@@ -13,7 +13,7 @@
             :headers="this.header"
             :items="this.hsComponentStore.customerOfThisReseller"
             :search="search"
-            v-model:page.sync="page"
+            :page.sync="page"
             :items-per-page="itemsPerPage"
             :hide-default-footer="true"
             disable-pagination
@@ -70,12 +70,12 @@
 </template>
 
 <script>
-  import { hsStore } from "@/store/hotspotSystemStore.js";
+  import { hsStoreSuperadmin } from "@/store/storeSuperadmin.js";
   import axios from "axios";
   export default {
     name: "TableCustomer",
     setup() {
-      const hsComponentStore = hsStore();
+      const hsComponentStore = hsStoreSuperadmin();
       return { hsComponentStore };
     },
     data() {

@@ -68,7 +68,7 @@
                                 <label>SELEZIONA STRUTTURA:{{ payload.CustomerId }} </label>
                                 <fieldset class="form-group">
                                   <select v-model="payload.CustomerId" class="form-select">
-                                    <template v-for="customer in hsComponentStore.customerOfThisReseller" :key="customer.id">
+                                    <template v-for="customer in hsComponentStore.customersOfSelectedReseller" :key="customer.id">
                                       <option :value="customer.id">
                                         {{ customer.companyName }}
                                       </option>
@@ -98,14 +98,14 @@
 
 <script>
   import axios from "axios";
-  import { hsStore } from "@/store/hotspotSystemStore.js";
+  import { hsStoreReseller } from "@/store/storeReseller.js";
   import TableWebsurfer from "@/components/reseller/TableWebsurfer.vue";
   import SidebarReseller from "@/components/reseller/SidebarReseller.vue";
   export default {
     name: "Websurfers",
     components: { SidebarReseller, TableWebsurfer },
     setup() {
-      const hsComponentStore = hsStore();
+      const hsComponentStore = hsStoreReseller();
       return { hsComponentStore };
     },
     data() {
@@ -121,13 +121,12 @@
       };
     },
     methods: {
-      insertWebsurfer(){
-        axios.post("/admin/websurfers/insert",this.payload).then((result) =>{
-          if(result != null){
-            
+      insertWebsurfer() {
+        axios.post("/admin/websurfers/insert", this.payload).then((result) => {
+          if (result != null) {
           }
-        })
-      }
+        });
+      },
     },
   };
 </script>

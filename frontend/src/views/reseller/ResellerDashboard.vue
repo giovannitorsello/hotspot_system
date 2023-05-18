@@ -29,7 +29,7 @@
                       <div class="col-md-8">
                         <h6 class="text-muted font-semibold">CLIENTI</h6>
                         <h6 class="font-extrabold mb-0">
-                          {{ hsComponentStore.customerOfThisReseller.length }}
+                          {{ hsComponentStore.customersOfSelectedReseller.length }}
                         </h6>
                       </div>
                     </div>
@@ -122,7 +122,7 @@
               </div>
             </div>
             <div class="row mb-6">
-              <TableCustomer />
+              <TableCustomers />
             </div>
 
             <div class="row">
@@ -183,7 +183,7 @@
                                   <th>DATA SCADENZA</th>
                                   <th>USERNAME</th>
                                   <th>PASSWORD</th>
-                                  <th>HOTEL</th>
+                                  <th>CUSTOMER</th>
                                   <th>WEBSURFER</th>
                                 </tr>
                               </thead>
@@ -233,14 +233,14 @@
 </template>
 
 <script>
-  import { hsStore } from "@/store/hotspotSystemStore.js";
+  import { hsStoreReseller } from "@/store/storeReseller.js";
   import SidebarReseller from "@/components/reseller/SidebarReseller.vue";
-  import TableCustomer from "@/components/reseller/TableCustomer.vue";
+  import TableCustomers from "@/components/reseller/TableCustomers.vue";
   export default {
-    components: { SidebarReseller, TableCustomer },
+    components: { SidebarReseller, TableCustomers },
     name: "Dashboard",
     setup() {
-      const hsComponentStore = hsStore();
+      const hsComponentStore = hsStoreReseller();
       return { hsComponentStore };
     },
     data() {

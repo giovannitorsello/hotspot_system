@@ -31,6 +31,9 @@ export const hsStore = defineStore({
 
     ticketsActiveOfSelectedCustomer: [],
     ticketsExpiredOfSelectedCustomer: [],
+
+    devicesOfSelectedCustomer: [],
+    devicesOfSelectedReseller: [],
   }),
   getters: {
     /*loggetUser(state) {
@@ -65,12 +68,12 @@ export const hsStore = defineStore({
         this.usersOfSelectedReseller = await this.fetchUsersByReseller(this.loggedReseller);
         console.log("Logged reseller is:", res.data.reseller);
       }
-      if (res.data.user.role === "HOTEL") {
+      if (res.data.user.role === "CUSTOMER") {
         this.loggedUser = res.data.user;
         this.loggedCustomer = res.data.customer;
         this.loggedReseller = {};
+        this.devicesOfSelectedCustomer = await this.fetchDevicesByCustomer(res.data.customer);
         this.websurfersOfSelectedCustomer = await this.fetchWebsurfersByCustomer(res.data.customer);
-
         //SECTION TICKETS CUSTOMER
         this.ticketsActiveOfSelectedCustomer = await this.fetchActiveTicketsByCustomer(res.data.customer);
         this.ticketsExpiredOfSelectedCustomer = await this.fetchExpiredTicketsByCustomer(res.data.customer);
@@ -89,79 +92,85 @@ export const hsStore = defineStore({
 
     //only for superadmin
     async fetchResellers() {
-      const res = await axios.post("/api/data/getResellers");
+      const res = await axios.post("/api/reseller/getResellers");
       if (!res.data || !res.data.resellers) return {};
       return res.data.resellers;
     },
     async fetchCustomerByUser(user) {
-      const res = await axios.post("/api/data/getCustomerByUser", { user: user });
+      const res = await axios.post("/api/user/getCustomerByUser", { user: user });
       if (!res.data || !res.data.reseller) return {};
       console.log("Customer logged is:", res.data);
       return res.data.reseller;
     },
     async fetchResellerByUser(user) {
-      const res = await axios.post("/api/data/getResellerByUser", { user: user });
+      const res = await axios.post("/api/user/getResellerByUser", { user: user });
       if (!res.data || !res.data.reseller) return {};
       console.log("Reseller logged is:", res.data);
       return res.data.reseller;
     },
     async fetchCustomersByReseller(reseller) {
       if (!reseller || !reseller.id) return {};
-      const res = await axios.post("/api/data/getCustomersByReseller", { reseller: reseller });
+      const res = await axios.post("/api/reseller/getCustomersByReseller", { reseller: reseller });
       if (!res.data || !res.data.customers) return {};
       return res.data.customers;
     },
     async fetchWebsurfersByCustomer(customer) {
       if (!customer || !customer.id) return {};
-      const res = await axios.post("/api/data/getWebsurfersByCustomer", { customer: customer });
+      const res = await axios.post("/api/websurfer/getWebsurfersByCustomer", { customer: customer });
       if (!res.data || !res.data.websurfers) return {};
       return res.data.websurfers;
     },
     async fetchUsersByCustomer(customer) {
       if (!customer || !customer.id) return {};
-      const res = await axios.post("/api/data/getUsersByCustomer", { customer: customer });
+      const res = await axios.post("/api/customer/getUsersByCustomer", { customer: customer });
       if (!res.data || !res.data.users) return {};
       return res.data.users;
     },
+    async fetchDevicesByCustomer(customer) {
+      if (!customer || !customer.id) return {};
+      const res = await axios.post("/api/customer/getDevicesByCustomer", { customer: customer });
+      if (!res.data || !res.data.devices) return {};
+      return res.data.devices;
+    },
     async fetchUsersByReseller(reseller) {
       if (!reseller || !reseller.id) return {};
-      const res = await axios.post("/api/data/getUsersByReseller", { reseller: reseller });
+      const res = await axios.post("/api/reseller/getUsersByReseller", { reseller: reseller });
       if (!res.data || !res.data.users) return {};
       return res.data.users;
     },
     async fetchTicketsByCustomer(customer) {
       if (!customer || !customer.id) return {};
-      const res = await axios.post("/api/data/getTicketsByCustomer", { customer: customer });
+      const res = await axios.post("/api/customer/getTicketsByCustomer", { customer: customer });
       if (!res.data || !res.data.tickets) return {};
       return res.data.tickets;
     },
     async fetchTicketsByWebsurfer(websurfer) {
       if (!websurfer || !websurfer.id) return {};
-      const res = await axios.post("/api/data/getTicketsByWebSurfer", { websurfer: websurfer });
+      const res = await axios.post("/api/websurfer/getTicketsByWebsurfer", { websurfer: websurfer });
       if (!res.data || !res.data.websurfer) return {};
       return res.data.websurfer;
     },
     async fetchTicketsByCustomer(customer) {
       if (!customer || !customer.id) return {};
-      const res = await axios.post("/api/data/getTicketsByCustomer", { customer: customer });
+      const res = await axios.post("/api/customer/getTicketsByCustomer", { customer: customer });
       if (!res.data || !res.data.tickets) return {};
       return res.data.tickets;
     },
     async fetchActiveTicketsByCustomer(customer) {
       if (!customer || !customer.id) return {};
-      const res = await axios.post("/api/data/getActiveTicketsByCustomer", { customer: customer });
+      const res = await axios.post("/api/customer/getActiveTicketsByCustomer", { customer: customer });
       if (!res.data || !res.data.tickets) return {};
       return res.data.tickets;
     },
     async fetchExpiredTicketsByCustomer(customer) {
       if (!customer || !customer.id) return {};
-      const res = await axios.post("/api/data/getExpiredTicketsByCustomer", { customer: customer });
+      const res = await axios.post("/api/customer/getExpiredTicketsByCustomer", { customer: customer });
       if (!res.data || !res.data.tickets) return {};
       return res.data.tickets;
     },
     async generateTicketForNewWebsurfer(websurfer) {
       if (!websurfer || !websurfer.id) return {};
-      const res = await axios.post("/api/data/generateTicketForNewWebsurfer", { websurfer: websurfer });
+      const res = await axios.post("/api/customer/generateTicketForNewWebsurfer", { websurfer: websurfer });
       if (!res.data || !res.data.ticket) return {};
       return res.data.ticket;
     },
@@ -190,7 +199,7 @@ export const hsStore = defineStore({
     },
 
     addWebsurfer(newWebsurfer) {
-      if (this.user.info.role == "HOTEL") {
+      if (this.user.info.role == "CUSTOMER") {
         this.websurfersOfSelectedCustomer.push(newWebsurfer);
       } else {
         this.websurfers.push(newWebsurfer);
@@ -201,7 +210,7 @@ export const hsStore = defineStore({
     },
 
     addTicket(newTicket) {
-      if (this.user.info.role == "HOTEL") {
+      if (this.user.info.role == "CUSTOMER") {
         this.user.data.tickets.push(newTicket);
       } else {
         this.ticketsOfAllCustomers.push(newTicket);
@@ -215,7 +224,7 @@ export const hsStore = defineStore({
     },
 
     deleteWebsurfer(id) {
-      if (this.user.info.role == "HOTEL") {
+      if (this.user.info.role == "CUSTOMER") {
         this.websurfersOfSelectedCustomer = this.websurfersOfSelectedCustomer.filter((t) => {
           return t.id !== id;
         });
@@ -239,7 +248,7 @@ export const hsStore = defineStore({
         });
       }
 
-      if (this.user.info.role == "HOTEL") {
+      if (this.user.info.role == "CUSTOMER") {
         this.ticketsActiveOfSelectedCustomer = this.ticketsActiveOfSelectedCustomer.filter((t) => {
           return t.id !== id;
         });

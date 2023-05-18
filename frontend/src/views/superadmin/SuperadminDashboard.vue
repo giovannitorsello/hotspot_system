@@ -17,14 +17,14 @@
 </template>
 
 <script>
-  import { hsStore } from "@/store/hotspotSystemStore.js";
+  import { hsStoreSuperadmin } from "@/store/storeSuperadmin.js";
   import SidebarSuperadmin from "@/components/superadmin/SidebarSuperadmin.vue";
   import TableReseller from "@/components/superadmin/TableReseller.vue";
   export default {
     components: { SidebarSuperadmin, TableReseller },
     name: "Dashboard",
     setup() {
-      const hsComponentStore = hsStore();
+      const hsComponentStore = hsStoreSuperadmin();
       return { hsComponentStore };
     },
     data() {

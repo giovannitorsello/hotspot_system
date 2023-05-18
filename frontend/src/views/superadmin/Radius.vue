@@ -91,13 +91,13 @@
 </template>
 
 <script>
-  import { hsStore } from "@/store/hotspotSystemStore.js";
+  import { hsStoreSuperadmin } from "@/store/storeSuperadmin.js";
   import SidebarSuperadmin from "@/components/superadmin/SidebarSuperadmin.vue";
   export default {
     name: "Radius",
     components: { SidebarSuperadmin },
     setup() {
-      const hsComponentStore = hsStore();
+      const hsComponentStore = hsStoreSuperadmin();
       return { hsComponentStore };
     },
     created() {},

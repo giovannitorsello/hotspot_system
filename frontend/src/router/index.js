@@ -47,6 +47,11 @@ const routes = [
     component: () => import("../views/reseller/Tickets.vue"),
   },
   {
+    path: "/reseller/devices",
+    name: "reseller",
+    component: () => import("../views/reseller/Devices.vue"),
+  },
+  {
     path: "/reseller/users",
     name: "resellerUsers",
     component: () => import("../views/reseller/Users.vue"),
@@ -63,7 +68,6 @@ const routes = [
     name: "ticketCustomer",
     component: () => import("../views/customer/Tickets.vue"),
   },
-
   {
     path: "/customer/websurfers",
     name: "customerWebsurfers",
@@ -74,7 +78,11 @@ const routes = [
     name: "customerUsers",
     component: () => import("../views/customer/Users.vue"),
   },
-
+  {
+    path: "/customer/devices",
+    name: "customerDevices",
+    component: () => import("../views/customer/Devices.vue"),
+  },
 ];
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),

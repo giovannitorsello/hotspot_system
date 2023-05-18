@@ -92,7 +92,7 @@
                               <template v-slot:[`item.role`]="{ item }">
                                 <span class="badge bg-primary" v-if="item.raw.role == 'RESELLER'">{{ item.raw.role }}</span>
 
-                                <span class="badge bg-success" v-if="item.raw.role == 'HOTEL'">{{ item.raw.role }}</span>
+                                <span class="badge bg-success" v-if="item.raw.role == 'CUSTOMER'">{{ item.raw.role }}</span>
 
                                 <span class="badge bg-dark" v-if="item.raw.role == 'USER'">{{ item.raw.role }}</span>
                               </template>
@@ -150,14 +150,14 @@
 </template>
 
 <script>
-  import { hsStore } from "@/store/hotspotSystemStore.js";
+  import { hsStoreCustomer } from "@/store/storeCustomer.js";
   import axios from "axios";
   import SidebarCustomer from "@/components/customer/SidebarCustomer.vue";
   export default {
     name: "Users",
     components: { SidebarCustomer },
     setup() {
-      const hsComponentStore = hsStore();
+      const hsComponentStore = hsStoreCustomer();
       return { hsComponentStore };
     },
     data() {

@@ -1,3 +1,4 @@
+storeCustomer
 <template>
   <v-card>
     <v-tabs v-model="tab" bg-color="#435ebe">
@@ -66,13 +67,13 @@
 </template>
 
 <script>
-  import { hsStore } from "@/store/hotspotSystemStore.js";
+  import { hsStoreCustomer } from "@/store/storeCustomer.js";
   import axios from "axios";
   import TableTicket from "@/components/customer/TableTicket.vue";
   export default {
     name: "TableWebsurfer",
     setup() {
-      const hsComponentStore = hsStore();
+      const hsComponentStore = hsStoreCustomer();
       return { hsComponentStore };
     },
     components: { TableTicket },
@@ -95,7 +96,7 @@
         return this.totalRecords / this.itemsPerPage;
       },
       headerField() {
-        if (this.hsComponentStore.user.role == "HOTEL") {
+        if (this.hsComponentStore.user.role == "CUSTOMER") {
           var header = [
             { title: "ID", key: "id" },
             { title: "NOME", key: "firstname" },
@@ -116,7 +117,7 @@
             { title: "TELEFONO", key: "phone" },
             { title: "SOCIAL ID", key: "idSocial" },
             { title: "SOCIAL", key: "typeSocial" },
-            { title: "ID_HOTEL", key: "CustomerId" },
+            { title: "ID_CUSTOMER", key: "CustomerId" },
             { title: "Actions", key: "actions" },
           ];
         }

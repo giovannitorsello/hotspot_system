@@ -9,11 +9,21 @@ import "vuetify/styles";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
-import {VDataTable } from "vuetify/labs/VDataTable";
-import piniaPluginPersistedState from "pinia-plugin-persistedstate"
+import { VDataTable } from "vuetify/labs/VDataTable";
+import { mdi } from "vuetify/iconsets/mdi";
+import { aliases, fa } from "vuetify/iconsets/fa";
+import piniaPluginPersistedState from "pinia-plugin-persistedstate";
 
 const vuetify = createVuetify({
-  components:{
+  icons: {
+    defaultSet: "fa",
+    aliases,
+    sets: {
+      fa,
+      mdi,
+    },
+  },
+  components: {
     ...components,
     VDataTable,
   },

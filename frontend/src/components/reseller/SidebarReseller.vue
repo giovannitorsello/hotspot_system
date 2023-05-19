@@ -64,14 +64,6 @@
           path: "/reseller/customers",
         },
         {
-          name: "Navigatore web",
-          path: "/reseller/websurfers",
-        },
-        {
-          name: "Ticket",
-          path: "/reseller/tickets",
-        },
-        {
           name: "Dispositivi",
           path: "/reseller/devices",
         },

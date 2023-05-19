@@ -90,10 +90,11 @@
                   </div>
                 </div>
               </div>
-              <TableWebsurferCustomer />
             </div>
           </div>
         </section>
+
+        <TableWebsurfer />
       </div>
     </div>
   </div>
@@ -101,9 +102,9 @@
 <script>
   import { hsStoreCustomer } from "@/store/storeCustomer.js";
   import SidebarCustomer from "@/components/customer/SidebarCustomer.vue";
-  import TableWebsurferCustomer from "@/components/customer/TableTicketCustomer.vue";
+  import TableWebsurfer from "@/components/customer/TableWebsurfer.vue";
   export default {
-    components: { SidebarCustomer, TableWebsurferCustomer },
+    components: { SidebarCustomer, TableWebsurfer },
     name: "CustomerDashboard",
     setup() {
       const hsComponentStore = hsStoreCustomer();

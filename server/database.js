@@ -141,17 +141,33 @@ const Reseller = sequelize.define(
 const User = sequelize.define(
   "User",
   {
+    firstname: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    lastname: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    email: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    phone: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
     role: {
       type: Sequelize.ENUM("SUPERADMIN", "RESELLER", "CUSTOMER"),
       allowNull: false,
     },
+    username: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
     password: {
       type: Sequelize.STRING,
-      allowNull: true,
-    },
-    utente: {
-      type: Sequelize.STRING,
-      allowNull: true,
+      allowNull: false,
     },
   },
   { tableName: "user" }
@@ -202,6 +218,10 @@ const Device = sequelize.define(
       allowNull: true,
     },
     postAuthLandingPage: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+    notes: {
       type: Sequelize.TEXT,
       allowNull: true,
     },

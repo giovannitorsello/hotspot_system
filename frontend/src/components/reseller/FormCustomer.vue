@@ -71,6 +71,7 @@
   </v-dialog>
 </template>
 <script>
+  import utilityArrays from "@/utils/utilityArrays.js";
   import { hsStoreReseller } from "@/store/storeReseller.js";
   import TableDevices from "@/components/reseller/TableDevices.vue";
   import FormDevice from "@/components/reseller/FormDevice.vue";
@@ -78,7 +79,7 @@
   export default {
     name: "FormCustomer",
     components: { TableDevices, FormDevice },
-    props: ["bShow"],
+
     setup() {
       const hsComponentStore = hsStoreReseller();
       console.log("Selected customer is:", hsComponentStore.selectedCustomer);
@@ -119,7 +120,7 @@
           })
           .then((response) => {
             if (response.data.status == 200) {
-              updateElementById(this.hsComponentStore.devicesOfSelectedCustomer, response.data.device);
+              utilityArrays.updateElementById(this.hsComponentStore.devicesOfSelectedCustomer, response.data.device);
               this.dialogEditDevice = false;
             } else {
               this.$emit("saveDeviceError");
@@ -127,11 +128,12 @@
           });
       },
       deleteDevice(device) {
-        axios.post("/api/device/delete", { device: device }).then((response) => {
+        axios.post("/api/device/delete", { device: device }).then(async (response) => {
           if (response.data.status == 200) {
-            utilityArrays.deleteElementById(this.hsComponentStore.devicesOfSelectedCustomer, device.id);
+            utilityArrays.deleteElementById(this.hsComponentStore.devicesOfSelectedCustomer, device);
             this.$swal(response.data.msg);
           } else {
+            utilityArrays.deleteElementById(this.hsComponentStore.devicesOfSelectedCustomer, device);
             this.$swal(response.data.msg);
           }
         });

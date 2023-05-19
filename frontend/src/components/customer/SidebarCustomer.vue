@@ -64,15 +64,11 @@
           path: "/customer/websurfers",
         },
         {
-          name: "Gestione Ticket",
-          path: "/customer/ticket",
-        },
-        {
           name: "Dispositivi",
           path: "/customer/devices",
         },
         {
-          name: "Credenziali Accesso",
+          name: "Utenti",
           path: "/customer/users",
         },
       ];

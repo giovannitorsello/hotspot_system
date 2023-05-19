@@ -15,6 +15,7 @@ export const hsStoreReseller = defineStore({
 
     selectedCustomer: {},
     selectedDevice: {},
+    selectedUser: {},
 
     //Statistics variables
     websurfers: [],
@@ -24,9 +25,6 @@ export const hsStoreReseller = defineStore({
   }),
   getters: {},
   actions: {
-    setSelectedCustomer(customer) {
-      this.selectedCustomer = customer;
-    },
     async init(user) {
       if (user && user.id > 0 && user.role === "RESELLER") {
         this.loggedUser = user;
@@ -45,27 +43,27 @@ export const hsStoreReseller = defineStore({
       return res.data.reseller;
     },
     async fetchUsersByReseller(reseller) {
-      if (!reseller || !reseller.id) return {};
+      if (!reseller || !reseller.id) return [];
       const res = await axios.post("/api/reseller/getUsersByReseller", { reseller: reseller });
-      if (!res.data || !res.data.users) return {};
+      if (!res.data || !res.data.users) return [];
       return res.data.users;
     },
     async fetchCustomersByReseller(reseller) {
-      if (!reseller || !reseller.id) return {};
+      if (!reseller || !reseller.id) return [];
       const res = await axios.post("/api/reseller/getCustomersByReseller", { reseller: reseller });
-      if (!res.data || !res.data.customers) return {};
+      if (!res.data || !res.data.customers) return [];
       return res.data.customers;
     },
     async fetchWebsurfersByCustomer(customer) {
-      if (!customer || !customer.id) return {};
+      if (!customer || !customer.id) return [];
       const res = await axios.post("/api/websurfer/getWebsurfersByCustomer", { customer: customer });
-      if (!res.data || !res.data.websurfers) return {};
+      if (!res.data || !res.data.websurfers) return [];
       return res.data.websurfers;
     },
     async fetchDevicesByCustomer(customer) {
-      if (!customer || !customer.id) return {};
+      if (!customer || !customer.id) return [];
       const res = await axios.post("/api/customer/getDevicesByCustomer", { customer: customer });
-      if (!res.data || !res.data.devices) return {};
+      if (!res.data || !res.data.devices) return [];
       this.devicesOfSelectedCustomer = res.data.devices;
       return res.data.devices;
     },

@@ -24,7 +24,7 @@ routerDashboard.post("/login", (req, res) => {
         //Case superadmin (Wifinetcom). send resellers
         if (user.role === "SUPERADMIN") {
           var resellers = await db.getResellers();
-          res.send({ status: "200", msg: "Login ok.", state: "ok", user: user, resellers: resellers });
+          res.send({ status: "200", msg: "Login ok.", user: user, resellers: resellers });
         }
 
         //Case reseller send user, customers
@@ -34,7 +34,7 @@ routerDashboard.post("/login", (req, res) => {
           res.send({
             status: "200",
             msg: "Login ok.",
-            state: "ok",
+
             user: user,
             reseller: reseller,
             customers: customers,
@@ -49,7 +49,7 @@ routerDashboard.post("/login", (req, res) => {
           res.send({
             status: "200",
             msg: "Login ok.",
-            state: "ok",
+
             user: user,
             customer: customer,
             //websurfers: websurfers,

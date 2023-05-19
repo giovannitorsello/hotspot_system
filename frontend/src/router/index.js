@@ -37,16 +37,6 @@ const routes = [
     component: () => import("../views/reseller/Customers.vue"),
   },
   {
-    path: "/reseller/websurfers",
-    name: "resellerWebsurfers",
-    component: () => import("../views/reseller/Websurfers.vue"),
-  },
-  {
-    path: "/reseller/tickets",
-    name: "resellerTickets",
-    component: () => import("../views/reseller/Tickets.vue"),
-  },
-  {
     path: "/reseller/devices",
     name: "reseller",
     component: () => import("../views/reseller/Devices.vue"),
@@ -64,24 +54,19 @@ const routes = [
     component: () => import("../views/customer/CustomerDashboard.vue"),
   },
   {
-    path: "/customer/ticket",
-    name: "ticketCustomer",
-    component: () => import("../views/customer/Tickets.vue"),
-  },
-  {
     path: "/customer/websurfers",
     name: "customerWebsurfers",
     component: () => import("../views/customer/Websurfers.vue"),
   },
   {
-    path: "/customer/users",
-    name: "customerUsers",
-    component: () => import("../views/customer/Users.vue"),
-  },
-  {
     path: "/customer/devices",
     name: "customerDevices",
     component: () => import("../views/customer/Devices.vue"),
+  },
+  {
+    path: "/customer/users",
+    name: "customerUsers",
+    component: () => import("../views/customer/Users.vue"),
   },
 ];
 const router = createRouter({

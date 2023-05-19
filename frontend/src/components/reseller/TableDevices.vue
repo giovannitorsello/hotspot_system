@@ -22,10 +22,11 @@
   </div>
 </template>
 <script>
+  import axios from "axios";
   import utilityArrays from "@/utils/utilityArrays.js";
   import { hsStoreReseller } from "@/store/storeReseller.js";
   import FormDevice from "@/components/reseller/FormDevice.vue";
-  import axios from "axios";
+
   export default {
     name: "TableDevice",
     components: { FormDevice },
@@ -74,11 +75,12 @@
           });
       },
       deleteDevice(device) {
-        axios.post("/api/device/delete", { device: device }).then((response) => {
+        axios.post("/api/device/delete", { device: device }).then(async (response) => {
           if (response.data.status == 200) {
-            utilityArrays.deleteElementById(this.hsComponentStore.devicesOfSelectedCustomer, device.id);
+            utilityArrays.deleteElementById(this.hsComponentStore.devicesOfSelectedCustomer, device);
             this.$swal(response.data.msg);
           } else {
+            utilityArrays.deleteElementById(this.hsComponentStore.devicesOfSelectedCustomer, device);
             this.$swal(response.data.msg);
           }
         });

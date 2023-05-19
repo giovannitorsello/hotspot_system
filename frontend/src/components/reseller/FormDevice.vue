@@ -2,18 +2,42 @@
   <v-dialog v-model="dialogEditDevice" :scrim="false" transition="dialog-bottom-transition">
     <v-card>
       <v-card-title> Modifica Dispositivo </v-card-title>
+      <v-tabs v-model="tabSettings" bg-color="primary">
+        <v-tab value="deviceGeneralSettings">Generale</v-tab>
+        <v-tab value="deviceWebSettings">Web</v-tab>
+        <v-tab value="deviceBandwidthSettings">Profili banda</v-tab>
+        <v-tab value="deviceCustomFieldsSettings">Campi personalizzati</v-tab>
+        <v-tab value="deviceAuthMonitoringSettings">Impostazioni di connessione</v-tab>
+        <v-tab value="deviceNotes">Annotazioni</v-tab>
+      </v-tabs>
+
       <v-card-text>
-        <v-text-field v-model="selectedDevice.description" label="Descrizione"></v-text-field>
-        <v-text-field v-model="selectedDevice.addressSetup" label="Indirizzo di installazione"></v-text-field>
-        <v-text-field v-model="selectedDevice.ipv4Management" label="Profilo IPV4"></v-text-field>
-        <v-text-field v-model="selectedDevice.ipv6Management" label="Profilo IPV6"></v-text-field>
-        <v-text-field v-model="selectedDevice.api_key" label="api_key"></v-text-field>
-        <v-text-field v-model="selectedDevice.defaultBandwidth" label="Profilo banda default"></v-text-field>
-        <v-text-field v-model="selectedDevice.preAuthLandingPage" label="Pagina di pre-autorizzazione"></v-text-field>
-        <v-text-field v-model="selectedDevice.postAuthLandingPage" label="pagina di post-autorizzazione"></v-text-field>
-        <v-textarea rows="10" row-height="10" auto-grow v-model="selectedDevice.websurferCustomFields" label="Campi aggiuntivi form registrazione (JSON)"></v-textarea>
-        <v-textarea rows="10" row-height="10" auto-grow v-model="selectedDevice.bandwidthProfiles" label="Profili di banda (JSON)"></v-textarea>
-        <v-textarea rows="10" row-height="10" auto-grow v-model="selectedDevice.deviceAuthProperties" label="Profilo accesso device (JSON)"></v-textarea>
+        <v-window v-model="tabSettings">
+          <v-window-item value="deviceGeneralSettings">
+            <v-text-field v-model="selectedDevice.description" label="Descrizione"></v-text-field>
+            <v-text-field v-model="selectedDevice.addressSetup" label="Indirizzo di installazione"></v-text-field>
+            <v-text-field v-model="selectedDevice.api_key" label="Chiave Api di riconoscimento"></v-text-field>
+            <v-text-field v-model="selectedDevice.ipv4Management" label="Profilo IPV4"></v-text-field>
+            <v-text-field v-model="selectedDevice.ipv6Management" label="Profilo IPV6"></v-text-field>
+            <v-text-field v-model="selectedDevice.defaultBandwidth" label="Profilo banda default"></v-text-field>
+          </v-window-item>
+          <v-window-item value="deviceWebSettings">
+            <v-text-field v-model="selectedDevice.preAuthLandingPage" label="Pagina di pre-autorizzazione"></v-text-field>
+            <v-text-field v-model="selectedDevice.postAuthLandingPage" label="pagina di post-autorizzazione"></v-text-field>
+          </v-window-item>
+          <v-window-item value="deviceBandwidthSettings">
+            <v-textarea rows="10" row-height="10" auto-grow v-model="selectedDevice.bandwidthProfiles" label="Profili di banda (JSON)"></v-textarea>
+          </v-window-item>
+          <v-window-item value="deviceCustomFieldsSettings">
+            <v-textarea rows="10" row-height="10" auto-grow v-model="selectedDevice.websurferCustomFields" label="Campi aggiuntivi form registrazione (JSON)"></v-textarea>
+          </v-window-item>
+          <v-window-item value="deviceAuthMonitoringSettings">
+            <v-textarea rows="10" row-height="10" auto-grow v-model="selectedDevice.deviceAuthProperties" label="Profilo accesso device (JSON)"></v-textarea>
+          </v-window-item>
+          <v-window-item value="deviceNotes">
+            <v-textarea rows="10" row-height="10" auto-grow v-model="selectedDevice.notes" label="Note"></v-textarea>
+          </v-window-item>
+        </v-window>
         <v-row>
           <v-col>
             <v-sheet class="pa-2 ma-1" align="end">
@@ -33,7 +57,7 @@
   export default {
     name: "FormDevice",
     components: {},
-    props: ["bShow"],
+
     setup() {
       const hsComponentStore = hsStoreReseller();
       console.log("Selected device is:", hsComponentStore.selectedDevice);
@@ -41,6 +65,7 @@
     },
     data() {
       return {
+        tabSettings: "deviceGeneralSettings",
         dialogEditDevice: true,
         selectedReseller: {},
         selectedCustomer: {},

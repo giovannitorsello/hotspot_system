@@ -48,8 +48,8 @@
     },
     data() {
       return {
-        username: "hotel1",
-        password: "hotel1",
+        username: "customer1",
+        password: "customer1",
       };
     },
 
@@ -60,15 +60,22 @@
           password: this.password,
         });
         console.log(res.data);
+        if (!res.data.user || !res.data.user.role) {
+          this.$router.push("/");
+          this.$swal("Credenziali errate!");
+          return;
+        }
+
         if (res.data.user.role === "SUPERADMIN") {
+          console.log("Logged superadmin is:", res.data.user);
           this.storeSuperadmin.init(res.data.user);
           this.$router.push("superadmin/dashboard");
-          //console.log("Logged reseller is:", res.data.reseller);
         } else if (res.data.user.role === "RESELLER") {
+          console.log("Logged reseller is:", res.data.user);
           this.storeReseller.init(res.data.user);
           this.$router.push("reseller/dashboard");
-          //console.log("Logged reseller is:", res.data.reseller);
         } else if (res.data.user.role === "CUSTOMER") {
+          console.log("Logged customer is:", res.data.user);
           this.storeCustomer.init(res.data.user);
           this.$router.push("customer/dashboard");
         } else {

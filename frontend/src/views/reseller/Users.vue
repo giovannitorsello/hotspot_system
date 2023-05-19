@@ -1,177 +1,11 @@
 <template>
   <div>
-    <div id="sidebar" class="active">
-      <div class="sidebar-wrapper active">
-        <div class="sidebar-header">
-          <div class="d-flex justify-content-between">
-            <div class="logo">
-              <a href="/dashboard"><img src="/img/logo_ASYTECH.png" alt="Logo" /></a>
-            </div>
-            <div class="toggler">
-              <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
-            </div>
-          </div>
-        </div>
-        <SidebarReseller />
-        <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
-      </div>
-    </div>
+    <SidebarReseller />
     <div id="main">
-      <header class="mb-3">
-        <a href="#" class="burger-btn d-block d-xl-none">
-          <i class="bi bi-justify fs-3"></i>
-        </a>
-      </header>
-
       <div class="page-heading">
-        <h3>UTENTI</h3>
+        <h3>ACCESSI AL SISTEMA</h3>
       </div>
-      <div class="page-content">
-        <section class="row">
-          <div class="col-12 col-lg-12">
-            <div class="page-heading">
-              <section class="section">
-                <div class="card">
-                  <div class="col-md-6 col-12">
-                    <div class="card">
-                      <div class="card-header">
-                        <h4 class="card-title">INSERISCI NUOVO UTENTE</h4>
-                      </div>
-                      <div class="card-content">
-                        <div class="card-body">
-                          <div class="form-body">
-                            <div class="row">
-                              <div class="col-md-4">
-                                <label>Nome Utente</label>
-                              </div>
-                              <div class="col-md-8">
-                                <div class="form-group has-icon-left">
-                                  <div class="position-relative">
-                                    <input type="text" class="form-control" v-model="payload.utente" required />
-                                    <div class="form-control-icon">
-                                      <i class="bi bi-person"></i>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="col-md-4">
-                                <label>Password</label>
-                              </div>
-                              <div class="col-md-8">
-                                <div class="form-group has-icon-left">
-                                  <div class="position-relative">
-                                    <input type="password" class="form-control" v-model="payload.password" required />
-                                    <div class="form-control-icon">
-                                      <i class="bi bi-lock"></i>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="col-md-4">
-                                <label>Ruolo</label>
-                              </div>
-                              <div class="col-md-8">
-                                <fieldset class="form-group">
-                                  <select v-model="payload.role" class="form-select">
-                                    <option disabled value="">Seleziona privilegi</option>
-                                    <option>CUSTOMER</option>
-                                    <option>USER</option>
-                                  </select>
-                                </fieldset>
-                              </div>
-                              <!--   <% if(role == "RESELLER"){ %>
-                                                                        <div class="col-md-4">
-                                                                            <label>Cliente</label>
-                                                                        </div>
-                                                                        
-                                                                        <div class="col-md-8">
-                                                                            <fieldset class="form-group">
-                                                                                <select class="form-select" name="client"
-                                                                                    required>
-                                                                                    <% clients.forEach(function(client) { %>
-                                                                                        <option value=<%=client.id %>> <%=
-                                                                                                client.companyName %>
-                                                                                        </option>
-                                                                                        <% }) %>
-                                                                                </select>
-                                                                            </fieldset>
-                                                                        </div>
-                                                                        <% } %> -->
-                              <div class="col-12 d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary me-1 mb-1" @click="insertUser()">INSERISCI</button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <section class="section">
-                    <v-card>
-                      <v-tabs v-model="tab" bg-color="#435ebe">
-                        <v-tab value="one" color="white">TUTTI</v-tab>
-                        <v-tab value="two" color="white">MODIFICA</v-tab>
-                        <v-tab value="three" color="white">ELIMINA</v-tab>
-                      </v-tabs>
-
-                      <v-card-text>
-                        <v-window v-model="tab">
-                          <v-window-item value="one">
-                            <v-text-field v-model="search" label="CERCA"></v-text-field>
-                            <v-data-table :headers="header" :items="hsComponentStore.usersOfSelectedReseller" :search="search" :page.sync="page" :items-per-page="itemsPerPage" disable-pagination>
-                              <template v-slot:[`item.role`]="{ item }">
-                                <span class="badge bg-primary">{{ item.raw.role }}</span>
-                              </template>
-                              <template v-slot:[`item.actions`]="{ item }">
-                                <i class="bi bi-trash" @click="deleteWebsurfer(item.raw)"> </i>
-                                <i class="bi bi-pen" @click="editWebsurfer(item.raw)"></i>
-                              </template>
-                            </v-data-table>
-                          </v-window-item>
-                          <v-window-item value="two">
-                            <v-card>
-                              <v-card-title> Modifica cliente </v-card-title>
-                              <v-card-text>
-                                <v-text-field v-model="selectedUser.role" label="RUOLO"></v-text-field>
-                                <v-text-field v-model="selectedUser.utente" label="USERNAME"></v-text-field>
-                                <v-text-field v-model="selectedUser.password" label="PASSWORD"></v-text-field>
-                                <v-text-field v-model="selectedUser.ResellerId" label="ID_RESELLER"></v-text-field>
-                                <v-text-field v-model="selectedUser.CustomerId" label="ID_CLIENTE"></v-text-field>
-
-                                <v-row>
-                                  <v-col>
-                                    <v-sheet class="pa-2 ma-1" align="end">
-                                      <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="goBack()"></i>
-                                      <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="saveWebsurfer(selectedCustomer)"></i>
-                                    </v-sheet>
-                                  </v-col>
-                                </v-row>
-                              </v-card-text>
-                            </v-card>
-                          </v-window-item>
-
-                          <v-window-item value="three">
-                            <v-card>
-                              <v-card-title>Conferma eliminazione</v-card-title>
-                              <v-card-text>
-                                <p>Vuoi eliminare il cliente "{{ selectedUser.utente }}"?</p>
-                              </v-card-text>
-                              <v-card-actions>
-                                <v-btn color="primary" @click="deleteUser(selectedUser)">Elimina</v-btn>
-                                <v-btn @click="selectedUser = null">Annulla</v-btn>
-                              </v-card-actions>
-                            </v-card>
-                          </v-window-item>
-                        </v-window>
-                      </v-card-text>
-                    </v-card>
-                  </section>
-                </div>
-              </section>
-            </div>
-          </div>
-        </section>
-      </div>
+      <TableUsers />
     </div>
   </div>
 </template>
@@ -180,9 +14,10 @@
   import { hsStoreReseller } from "@/store/storeReseller.js";
   import axios from "axios";
   import SidebarReseller from "@/components/reseller/SidebarReseller.vue";
+  import TableUsers from "@/components/reseller/TableUsers.vue";
   export default {
     name: "Users",
-    components: { SidebarReseller },
+    components: { SidebarReseller, TableUsers },
     setup() {
       const hsComponentStore = hsStoreReseller();
       return { hsComponentStore };
@@ -192,13 +27,7 @@
         tab: "",
         selectedUser: null,
         search: "",
-        header: [
-          { title: "ID", key: "id" },
-          { title: "RUOLO", key: "role" },
-          { title: "USERNAME", key: "utente" },
-          { title: "PASSWORD", key: "password" },
-          { title: "Actions", key: "actions" },
-        ],
+
         page: 1,
         itemsPerPage: 10,
         payload: {

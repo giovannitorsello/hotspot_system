@@ -7,10 +7,10 @@
     <v-row>
       <v-text-field v-model="search" label="CERCA"></v-text-field>
       <v-data-table
-        :headers="this.header"
+        :headers="headers"
         :items="hsComponentStore.customersOfSelectedReseller"
         :search="search"
-        page.sync="page"
+        :page.sync="page"
         :items-per-page="itemsPerPage"
         :hide-default-footer="true"
         disable-pagination
@@ -26,8 +26,8 @@
 </template>
 
 <script>
-  import { hsStoreReseller } from "@/store/storeReseller.js";
   import utilityArrays from "@/utils/utilityArrays.js";
+  import { hsStoreReseller } from "@/store/storeReseller.js";
   import FormCustomer from "@/components/reseller/FormCustomer.vue";
   import TableCustomers from "@/components/reseller/TableCustomers.vue";
 
@@ -48,7 +48,7 @@
         selectedDevice: {},
         tabSettings: "customerGeneralSettings",
         search: "",
-        header: [
+        headers: [
           { title: "ID", key: "id" },
           { title: "NOME", key: "companyName" },
           { title: "TELEFONO", key: "phone" },
@@ -82,9 +82,10 @@
           })
           .then((response) => {
             if (response.data.status == 200) {
-              utilityArrays.deleteElementById(this.hsComponentStore.customersOfSelectedReseller, customer.id);
+              utilityArrays.deleteElementById(this.hsComponentStore.customersOfSelectedReseller, customer);
               this.$swal(response.data.msg);
             } else {
+              utilityArrays.deleteElementById(this.hsComponentStore.customersOfSelectedReseller, customer);
               this.$swal(response.data.msg);
             }
           });

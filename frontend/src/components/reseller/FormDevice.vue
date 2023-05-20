@@ -26,13 +26,16 @@
             <v-text-field v-model="selectedDevice.postAuthLandingPage" label="pagina di post-autorizzazione"></v-text-field>
           </v-window-item>
           <v-window-item value="deviceBandwidthSettings">
-            <v-textarea rows="10" row-height="10" auto-grow v-model="selectedDevice.bandwidthProfiles" label="Profili di banda (JSON)"></v-textarea>
+            <!--v-textarea rows="10" row-height="10" auto-grow v-model="selectedDevice.bandwidthProfiles" label="Profili di banda (JSON)"></!--v-textarea-->
+            <Vue3JsonEditor v-model="hsComponentStore.selectedDevice.bandwidthProfiles" @json-change="onChangeBandwidthProfile" mode="code" :show-btns="false" :expandedOnStart="false" />
           </v-window-item>
           <v-window-item value="deviceCustomFieldsSettings">
-            <v-textarea rows="10" row-height="10" auto-grow v-model="selectedDevice.websurferCustomFields" label="Campi aggiuntivi form registrazione (JSON)"></v-textarea>
+            <!--v-textarea rows="10" row-height="10" auto-grow v-model="selectedDevice.websurferCustomFields" label="Campi aggiuntivi form registrazione (JSON)"></!--v-textarea-->
+            <Vue3JsonEditor v-model="hsComponentStore.selectedDevice.websurferCustomFields" @json-change="onChangeWebSurferCustomFields" mode="code" :show-btns="false" :expandedOnStart="false" />
           </v-window-item>
           <v-window-item value="deviceAuthMonitoringSettings">
-            <v-textarea rows="10" row-height="10" auto-grow v-model="selectedDevice.deviceAuthProperties" label="Profilo accesso device (JSON)"></v-textarea>
+            <!--v-textarea rows="10" row-height="10" auto-grow v-model="selectedDevice.deviceAuthProperties" label="Profilo accesso device (JSON)"></!--v-textarea-->
+            <Vue3JsonEditor v-model="hsComponentStore.selectedDevice.deviceAuthProperties" @json-change="onChangeAuthProperties" mode="code" :show-btns="false" :expandedOnStart="false" />
           </v-window-item>
           <v-window-item value="deviceNotes">
             <v-textarea rows="10" row-height="10" auto-grow v-model="selectedDevice.notes" label="Note"></v-textarea>
@@ -54,14 +57,19 @@
   import utilityArrays from "@/utils/utilityArrays.js";
   import { hsStoreReseller } from "@/store/storeReseller.js";
   import axios from "axios";
+  import { Vue3JsonEditor } from "vue3-json-editor";
+  import { defineComponent, reactive, toRefs } from "vue";
+
   export default {
     name: "FormDevice",
-    components: {},
+    components: { Vue3JsonEditor },
 
     setup() {
       const hsComponentStore = hsStoreReseller();
-      console.log("Selected device is:", hsComponentStore.selectedDevice);
-      return { hsComponentStore };
+      const state = reactive({
+        json: {},
+      });
+      return { hsComponentStore, ...toRefs(state) };
     },
     data() {
       return {
@@ -80,6 +88,8 @@
         ],
         page: 1,
         itemsPerPage: 10,
+        websurferCustomFields: {},
+        authProperties: {},
       };
     },
     mounted() {
@@ -89,26 +99,28 @@
       this.selectedDevice = this.hsComponentStore.selectedDevice;
     },
     methods: {
-      saveDevice() {
-        this.$emit("saveDevice", this.selectedDevice);
+      saveDevice(device) {
+        this.$emit("saveDevice", device);
       },
       deleteDevice(device) {
-        this.$emit("deleteDevice", this.selectedDevice);
+        this.$emit("deleteDevice", device);
       },
       editDevice(device) {
         console.log("Selected device is:", device);
         this.hsComponentStore.selectedDevice = device;
       },
-      selectDevice(row, object) {
-        var deviceId = object.item.columns.id;
-        const indexOfObject = this.hsComponentStore.devicesOfSelectedCustomer((object) => {
-          return object.id === device.id;
-        });
-        this.selectedDevice = this.hsComponentStore.devicesOfSelectedCustomer[indexOfObject];
-      },
       exit() {
         this.dialogEditDevice = false;
         this.$emit("exitEditDevice");
+      },
+      onChangeBandwidthProfile(jsonValue) {
+        this.hsComponentStore.selectedDevice.bandwidthProfiles = jsonValue;
+      },
+      onChangeWebSurferCustomFields(jsonValue) {
+        this.hsComponentStore.selectedDevice.websurferCustomFields = jsonValue;
+      },
+      onChangeAuthProperties(jsonValue) {
+        this.hsComponentStore.selectedDevice.deviceAuthProperties = jsonValue;
       },
     },
   };

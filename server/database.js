@@ -192,25 +192,21 @@ const Device = sequelize.define(
       type: Sequelize.STRING,
       allowNull: true,
     },
-    deviceAuthProperties: {
-      //Contains alla auth data, management ports, js drivers plugin etc
-      type: Sequelize.TEXT,
-      allowNull: true,
-    },
     api_key: {
       type: Sequelize.STRING,
       allowNull: true,
     },
-    defaultBandwidth: {
-      type: Sequelize.STRING,
+    deviceAuthProperties: {
+      //Contains alla auth data, management ports, js drivers plugin etc
+      type: Sequelize.JSON,
       allowNull: true,
     },
     bandwidthProfiles: {
-      type: Sequelize.TEXT,
+      type: Sequelize.JSON,
       allowNull: true,
     },
     websurferCustomFields: {
-      type: Sequelize.TEXT,
+      type: Sequelize.JSON,
       allowNull: true,
     },
     preAuthLandingPage: {
@@ -388,7 +384,7 @@ const getWebSurfersByCustomer = async (customer) => {
 
 const getUsersByCustomer = async (customer) => {
   if (!customer || !customer.id) return {};
-  var users = await User.findAll({ where: { [Op.and]: { CustomerId: customer.id, role: "CUSTOMER" } } });
+  var users = await User.findAll({ attributes: { exclude: ["password"] }, where: { [Op.and]: { CustomerId: customer.id, role: "CUSTOMER" } } });
   return users;
 };
 
@@ -406,7 +402,7 @@ const getResellerByUser = async (user) => {
 
 const getUsersByReseller = async (reseller) => {
   if (!reseller || !reseller.id) return {};
-  var users = await User.findAll({ where: { [Op.and]: { ResellerId: reseller.id, role: "RESELLER" } } });
+  var users = await User.findAll({ attributes: { exclude: ["password"] }, where: { [Op.and]: { ResellerId: reseller.id, role: "RESELLER" } } });
   return users;
 };
 

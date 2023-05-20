@@ -10,6 +10,7 @@ const { ticketUsername, ticketPassword } = generateRandomCredentials();
 const createUser = require("../utils/radiusDB");
 const dateUtils = require("../utils/dateUtils");
 const axios = require("axios");
+const md5 = require("md5");
 var customer = {};
 var device = {};
 
@@ -18,6 +19,8 @@ router.post("/api/login", async (req, res) => {
   //Prevent errors
   if (!req.body || !req.body.username || !req.body.password) res.send({ status: "404", msg: "Login incorrect" });
 
+  //Transform password in md5
+  req.body.password = md5(req.body.password);
   const user = await User.findOne({ where: { username: req.body.username, password: req.body.password } });
   if (user != null) {
     res.send({ status: "200", msg: "Login ok.", user: user });
@@ -27,12 +30,16 @@ router.post("/api/login", async (req, res) => {
 });
 
 //////////////////// USERS MANAGEMENT ROUTES ///////////////
+
 router.post("/api/user/save", async (req, res) => {
   var user = req.body.user;
   if (!user || !(user.username || user.password)) {
     res.send({ status: "404", msg: "DATI NON COMPLETI O ERRATI" });
     return;
   }
+
+  // Password in MD5
+  user.password = md5(user.password);
 
   if (user.id && user.id > 0) foundUser = await User.findOne({ where: { id: user.id } });
   else foundUser = await User.findOne({ where: { username: user.username, password: user.password, role: user.role, email: user.email } });
@@ -64,6 +71,24 @@ router.post("/api/user/delete", async (req, res) => {
     res.send({ status: "200", msg: "UTENTE ELIMINATO", user: user });
   } else {
     res.send({ status: "404", msg: "ERRORE NELLA CANCELLAZIONE DEL UTENTE.", user: {} });
+  }
+});
+
+router.post("/api/user/changePassword", async function (req, res) {
+  var user = req.body.user;
+  if (!user || !user.id) {
+    res.send({ status: "404", msg: "DATI NON COMPLETI O ERRATI" });
+    return;
+  }
+  // Password in MD5
+  user.password = md5(user.password);
+
+  foundUser = await User.findOne({ where: { id: user.id } });
+  //UPDATE
+  if (foundUser && foundUser.id !== 0) {
+    var userUpdated = await foundUser.update(user);
+    if (userUpdated) res.send({ status: "200", msg: "PASSWORD MODIFICATA.", user: userUpdated });
+    else res.send({ status: "404", msg: "DATI NON COMPLETI O ERRATI" });
   }
 });
 

@@ -44,5 +44,4 @@ pinia.use(piniaPluginPersistedState);
 axios.defaults.baseURL = process.env.VUE_APP_API_ENDPOINT;
 //$axios.defaults.headers.common["Authorization"] = AUTH_TOKEN;
 //$axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-
 createApp(App).use(pinia).use(router).use(VueSweetalert2).use(vuetify).mount("#app");

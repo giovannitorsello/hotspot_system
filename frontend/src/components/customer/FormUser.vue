@@ -19,6 +19,7 @@
               <v-col>
                 <v-sheet class="pa-2 ma-1" align="end">
                   <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="exitEditUser()"></i>
+                  <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="saveCustomerUser(selectedUser)"></i>
                 </v-sheet>
               </v-col>
             </v-row>
@@ -30,6 +31,7 @@
               <v-col>
                 <v-sheet class="pa-2 ma-1" align="end">
                   <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="exitEditUser()"></i>
+                  <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="changeUserPassword(selectedUser)"></i>
                 </v-sheet>
               </v-col>
             </v-row>
@@ -51,7 +53,6 @@
   </v-dialog>
 </template>
 <script>
-  import axios from "axios";
   import { hsStoreCustomer } from "@/store/storeCustomer.js";
   export default {
     name: "FormUser",
@@ -67,8 +68,13 @@
       };
     },
     methods: {
-      saveCustomerUser() {
-        this.$emit("saveCustomerUser", this.selectedUser);
+      saveCustomerUser(user) {
+        if (!this.selectedUser.username || this.selectedUser.username == "") this.selectedUser.username = this.selectedUser.email;
+        if (!this.selectedUser.password || this.selectedUser.password == "") this.selectedUser.password = this.selectedUser.email;
+        this.$emit("saveCustomerUser", user);
+      },
+      changeUserPassword(user) {
+        this.$emit("changeCustomerUserPassword", user);
       },
       deleteCustomerUser(user) {
         this.$emit("deleteCustomerUser", user);
@@ -80,11 +86,11 @@
       exitEditUser() {
         this.$emit("exitEditUser");
       },
-      mounted() {
-        this.selectedUser = this.hsComponentStore.selectedUser;
-        this.selectedUser.role = "CUSTOMER";
-        this.dialogEditUser = true;
-      },
+    },
+    mounted() {
+      this.selectedUser = this.hsComponentStore.selectedUser;
+      this.selectedUser.role = "CUSTOMER";
+      this.dialogEditUser = true;
     },
   };
 </script>

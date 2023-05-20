@@ -22,7 +22,7 @@
         </template>
       </v-data-table>
     </v-row>
-    <FormUser v-if="dialogEditUser" @exitEditUser="exitEditUser" @saveResellerUser="saveResellerUser" />
+    <FormUser v-if="dialogEditUser" @exitEditUser="exitEditUser" @saveResellerUser="saveResellerUser" @changeResellerUserPassword="changeResellerUserPassword" />
   </div>
 </template>
 
@@ -84,12 +84,27 @@
           }
         });
       },
+      changeResellerUserPassword(user) {
+        user.ResellerId = this.hsComponentStore.loggedReseller.id;
+        user.role = "RESELLER";
+        axios
+          .post("/api/user/changePassword", {
+            user: user,
+          })
+          .then((response) => {
+            if (response.data.status == 200) {
+              console.log("Password changed");
+            } else {
+              console.log("Change password error");
+            }
+          });
+      },
       editResellerUser(user) {
         this.hsComponentStore.selectedUser = user;
         this.dialogEditUser = true;
       },
       addResellerUser() {
-        //this.hsComponentStore.selectedUser = {};
+        this.hsComponentStore.selectedUser = {};
         this.dialogEditUser = true;
       },
       exitEditUser() {

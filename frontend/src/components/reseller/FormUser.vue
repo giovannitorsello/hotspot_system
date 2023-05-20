@@ -19,6 +19,7 @@
               <v-col>
                 <v-sheet class="pa-2 ma-1" align="end">
                   <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="exitEditUser()"></i>
+                  <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="saveUser(selectedUser)"></i>
                 </v-sheet>
               </v-col>
             </v-row>
@@ -29,6 +30,7 @@
             <v-row>
               <v-col>
                 <v-sheet class="pa-2 ma-1" align="end">
+                  <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="changePassword(selectedUser)"></i>
                   <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="exitEditUser()"></i>
                 </v-sheet>
               </v-col>
@@ -51,9 +53,7 @@
   </v-dialog>
 </template>
 <script>
-  import utilityArrays from "@/utils/utilityArrays.js";
   import { hsStoreReseller } from "@/store/storeReseller.js";
-  import axios from "axios";
   export default {
     name: "FormUser",
     setup() {
@@ -68,10 +68,15 @@
       };
     },
     methods: {
-      saveUser() {
-        this.$emit("saveResellerUser", this.selectedUser);
+      saveUser(user) {
+        if (!this.selectedUser.username || this.selectedUser.username == "") this.selectedUser.username = this.selectedUser.email;
+        if (!this.selectedUser.password || this.selectedUser.password == "") this.selectedUser.password = this.selectedUser.email;
+        this.$emit("saveResellerUser", user);
       },
-      deleteCustomer(customer) {
+      changePassword(user) {
+        this.$emit("changeResellerUserPassword", user);
+      },
+      deleteUser(customer) {
         this.$emit("deleteResellerUser", user);
       },
       editUser(user) {

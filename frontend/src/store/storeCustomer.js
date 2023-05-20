@@ -69,8 +69,8 @@ export const hsStoreCustomer = defineStore({
     async fetchTicketsByWebsurfer(websurfer) {
       if (!websurfer || !websurfer.id) return [];
       const res = await axios.post("/api/websurfer/getTicketsByWebsurfer", { websurfer: websurfer });
-      if (!res.data || !res.data.websurfer) return [];
-      return res.data.websurfer;
+      if (!res.data || !res.data.tickets) return [];
+      return res.data.tickets;
     },
     async fetchTicketsByCustomer(customer) {
       if (!customer || !customer.id) return [];

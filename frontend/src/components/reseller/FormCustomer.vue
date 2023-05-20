@@ -82,7 +82,6 @@
 
     setup() {
       const hsComponentStore = hsStoreReseller();
-      console.log("Selected customer is:", hsComponentStore.selectedCustomer);
       return { hsComponentStore };
     },
     data() {

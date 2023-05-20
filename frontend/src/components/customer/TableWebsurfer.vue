@@ -55,6 +55,9 @@
         itemsPerPage: 10,
       };
     },
+    mounted() {
+      this.selectedWebsurfer = this.hsComponentStore.selectedWebsurfer;
+    },
     methods: {
       saveWebsurfer(websurfer) {
         websurfer.CustomerId = this.hsComponentStore.loggedCustomer.id;

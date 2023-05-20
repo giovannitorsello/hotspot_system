@@ -249,7 +249,7 @@ const Ticket = sequelize.define(
       allowNull: true,
     },
     bandwidthProfile: {
-      type: Sequelize.TEXT,
+      type: Sequelize.JSON,
       allowNull: true,
     },
     login: {
@@ -301,7 +301,7 @@ const connectToDatabase = async () => {
 
 const syncModels = async () => {
   try {
-    await sequelize.sync({ force: false, alter: true });
+    await sequelize.sync({ force: false, alter: false });
     console.log("Sincronizzazione con il database avvenuta con successo.");
   } catch (error) {
     console.error("Errore durante la sincronizzazione con il database:", error);
@@ -415,6 +415,12 @@ const getDevicesByCustomer = async (customer) => {
 const getTicketsByCustomer = async (customer) => {
   if (!customer || !customer.id) return {};
   var tickets = await Ticket.findAll({ where: { CustomerId: customer.id } });
+  return tickets;
+};
+
+const getTicketsByWebsurfer = async (websurfer) => {
+  if (!websurfer || !websurfer.id) return {};
+  var tickets = await Ticket.findAll({ where: { WebsurferId: websurfer.id } });
   return tickets;
 };
 
@@ -537,6 +543,7 @@ module.exports = {
   generateTicketForNewWebsurfer: generateTicketForNewWebsurfer,
   getCustomersByFulltextSearch: getCustomersByFulltextSearch,
   getTicketsByCustomer: getTicketsByCustomer,
+  getTicketsByWebsurfer: getTicketsByWebsurfer,
   getUsersByCustomer: getUsersByCustomer,
   deleteWebSurferTickets: deleteWebSurferTickets,
   deleteCustomerWebSurfers: deleteCustomerWebSurfers,

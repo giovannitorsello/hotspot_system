@@ -3,7 +3,7 @@ module.exports = {
     const indexOfObject = arrayObjects.findIndex((object) => {
       return object.id == objectToUpdate.id;
     });
-    if (indexOfObject >= 0) arrayObjects[indexOfObject] = objectToUpdate;
+    if (indexOfObject >= 0) arrayObjects[indexOfObject] = Object.assign({}, objectToUpdate);
     else arrayObjects.push(objectToUpdate);
   },
   deleteElementById: (arrayObjects, objectToDelete) => {

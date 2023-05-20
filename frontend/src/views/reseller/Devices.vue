@@ -52,7 +52,7 @@
           })
           .then((response) => {
             if (response.data.status == 200) {
-              this.hsComponentStore.devicesOfSelectedCustomer.push(selectedDevice);
+              utilityArrays.updateElementById(this.hsComponentStore.devicesOfSelectedCustomer, this.selectedDevice);
               this.$swal(response.data.msg);
             } else {
               this.$swal(response.data.msg);
@@ -69,13 +69,6 @@
             this.$swal(response.data.msg);
           }
         });
-      },
-      selectDevice(row, object) {
-        var deviceId = object.item.columns.id;
-        const indexOfObject = this.hsComponentStore.devicesOfSelectedCustomer((object) => {
-          return object.id === device.id;
-        });
-        this.selectedDevice = this.hsComponentStore.devicesOfSelectedCustomer[indexOfObject];
       },
     },
   };

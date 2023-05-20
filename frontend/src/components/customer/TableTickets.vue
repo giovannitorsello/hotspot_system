@@ -7,31 +7,31 @@
       <v-text-field v-model="search" label="CERCA"></v-text-field>
       <v-data-table
         :headers="headers"
-        :items="hsComponentStore.ticketsOfSelectedWebsurfer"
+        :items="this.hsComponentStore.ticketsOfSelectedWebsurfer"
         :search="search"
         :page.sync="page"
         :items-per-page="itemsPerPage"
         :hide-default-header="true"
         :hide-default-footer="true"
       >
-        <template v-slot:[`item.bandwidthProfile`]="{ item }">
-          {{ getBandwidthProfileName(item) }}
-        </template>
+        <template v-slot:[`item.bandwidthProfile`]="{ item }">{{ getBandwidthProfileDescription(item.raw) }}</template>
         <template v-slot:[`item.actions`]="{ item }">
+          <i class="bi bi-pen" @click="editTicket(item.raw)"> </i>
           <i class="bi bi-trash" @click="deleteTicket(item.raw)"> </i>
         </template>
       </v-data-table>
     </v-row>
-    <FormTicket v-if="dialogEditTicket" @exitEditTicket="exitEditTicket()" @saveTicket="saveTicket" />
+    <FormTicket v-if="dialogEditTicket" @exitEditTicket="exitEditTicket" @saveTicket="saveTicket" />
   </div>
 </template>
 
 <script>
+  import axios from "axios";
+  import utilityArrays from "@/utils/utilityArrays.js";
   import { hsStoreCustomer } from "@/store/storeCustomer.js";
-  import generateRandomCredentials from "@/utils/random";
   import FormTicket from "@/components/customer/FormTicket.vue";
   export default {
-    name: "TableTicket",
+    name: "TableTickets",
     components: { FormTicket },
     setup() {
       const hsComponentStore = hsStoreCustomer();
@@ -54,27 +54,37 @@
         ],
         page: 1,
         itemsPerPage: 10,
+        tickets: [],
       };
     },
+    mounted() {
+      var thisTableTickets = this;
+      this.hsComponentStore.fetchTicketsByWebsurfer(this.hsComponentStore.selectedWebsurfer).then((tickets) => {
+        console.log("Found tickets: ", tickets);
+        this.hsComponentStore.ticketsOfSelectedWebsurfer = tickets;
+        thisTableTickets.tickets = tickets;
+      });
+    },
     methods: {
-      exitEditTicket() {
-        this.dialogEditTicket = false;
-      },
       addTicket() {
+        this.dialogEditTicket = true;
+        this.hsComponentStore.selectedTicket = {};
+      },
+      editTicket(ticket) {
+        this.hsComponentStore.selectedTicket = ticket;
         this.dialogEditTicket = true;
       },
       saveTicket(ticket) {
-        //this.payload.user = this.hsComponentStore.user;
-        //this.payload.credentials = generateRandomCredentials();
         axios
           .post("/api/ticket/save", {
             ticket: ticket,
           })
-          .then((response) => {
-            console.log(response);
+          .then(async (response) => {
             if (response.data.status == 200) {
+              this.dialogEditTicket = false;
               utilityArrays.updateElementById(this.hsComponentStore.ticketsOfSelectedWebsurfer, response.data.ticket);
             } else {
+              this.$emit("saveTicketError");
             }
           });
       },
@@ -84,23 +94,17 @@
             utilityArrays.deleteElementById(this.hsComponentStore.ticketsOfSelectedWebsurfer, response.data.ticket);
           } else {
             utilityArrays.deleteElementById(this.hsComponentStore.ticketsOfSelectedWebsurfer, response.data.ticket);
+            this.$emit("deleteTicketError");
           }
         });
       },
-      getBandwidthProfileName(item) {
-        try {
-          var bandwidthProfileObject = JSON.parse(item.columns.bandwidthProfile);
-          return bandwidthProfileObject.name;
-        } catch (error) {
-          console.log("Error in parsing object bandwith", error);
-          console.log(item);
-          return "----";
-        }
+      getBandwidthProfileDescription(item) {
+        console.log(item);
+        return item.bandwidthProfile.name + " (" + item.bandwidthProfile.download + "K -- " + item.bandwidthProfile.upload + "K)";
       },
-    },
-    mount() {
-      this.selectedWebsurfer = this.hsComponentStore.selectedWebsurfer;
-      this.hsComponentStore.devicesOfSelectedCustomer = this.hsComponentStore.fetchTicketsByWebsurfer(this.selectedWebsurfer);
+      exitEditTicket() {
+        this.dialogEditTicket = false;
+      },
     },
   };
 </script>

@@ -29,25 +29,18 @@
         </v-window-item>
         <v-window-item value="two">
           <v-card>
-            <v-card-title> Modifica cliente </v-card-title>
+            <v-card-title> Generazione Tickets </v-card-title>
             <v-card-text>
+              <v-select v-model="selectedTicket.profile" items="selectedDevice.bandwidthProfiles" item-title="name" return-object label="PROFILO"></v-select>
               <v-text-field v-model="selectedTicket.emissionDate" label="DATA EMISSIONE"></v-text-field>
               <v-text-field v-model="selectedTicket.expirationDate" label="DATA SCADENZA"></v-text-field>
               <v-text-field v-model="selectedTicket.durationDays" label="DURATA (GG)"></v-text-field>
-              <v-text-field v-model="selectedTicket.login" label="USERNAME"></v-text-field>
-              <v-text-field v-model="selectedTicket.password" label="PASSWORD"></v-text-field>
-              <v-text-field v-model="selectedTicket.serialNumber" label="N.SERIALE"></v-text-field>
-              <v-text-field v-model="selectedTicket.state" label="STATO"></v-text-field>
-              <v-text-field v-model="selectedTicket.profile" label="PROFILO"></v-text-field>
-              <v-text-field v-model="selectedTicket.WebsurferId" label="ID_WEBSURFER"></v-text-field>
-              <v-text-field v-model="selectedTicket.CustomerId" label="ID_CLIENTE"></v-text-field>
-              <v-text-field v-model="selectedTicket.ResellerId" label="ID_RESELLER"></v-text-field>
               <v-text-field v-model="selectedTicket.note" label="NOTE"></v-text-field>
               <v-row>
                 <v-col>
                   <v-sheet class="pa-2 ma-1" align="end">
-                    <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="goBack()"></i>
-                    <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="saveWebsurfer(selectedCustomer)"></i>
+                    <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="exit()"></i>
+                    <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="saveTicket(selectedTicket)"></i>
                   </v-sheet>
                 </v-col>
               </v-row>
@@ -103,30 +96,22 @@
     },
     props: {},
     methods: {
-      insertTicket() {
-        this.payload.user = this.hsComponentStore.user;
-        this.payload.credentials = generateRandomCredentials();
+      saveTicket(ticket) {
         axios
-          .post("/admin/tickets/insert", {
-            payload: this.payload,
+          .post("/api/tickets/save", {
+            ticket: ticket,
           })
           .then((response) => {
             console.log(response);
             if (response.data.status == 200) {
-              this.hsComponentStore.addTicket(response.data.result);
-              this.$swal(response.data.msg);
             } else {
-              this.$swal(response.data.msg);
             }
           });
       },
       deleteTicket(ticket) {
-        axios.post("/admin/tickets/delete", { payload: ticket }).then((response) => {
+        axios.post("/api/ticket/delete", { ticket: ticket }).then((response) => {
           if (response.data.status == 200) {
-            this.hsComponentStore.deleteTicket(ticket.id);
-            this.$swal(response.data.msg);
           } else {
-            this.$swal(response.data.msg);
           }
         });
       },

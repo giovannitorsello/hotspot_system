@@ -3,7 +3,7 @@
     <v-text-field v-model="search" append-icon="mdi-magnify" label="Cerca" single-line hide-details></v-text-field>
     <v-data-table
       :headers="header"
-      :items="this.hsComponentStore.devicesOfSelectedCustomer"
+      :items="this.hsComponentStore.devicesOfSelectedReseller"
       :search="search"
       :page.sync="page"
       :items-per-page="itemsPerPage"
@@ -32,9 +32,12 @@
     components: { FormDevice },
     setup() {
       const hsComponentStore = hsStoreReseller();
-      console.log("Selected customer is:", hsComponentStore.selectedCustomer);
-      hsComponentStore.fetchDevicesByCustomer(hsComponentStore.selectedCustomer);
       return { hsComponentStore };
+    },
+    mounted() {
+      /*this.hsComponentStore.fetchDevicesByCustomer(hsComponentStore.selectedCustomer).then((devices) => {
+        this.hsComponentStore.devicesOfSelectedCustomer = devices;
+      });*/
     },
     data() {
       return {
@@ -92,13 +95,6 @@
       },
       exitEditDevice() {
         this.dialogEditDevice = false;
-      },
-      selectDevice(row, object) {
-        var deviceId = object.item.columns.id;
-        const indexOfObject = this.hsComponentStore.devicesOfSelectedCustomer((object) => {
-          return object.id === device.id;
-        });
-        this.selectedDevice = this.hsComponentStore.devicesOfSelectedCustomer[indexOfObject];
       },
     },
   };

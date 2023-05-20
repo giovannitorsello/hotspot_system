@@ -412,14 +412,13 @@ router.post("/api/websurfer/getWebsurfersByCustomer", async function (req, res) 
   });
 });
 
-router.post("/api/websurfer/getTicketsByWebsurfer", function (req, res) {
+router.post("/api/websurfer/getTicketsByWebsurfer", async function (req, res) {
   if (!req.body || !req.body.websurfer || !req.body.websurfer.id) res.send({ status: "404", msg: "No websurfer data present", state: "error", tickets: {} });
   const websurfer = req.body.websurfer;
-  var tickets = database.getTicketsByWebsurfer(websurfer);
+  var tickets = await database.getTicketsByWebsurfer(websurfer);
   res.send({
     status: "200",
     msg: "Success.",
-
     tickets: tickets,
   });
 });
@@ -427,17 +426,30 @@ router.post("/api/websurfer/getTicketsByWebsurfer", function (req, res) {
 //////////////////// WEBSURFER MANAGEMENT ROUTES ///////////////
 router.post("/api/ticket/save", async (req, res) => {
   var ticket = req.body.ticket;
-  if (!ticket || !(ticket.email || ticket.phone)) {
+  if (!ticket) {
     res.send({ status: "404", msg: "DATI NON COMPLETI O ERRATI" });
     return;
   }
 
-  if (!ticket.email) ticket.email = "";
-  if (!ticket.phone) ticket.phone = "";
-  if (websurfer.id && websurfer.id > 0) foundWebsurfer = await Websurfer.findOne({ where: { id: ticket.id } });
-  else foundWebsurfer = await Ticket.findOne({ where: { email: ticket.email, phone: ticket.phone } });
-  //NEW INSERT
+  if (ticket && ticket.id > 0) foundTicket = await Ticket.findOne({ where: { id: ticket.id } });
+  else if (ticket && ticket.login && ticket.password) foundTicket = await Ticket.findOne({ where: { login: ticket.login, password: ticket.password } });
+  else foundTicket = null;
+
+  //Generate credentials checking if couple exists
+  if (!ticket.login || !ticket.password) {
+    var exists = true;
+    var nTries = 0;
+    while (exists && nTries < 10) {
+      [ticket.login, ticket.password] = generateRandomCredentials();
+      searchTicket = await Ticket.findOne({ where: { login: ticket.login, password: ticket.password } });
+      if (!searchTicket) exists = false;
+      nTries++;
+    }
+  }
+
   if (foundTicket == null) {
+    //NEW INSERT
+    ticket.serialNumber = new Date().getTime();
     var ticketToInsert = Object.assign({}, ticket);
     var ticketSaved = await Ticket.create(ticketToInsert);
     if (ticketSaved) res.send({ status: "200", msg: "WEBSURFER INSERITO", ticket: ticketSaved });

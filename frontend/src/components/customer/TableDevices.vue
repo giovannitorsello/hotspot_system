@@ -2,7 +2,7 @@
   <div>
     <v-text-field v-model="search" append-icon="mdi-magnify" label="Cerca" single-line hide-details></v-text-field>
     <v-data-table
-      :headers="header"
+      :headers="headers"
       :items="hsComponentStore.devicesOfSelectedCustomer"
       :search="search"
       :page.sync="page"
@@ -18,17 +18,16 @@
   </div>
 </template>
 <script>
-  import utilityArrays from "@/utils/utilityArrays.js";
-  import { hsStoreReseller } from "@/store/storeReseller.js";
-  import FormDevice from "@/components/reseller/FormDevice.vue";
   import axios from "axios";
+  import utilityArrays from "@/utils/utilityArrays.js";
+  import { hsStoreCustomer } from "@/store/storeCustomer.js";
+  import FormDevice from "@/components/reseller/FormDevice.vue";
+
   export default {
-    name: "TableDevice",
+    name: "TableDevices",
     components: { FormDevice },
     setup() {
-      const hsComponentStore = hsStoreReseller();
-      console.log("Selected customer is:", hsComponentStore.selectedCustomer);
-      hsComponentStore.fetchDevicesByCustomer(hsComponentStore.selectedCustomer);
+      const hsComponentStore = hsStoreCustomer();
       return { hsComponentStore };
     },
     data() {
@@ -37,7 +36,7 @@
         selectedReseller: {},
         selectedCustomer: {},
         selectedDevice: {},
-        header: [
+        headers: [
           { title: "Descrizione", key: "description" },
           { title: "Indirizzo installazione", key: "addressSetup" },
           { title: "State", key: "state" },
@@ -46,6 +45,9 @@
         page: 1,
         itemsPerPage: 10,
       };
+    },
+    mounted() {
+      console.log("devices: ", this.hsComponentStore.devicesOfSelectedCustomer);
     },
     methods: {
       saveDevice(device) {
@@ -78,19 +80,11 @@
         });
       },
       editDevice(device) {
-        console.log("Selected device is:", device);
         this.hsComponentStore.selectedDevice = device;
         this.dialogEditDevice = true;
       },
       exitEditDevice() {
         this.dialogEditDevice = false;
-      },
-      selectDevice(row, object) {
-        var deviceId = object.item.columns.id;
-        const indexOfObject = this.hsComponentStore.devicesOfSelectedCustomer((object) => {
-          return object.id === device.id;
-        });
-        this.selectedDevice = this.hsComponentStore.devicesOfSelectedCustomer[indexOfObject];
       },
     },
   };

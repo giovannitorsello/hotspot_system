@@ -16,7 +16,7 @@
             <v-text-field v-model="selectedWebsurfer.note" label="NOTE"></v-text-field>
           </v-window-item>
           <v-window-item value="ticketWebsurfer">
-            <TableTicket />
+            <TableTickets />
           </v-window-item>
         </v-window>
 
@@ -35,11 +35,11 @@
 <script>
   import axios from "axios";
   import { hsStoreCustomer } from "@/store/storeCustomer.js";
-  import TableTicket from "@/components/customer/TableTicket.vue";
+  import TableTickets from "@/components/customer/TableTickets.vue";
 
   export default {
     name: "FormWebsurfer",
-    components: { TableTicket },
+    components: { TableTickets },
     setup() {
       const hsComponentStore = hsStoreCustomer();
       return { hsComponentStore };

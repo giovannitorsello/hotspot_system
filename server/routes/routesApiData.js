@@ -11,6 +11,9 @@ const createUser = require("../utils/radiusDB");
 const dateUtils = require("../utils/dateUtils");
 const axios = require("axios");
 const md5 = require("md5");
+const formidable = require("formidable");
+const multer = require("multer");
+
 var customer = {};
 var device = {};
 
@@ -117,7 +120,24 @@ router.post("/api/user/getCustomerByUser", async function (req, res) {
 });
 
 //////////////////// CUSTOMERS MANAGEMENT ROUTES ///////////////
-router.post("/api/customer/save", async (req, res) => {
+router.post("/api/customer/upload/logo", multer().array("files"), async (req, res) => {
+  var form = new formidable.IncomingForm();
+
+  form.parse(req, function (err, fields, files) {
+    var reseller = fields.reseller;
+    var customer = fields.customer;
+    var oldpath = files.filetoupload.filepath;
+    var newFileNameLogo = "";
+    if (reseller && reseller.id) newFileNameLogo = config.folderCompanyLogo + "reseller_" + reseller.id;
+    if (customer && customer.id) newFileNameLogo = config.folderCompanyLogo + "customer_" + customer.id;
+    fs.rename(oldpath, newpath, function (err) {
+      if (!err) {
+        resolve({ status: "ok", msg: "LOGO CARICATO", logoPath: newFileNameLogo });
+      } else reject({ status: "error", msg: "ERRORE CARICAMENTO LOGO", logoPath: "" });
+    });
+  });
+});
+router.post("/api/customer/save", multer().array("files"), async (req, res) => {
   var customer = req.body.customer;
   if (!customer || !(customer.fiscalCode || customer.vatCode)) {
     res.send({ status: "404", msg: "DATI NON COMPLETI O ERRATI" });
@@ -470,23 +490,6 @@ router.post("/api/ticket/delete", async (req, res) => {
     const result = foundTicket.destroy();
     res.send({ status: "200", msg: "DISPOSITIVO ELIMINATO", ticket: foundTicket });
   } else res.send({ status: "400", msg: "ERRORE DI ELIMINAZIONE DISPOSITIVO", ticket: {} });
-});
-
-////////////////////////// FILE UTILS ////////////////////////////
-router.post("/api/file/logo/upload", async (req, res) => {
-  var form = new formidable.IncomingForm();
-  form.parse(req, function (err, fields, files) {
-    var newfileName = fields.vatcode;
-    var oldpath = files.filetoupload.filepath;
-    var newpath = config.folderCompanyLogo + files.filetoupload.originalFilename;
-    fs.rename(oldpath, newpath, function (err) {
-      if (err) throw err;
-      res.write("File uploaded and moved!");
-      res.end();
-    });
-    res.write("File uploaded");
-    res.end();
-  });
 });
 
 module.exports = router;

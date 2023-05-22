@@ -7,6 +7,7 @@
         <v-tab value="customerContactSettings">Contatti</v-tab>
         <v-tab value="customerDevicesSettings">Dispositivi</v-tab>
         <v-tab value="customerNotes">Annotazioni</v-tab>
+        <v-tab value="customerLogo">Logo</v-tab>
       </v-tabs>
 
       <v-card-text>
@@ -16,6 +17,7 @@
             <v-text-field v-model="selectedCustomer.fiscalCode" label="Codice fiscale"></v-text-field>
             <v-text-field v-model="selectedCustomer.vatCode" label="Partita IVA"></v-text-field>
             <v-text-field v-model="selectedCustomer.city" label="Comune"></v-text-field>
+
             <v-row>
               <v-col>
                 <v-sheet class="pa-2 ma-1" align="end">
@@ -65,17 +67,56 @@
               </v-col>
             </v-row>
           </v-window-item>
+          <v-window-item value="customerLogo">
+            <v-form id="formLogo">
+              <v-file-input v-model="selectedLogo" show-size label="Seleziona logo" accept="image/*" @change="uploadLogo()"></v-file-input>
+              <div v-if="progress">
+                <div>
+                  <v-progress-linear v-model="progress" color="light-blue" height="25" reactive>
+                    <strong>{{ progressUploadLogo }} %</strong>
+                  </v-progress-linear>
+                </div>
+              </div>
+              <div v-if="previewImage">
+                <div>
+                  <img class="preview logo" :src="previewLogo" alt="logo preview" />
+                </div>
+              </div>
+              <v-alert v-if="messageUploadLogo" border="left" color="blue-grey" dark>
+                {{ messageUploadLogo }}
+              </v-alert>
+              <v-card v-if="imageInfos.length > 0" class="mx-auto">
+                <v-list>
+                  <v-subheader>Dettagli immagine</v-subheader>
+                  <v-list-item-group color="primary">
+                    <v-list-item v-for="(image, index) in imageInfos" :key="index">
+                      <a :href="image.url">{{ image.name }}</a>
+                    </v-list-item>
+                  </v-list-item-group>
+                </v-list>
+              </v-card>
+            </v-form>
+            <v-row>
+              <v-col>
+                <v-sheet class="pa-2 ma-1" align="end">
+                  <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="exit()"></i>
+                  <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="changeLogo(urlLogo)"></i>
+                </v-sheet>
+              </v-col>
+            </v-row>
+          </v-window-item>
         </v-window>
       </v-card-text>
     </v-card>
   </v-dialog>
 </template>
 <script>
+  import axios from "axios";
+  import UploadLogoService from "@/services/UploadLogoService";
   import utilityArrays from "@/utils/utilityArrays.js";
   import { hsStoreReseller } from "@/store/storeReseller.js";
   import TableDevices from "@/components/reseller/TableDevices.vue";
   import FormDevice from "@/components/reseller/FormDevice.vue";
-  import axios from "axios";
   export default {
     name: "FormCustomer",
     components: { TableDevices, FormDevice },
@@ -86,6 +127,12 @@
     },
     data() {
       return {
+        urlLogo: {},
+        selectedLogo: {},
+        previewLogo: {},
+        imageInfos: {},
+        progressUploadLogo: 0,
+        messageUploadLogo: "",
         dialogEditDevice: false,
         dialogEditCustomer: true,
         tabSettings: "customerGeneralSettings",
@@ -98,6 +145,39 @@
       this.selectedDevice = this.hsComponentStore.selectedDevice;
     },
     methods: {
+      changeLogo() {
+        console.log("Entering change logo");
+        this.previewLogo = URL.createObjectURL(this.selectedLogo);
+        this.progressUploadLogo = 0;
+        this.messageUploadLogo = "";
+        this.uploadLogo();
+      },
+      onProgressUploadLogo(event) {
+        this.progressUploadLogo = Math.round((100 * event.loaded) / event.total);
+      },
+      uploadLogo() {
+        console.log("Entering upload logo");
+        if (!this.selectedLogo) {
+          this.message = "Please select an image!";
+          return;
+        }
+
+        this.progressUploadLogo = 0;
+        this.messageUploadLogo = "";
+        UploadLogoService.upload(this.selectedLogo, (event) => this.onProgressUploadLogo(event))
+          .then((response) => {
+            this.messageUploadLogo = response.data.message;
+            return UploadLogoService.getFiles();
+          })
+          .then((images) => {
+            this.imageInfos = images.data;
+          })
+          .catch((err) => {
+            this.progressUploadLogo = 0;
+            this.messageUploadLogo = "Errore in logo upload " + err;
+            this.selectedLogo = null;
+          });
+      },
       saveCustomer() {
         this.$emit("saveCustomer", this.selectedCustomer);
       },

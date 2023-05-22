@@ -471,4 +471,22 @@ router.post("/api/ticket/delete", async (req, res) => {
     res.send({ status: "200", msg: "DISPOSITIVO ELIMINATO", ticket: foundTicket });
   } else res.send({ status: "400", msg: "ERRORE DI ELIMINAZIONE DISPOSITIVO", ticket: {} });
 });
+
+////////////////////////// FILE UTILS ////////////////////////////
+router.post("/api/file/logo/upload", async (req, res) => {
+  var form = new formidable.IncomingForm();
+  form.parse(req, function (err, fields, files) {
+    var newfileName = fields.vatcode;
+    var oldpath = files.filetoupload.filepath;
+    var newpath = config.folderCompanyLogo + files.filetoupload.originalFilename;
+    fs.rename(oldpath, newpath, function (err) {
+      if (err) throw err;
+      res.write("File uploaded and moved!");
+      res.end();
+    });
+    res.write("File uploaded");
+    res.end();
+  });
+});
+
 module.exports = router;

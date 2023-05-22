@@ -229,19 +229,19 @@ const Ticket = sequelize.define(
   "Ticket",
   {
     emissionDate: {
-      type: Sequelize.DATEONLY,
+      type: Sequelize.DATE,
       allowNull: true,
     },
     firstUse: {
-      type: Sequelize.DATEONLY,
+      type: Sequelize.DATE,
       allowNull: true,
     },
     expirationDate: {
-      type: Sequelize.DATEONLY,
+      type: Sequelize.DATE,
       allowNull: true,
     },
     expirationUsageDate: {
-      type: Sequelize.DATEONLY,
+      type: Sequelize.DATE,
       allowNull: true,
     },
     durationDays: {

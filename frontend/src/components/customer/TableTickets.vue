@@ -14,6 +14,8 @@
         :hide-default-header="true"
         :hide-default-footer="true"
       >
+        <template v-slot:[`item.emissionDate`]="{ item }">{{ getFormattedDate(item.raw.emissionDate) }}</template>
+        <template v-slot:[`item.expirationDate`]="{ item }">{{ getFormattedDate(item.raw.expirationDate) }}</template>
         <template v-slot:[`item.bandwidthProfile`]="{ item }">{{ getBandwidthProfileDescription(item.raw) }}</template>
         <template v-slot:[`item.actions`]="{ item }">
           <i class="bi bi-pen" @click="editTicket(item.raw)"> </i>
@@ -101,6 +103,11 @@
       getBandwidthProfileDescription(item) {
         console.log(item);
         return item.bandwidthProfile.name + " (" + item.bandwidthProfile.download + "K -- " + item.bandwidthProfile.upload + "K)";
+      },
+      getFormattedDate(dateIsoString) {
+        console.log("Date is", dateIsoString);
+        var dateObject = new Date(dateIsoString);
+        return dateObject.toLocaleDateString();
       },
       exitEditTicket() {
         this.dialogEditTicket = false;

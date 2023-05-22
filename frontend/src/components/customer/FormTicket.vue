@@ -46,7 +46,7 @@
         selectedDevice: {},
         selectedTicket: {},
         locationRouters: [],
-        periodValidity: {},
+        periodValidity: [],
       };
     },
     mounted() {
@@ -57,11 +57,27 @@
       this.locationRouters = this.hsComponentStore.devicesOfSelectedCustomer;
       this.locationRouter = this.locationRouters[0];
       console.log("available devices are: ", this.hsComponentStore.devicesOfSelectedCustomer);
+
+      //Set default range for a week
+      var dataStart = new Date();
+      var dataEnd = new Date(dataStart.getTime() + 7 * 24 * 3600 * 1000);
+      this.periodValidity = [dataStart, dataEnd];
     },
     methods: {
       saveTicket() {
         this.selectedTicket.WebsurferId = this.selectedWebsurfer.id;
         this.selectedTicket.CustomerId = this.selectedCustomer.id;
+        if (this.periodValidity.length === 2) {
+          this.hsComponentStore.selectedTicket.emissionDate = this.periodValidity[0];
+          this.hsComponentStore.selectedTicket.firstUse = this.periodValidity[0];
+          this.hsComponentStore.selectedTicket.expirationDate = this.periodValidity[1];
+          this.hsComponentStore.selectedTicket.expirationUsageDate = this.periodValidity[1];
+          var Difference_In_Time = this.periodValidity[1].getTime() - this.periodValidity[0].getTime();
+          var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+          this.hsComponentStore.selectedTicket.durationDays = Difference_In_Days;
+          this.hsComponentStore.selectedTicket.state = "active";
+        }
+        console.log("Ticket state is: ", this.hsComponentStore.selectedTicket);
         this.$emit("saveTicket", this.selectedTicket);
       },
       deleteTicket(ticket) {

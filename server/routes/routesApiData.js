@@ -121,7 +121,11 @@ router.post("/api/user/getCustomerByUser", async function (req, res) {
 });
 
 //////////////////// CUSTOMERS MANAGEMENT ROUTES ///////////////
-router.post("/api/customer/upload/logo", async (req, res) => {
+router.post("/api/customer/upload/logo", (req, res) => {
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.send({ status: "404", msg: "UPLOAD LOGO CORRETTAMENTE ESEGUITO", companyLogo: {} });
+  }
+
   let companyLogo = req.files.companyLogo;
   var reseller = req.body.reseller;
   var customer = req.body.customer;
@@ -129,15 +133,19 @@ router.post("/api/customer/upload/logo", async (req, res) => {
   if (typeof companyLogo !== "undefined" && companyLogo) {
     const typeCompany = req.body.typeCompany;
     const idCompany = req.body.idCompany;
-    var newFileNameLogo = "";
-    if (idCompany && typeCompany && (typeCompany === "reseller" || typeCompany === "customer")) newFileNameLogo = process.cwd() + config.folder.folderCompanyLogo + typeCompany + "_" + idCompany;
-
-    error = await companyLogo.mv(newFileNameLogo, (error) => {
-      if (error) return error;
+    const fileExt = companyLogo.name.split(".").pop();
+    var newFileNameLogo = "",
+      newAbsoluteFilePath = "";
+    if (idCompany && typeCompany && (typeCompany === "reseller" || typeCompany === "customer")) {
+      newFileNameLogo = typeCompany + "_" + idCompany + "." + fileExt;
+      newAbsoluteFilePath = process.cwd() + config.folder.folderCompanyLogo + newFileNameLogo;
+    }
+    companyLogo.mv(newAbsoluteFilePath, (error) => {
+      if (!error) {
+        companyLogo.url = "https://" + config.server.domain + ":" + config.server.https_port + "/logo/" + newFileNameLogo;
+        res.send({ status: "404", msg: "UPLOAD LOGO CORRETTAMENTE ESEGUITO", companyLogo: companyLogo });
+      } else res.send({ status: "200", msg: "ERRORE NELL'UPLOAD DEL LOGO", companyLogo: {} });
     });
-
-    if (!error) res.send({ status: "404", msg: "UPLOAD LOGO CORRETTAMENTE ESEGUITO", companyLogo: companyLogo });
-    else res.send({ status: "200", msg: "ERRORE NELL'UPLOAD DEL LOGO", companyLogo: {} });
   }
 });
 router.post("/api/customer/save", multer().array("files"), async (req, res) => {

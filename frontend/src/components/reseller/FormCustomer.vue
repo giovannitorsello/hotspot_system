@@ -70,31 +70,21 @@
           <v-window-item value="customerLogo">
             <v-form id="formLogo">
               <v-file-input v-model="selectedLogo" show-size label="Seleziona logo" accept="image/*" @change="uploadLogo()"></v-file-input>
-              <div v-if="progress">
-                <div>
-                  <v-progress-linear v-model="progress" color="light-blue" height="25" reactive>
-                    <strong>{{ progressUploadLogo }} %</strong>
-                  </v-progress-linear>
-                </div>
-              </div>
-              <div v-if="previewImage">
-                <div>
-                  <img class="preview logo" :src="previewLogo" alt="logo preview" />
-                </div>
-              </div>
+
               <v-alert v-if="messageUploadLogo" border="left" color="blue-grey" dark>
                 {{ messageUploadLogo }}
               </v-alert>
-              <!--v-card v-if="imageInfos.length > 0" class="mx-auto">
+              <v-card v-if="imageInfos" class="mx-auto">
                 <v-list>
                   <v-subheader>Dettagli immagine</v-subheader>
                   <v-list-item-group color="primary">
-                    <v-list-item v-for="(image, index) in imageInfos" :key="index">
-                      <a :href="image.url">{{ image.name }}</a>
+                    <v-list-item>
+                      <a :href="imageInfos.url">{{ imageInfos.name }}</a>
+                      <v-img class="bg-white" width="300" :aspect-ratio="1" :src="imageInfos.url" cover></v-img>
                     </v-list-item>
                   </v-list-item-group>
                 </v-list>
-              </!--v-card-->
+              </v-card>
             </v-form>
             <v-row>
               <v-col>
@@ -129,10 +119,7 @@
       return {
         urlLogo: {},
         selectedLogo: {},
-        previewLogo: {},
         imageInfos: {},
-        progressUploadLogo: 0,
-        messageUploadLogo: "",
         dialogEditDevice: false,
         dialogEditCustomer: true,
         tabSettings: "customerGeneralSettings",
@@ -143,13 +130,13 @@
       this.dialogEditCustomer = true;
       this.selectedCustomer = this.hsComponentStore.selectedCustomer;
       this.selectedDevice = this.hsComponentStore.selectedDevice;
+      this.imageInfos.name = "logo";
+      this.imageInfos.url = process.env.VUE_APP_API_ENDPOINT + "/logo/customer_" + this.selectedCustomer.id + ".jpg";
     },
     methods: {
       changeLogo() {
         console.log("Entering change logo");
         if (this.selectedLogo && this.selectedLogo.length === 1) this.previewLogo = URL.createObjectURL(this.selectedLogo[0]);
-        this.progressUploadLogo = 0;
-        this.messageUploadLogo = "";
         this.uploadLogo();
       },
 
@@ -160,8 +147,9 @@
           return;
         }
 
-        this.progressUploadLogo = 0;
-        this.messageUploadLogo = "";
+        this.imageInfos.url = "";
+        this.imageInfos.name = "";
+
         console.log("File is:", this.selectedLogo);
         let formData = new FormData();
         formData.append("companyLogo", this.selectedLogo[0]);
@@ -175,27 +163,14 @@
             },
           })
           .then((result) => {
-            this.imageInfos = result.companyLogo;
-            console.log("File uploaded: ", companyLogo);
+            console.log("File uploaded: ", result.data);
+            this.imageInfos = result.data.companyLogo;
+            this.imageInfos.url = result.data.companyLogo.url + "?rnd=" + new Date().getTime();
           })
           .catch((error) => {
-            this.progressUploadLogo = 0;
             this.messageUploadLogo = "Errore in logo upload " + error;
             this.selectedLogo = null;
           });
-        /*UploadLogoService.upload(this.selectedLogo, (event) => this.onProgressUploadLogo(event))
-          .then((response) => {
-            this.messageUploadLogo = response.data.message;
-            return UploadLogoService.getFiles();
-          })
-          .then((images) => {
-            this.imageInfos = images.data;
-          })
-          .catch((err) => {
-            this.progressUploadLogo = 0;
-            this.messageUploadLogo = "Errore in logo upload " + err;
-            this.selectedLogo = null;
-          });*/
       },
       saveCustomer() {
         this.$emit("saveCustomer", this.selectedCustomer);

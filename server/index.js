@@ -37,6 +37,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/public/assets"));
+app.use("/logo", express.static(__dirname + "/upload/folderCompanyLogo"));
 app.use("/", routes);
 app.use("/", routesApiData);
 app.use("/admin", routesDashboard);

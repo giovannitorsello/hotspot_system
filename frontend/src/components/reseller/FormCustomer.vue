@@ -70,10 +70,6 @@
           <v-window-item value="customerLogo">
             <v-form id="formLogo">
               <v-file-input v-model="selectedLogo" show-size label="Seleziona logo" accept="image/*" @change="uploadLogo()"></v-file-input>
-
-              <v-alert v-if="messageUploadLogo" border="left" color="blue-grey" dark>
-                {{ messageUploadLogo }}
-              </v-alert>
               <v-card v-if="imageInfos" class="mx-auto">
                 <v-list>
                   <v-subheader>Dettagli immagine</v-subheader>
@@ -168,7 +164,6 @@
             this.imageInfos.url = result.data.companyLogo.url + "?rnd=" + new Date().getTime();
           })
           .catch((error) => {
-            this.messageUploadLogo = "Errore in logo upload " + error;
             this.selectedLogo = null;
           });
       },

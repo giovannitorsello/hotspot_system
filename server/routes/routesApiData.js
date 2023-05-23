@@ -1,3 +1,4 @@
+var config = require("../config.js").load();
 const express = require("express");
 const session = require("express-session");
 const router = express.Router();
@@ -120,22 +121,24 @@ router.post("/api/user/getCustomerByUser", async function (req, res) {
 });
 
 //////////////////// CUSTOMERS MANAGEMENT ROUTES ///////////////
-router.post("/api/customer/upload/logo", multer().array("files"), async (req, res) => {
-  var form = new formidable.IncomingForm();
+router.post("/api/customer/upload/logo", async (req, res) => {
+  let companyLogo = req.files.companyLogo;
+  var reseller = req.body.reseller;
+  var customer = req.body.customer;
 
-  form.parse(req, function (err, fields, files) {
-    var reseller = fields.reseller;
-    var customer = fields.customer;
-    var oldpath = files.filetoupload.filepath;
+  if (typeof companyLogo !== "undefined" && companyLogo) {
+    const typeCompany = req.body.typeCompany;
+    const idCompany = req.body.idCompany;
     var newFileNameLogo = "";
-    if (reseller && reseller.id) newFileNameLogo = config.folderCompanyLogo + "reseller_" + reseller.id;
-    if (customer && customer.id) newFileNameLogo = config.folderCompanyLogo + "customer_" + customer.id;
-    fs.rename(oldpath, newpath, function (err) {
-      if (!err) {
-        resolve({ status: "ok", msg: "LOGO CARICATO", logoPath: newFileNameLogo });
-      } else reject({ status: "error", msg: "ERRORE CARICAMENTO LOGO", logoPath: "" });
+    if (idCompany && typeCompany && (typeCompany === "reseller" || typeCompany === "customer")) newFileNameLogo = process.cwd() + config.folder.folderCompanyLogo + typeCompany + "_" + idCompany;
+
+    error = await companyLogo.mv(newFileNameLogo, (error) => {
+      if (error) return error;
     });
-  });
+
+    if (!error) res.send({ status: "404", msg: "UPLOAD LOGO CORRETTAMENTE ESEGUITO", companyLogo: companyLogo });
+    else res.send({ status: "200", msg: "ERRORE NELL'UPLOAD DEL LOGO", companyLogo: {} });
+  }
 });
 router.post("/api/customer/save", multer().array("files"), async (req, res) => {
   var customer = req.body.customer;

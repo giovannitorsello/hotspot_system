@@ -85,7 +85,7 @@
               <v-alert v-if="messageUploadLogo" border="left" color="blue-grey" dark>
                 {{ messageUploadLogo }}
               </v-alert>
-              <v-card v-if="imageInfos.length > 0" class="mx-auto">
+              <!--v-card v-if="imageInfos.length > 0" class="mx-auto">
                 <v-list>
                   <v-subheader>Dettagli immagine</v-subheader>
                   <v-list-item-group color="primary">
@@ -94,7 +94,7 @@
                     </v-list-item>
                   </v-list-item-group>
                 </v-list>
-              </v-card>
+              </!--v-card-->
             </v-form>
             <v-row>
               <v-col>
@@ -147,14 +147,12 @@
     methods: {
       changeLogo() {
         console.log("Entering change logo");
-        this.previewLogo = URL.createObjectURL(this.selectedLogo);
+        if (this.selectedLogo && this.selectedLogo.length === 1) this.previewLogo = URL.createObjectURL(this.selectedLogo[0]);
         this.progressUploadLogo = 0;
         this.messageUploadLogo = "";
         this.uploadLogo();
       },
-      onProgressUploadLogo(event) {
-        this.progressUploadLogo = Math.round((100 * event.loaded) / event.total);
-      },
+
       uploadLogo() {
         console.log("Entering upload logo");
         if (!this.selectedLogo) {
@@ -164,7 +162,28 @@
 
         this.progressUploadLogo = 0;
         this.messageUploadLogo = "";
-        UploadLogoService.upload(this.selectedLogo, (event) => this.onProgressUploadLogo(event))
+        console.log("File is:", this.selectedLogo);
+        let formData = new FormData();
+        formData.append("companyLogo", this.selectedLogo[0]);
+        formData.append("typeCompany", "customer");
+        formData.append("idCompany", this.selectedCustomer.id);
+
+        axios
+          .post("/api/customer/upload/logo", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then((result) => {
+            this.imageInfos = result.companyLogo;
+            console.log("File uploaded: ", companyLogo);
+          })
+          .catch((error) => {
+            this.progressUploadLogo = 0;
+            this.messageUploadLogo = "Errore in logo upload " + error;
+            this.selectedLogo = null;
+          });
+        /*UploadLogoService.upload(this.selectedLogo, (event) => this.onProgressUploadLogo(event))
           .then((response) => {
             this.messageUploadLogo = response.data.message;
             return UploadLogoService.getFiles();
@@ -176,7 +195,7 @@
             this.progressUploadLogo = 0;
             this.messageUploadLogo = "Errore in logo upload " + err;
             this.selectedLogo = null;
-          });
+          });*/
       },
       saveCustomer() {
         this.$emit("saveCustomer", this.selectedCustomer);

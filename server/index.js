@@ -1,19 +1,23 @@
 var config = require("./config.js").load();
-var cors = require("cors");
+
 const express = require("express");
-const app = express();
-const schedule = require("node-schedule");
-const passport = require("passport");
 const fs = require("fs");
 const https = require("https");
 const http = require("http");
-const bodyParser = require("body-parser");
+const cors = require("cors");
+const fileupload = require("express-fileupload");
+
+const passport = require("passport");
+const schedule = require("node-schedule");
+
 const passportConfig = require("./utils/passport");
 const routes = require("./routes/routes");
 const routesDashboard = require("./routes/routesDashboard");
 const routesApiData = require("./routes/routesApiData");
+
 const { sequelize, connectToDatabase, syncModels } = require("./database");
 
+const app = express();
 connectToDatabase();
 syncModels();
 
@@ -22,8 +26,15 @@ syncModels();
   syncModels();
 }); */
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(
+  fileupload({
+    limits: { fileSize: 50 * 1024 * 1024 },
+    useTempFiles: true,
+    tempFileDir: process.cwd + "/tmp/",
+  })
+);
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/public/assets"));
 app.use("/", routes);

@@ -199,14 +199,56 @@ const Device = sequelize.define(
     deviceAuthProperties: {
       //Contains alla auth data, management ports, js drivers plugin etc
       type: Sequelize.JSON,
+      get: function () {
+        var value = this.getDataValue("deviceAuthProperties");
+        if (typeof value === "string") {
+          try {
+            return JSON.parse(value);
+          } catch (error) {
+            console.log("Parse JSON deviceAuthproperties error.");
+            return {};
+          }
+        }
+        if (typeof value === "object") {
+          return value;
+        } else return {};
+      },
       allowNull: true,
     },
     bandwidthProfiles: {
       type: Sequelize.JSON,
+      get: function () {
+        var value = this.getDataValue("bandwidthProfiles");
+        if (typeof value === "string") {
+          try {
+            return JSON.parse(value);
+          } catch (error) {
+            console.log("Parse JSON bandwidthProfiles error.");
+            return {};
+          }
+        }
+        if (typeof value === "object") {
+          return value;
+        } else return {};
+      },
       allowNull: true,
     },
     websurferCustomFields: {
       type: Sequelize.JSON,
+      get: function (value) {
+        var value = this.getDataValue("websurferCustomFields");
+        if (typeof value === "string") {
+          try {
+            return JSON.parse(value);
+          } catch (error) {
+            console.log("Parse JSON websurferCustomFields error.");
+            return {};
+          }
+        }
+        if (typeof value === "object") {
+          return value;
+        } else return {};
+      },
       allowNull: true,
     },
     preAuthLandingPage: {

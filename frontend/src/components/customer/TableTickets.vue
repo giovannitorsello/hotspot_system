@@ -102,6 +102,9 @@
       },
       getBandwidthProfileDescription(item) {
         console.log(item);
+        //Workaround broken version of mariadb
+        if (typeof item.bandwidthProfile === "string") item.bandwidthProfile = JSON.parse(item.bandwidthProfile);
+
         return item.bandwidthProfile.name + " (" + item.bandwidthProfile.download + "K -- " + item.bandwidthProfile.upload + "K)";
       },
       getFormattedDate(dateIsoString) {

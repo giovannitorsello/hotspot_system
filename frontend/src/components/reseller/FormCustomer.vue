@@ -69,7 +69,7 @@
           </v-window-item>
           <v-window-item value="customerLogo">
             <v-form id="formLogo">
-              <v-file-input v-model="selectedLogo" show-size label="Seleziona logo" accept="image/*" @change="uploadLogo()"></v-file-input>
+              <v-file-input v-model="selectedLogo" show-size label="Seleziona logo" accept="image/jpeg, image/jpg" @change="uploadLogo()"></v-file-input>
               <v-card v-if="imageInfos" class="mx-auto">
                 <v-list>
                   <v-subheader>Dettagli immagine</v-subheader>

@@ -6,5 +6,4 @@ const chars = '0123456789';
       const randomIndex = Math.floor(Math.random() * chars.length);
       randomPin += chars[randomIndex];
     }
-  
   module.exports = randomPin

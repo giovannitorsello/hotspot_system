@@ -11,11 +11,9 @@
 </template>
 
 <script>
-  import axios from "axios";
   import { hsStoreReseller } from "@/store/storeReseller.js";
   import SidebarReseller from "@/components/reseller/SidebarReseller.vue";
   import TableCustomers from "@/components/reseller/TableCustomers.vue";
-
   export default {
     name: "Customers",
     components: { SidebarReseller, TableCustomers },

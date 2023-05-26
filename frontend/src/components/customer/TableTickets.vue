@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row>
-      <v-btn icon="fas fa-plus" @click="addTicket()" />
+      <v-btn icon="bi bi-plus" @click="addTicket()" />
     </v-row>
     <v-row>
       <v-text-field v-model="search" label="CERCA"></v-text-field>

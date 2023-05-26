@@ -48,11 +48,10 @@
     },
     data() {
       return {
-        username: "customer1",
-        password: "customer1",
+        username: "superadmin",
+        password: "superadmin",
       };
     },
-
     methods: {
       async checkCredentials() {
         const res = await axios.post("/api/login", {
@@ -65,7 +64,6 @@
           this.$swal("Credenziali errate!");
           return;
         }
-
         if (res.data.user.role === "SUPERADMIN") {
           console.log("Logged superadmin is:", res.data.user);
           this.storeSuperadmin.init(res.data.user);

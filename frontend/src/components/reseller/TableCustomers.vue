@@ -1,9 +1,8 @@
 <template>
-  <div>
-    <v-row>
-      <v-col cols="auto"> <v-btn icon="fas fa-plus" @click="addCustomer" /> </v-col>
+    <v-card>
+      <v-row class="justify-content-center">
+      <v-col cols="auto"> <v-btn icon="bi bi-plus"  @click="addCustomer" /> </v-col>
     </v-row>
-
     <v-row>
       <v-text-field v-model="search" label="CERCA"></v-text-field>
       <v-data-table
@@ -22,7 +21,7 @@
       </v-data-table>
     </v-row>
     <FormCustomer v-if="dialogEditCustomer" @exitEditCustomer="exitEditCustomer" @saveCustomer="saveCustomer" />
-  </div>
+    </v-card>
 </template>
 
 <script>

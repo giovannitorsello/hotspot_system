@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-row>
-      <v-btn icon="fas fa-plus" @click="addWebsurfer()" />
+    <v-row class="justify-content-center">
+      <v-btn icon="bi bi-plus" @click="addWebsurfer()" />
     </v-row>
     <v-row>
       <v-text-field label="CERCA" v-model="search"></v-text-field>

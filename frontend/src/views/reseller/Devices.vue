@@ -47,7 +47,8 @@
         this.selectedDevice.CustomerId = customer.id;
         this.selectedDevice.ResellerId = customer.ResellerId;
         axios
-          .post("/api/device/insert", {
+          .post("/api/device/insert", { 
+          
             selectedDevice: this.selectedDevice,
           })
           .then((response) => {

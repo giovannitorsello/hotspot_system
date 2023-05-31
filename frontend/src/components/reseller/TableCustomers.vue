@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+  
       <v-row class="justify-content-center">
       <v-col cols="auto"> <v-btn icon="bi bi-plus"  @click="addCustomer" /> </v-col>
     </v-row>
@@ -21,11 +21,12 @@
       </v-data-table>
     </v-row>
     <FormCustomer v-if="dialogEditCustomer" @exitEditCustomer="exitEditCustomer" @saveCustomer="saveCustomer" />
-    </v-card>
+  
 </template>
 
 <script>
   import utilityArrays from "@/utils/utilityArrays.js";
+
   import { hsStoreReseller } from "@/store/storeReseller.js";
   import FormCustomer from "@/components/reseller/FormCustomer.vue";
   import TableCustomers from "@/components/reseller/TableCustomers.vue";
@@ -63,6 +64,7 @@
       };
     },
     methods: {
+    
       addCustomer() {
         this.hsComponentStore.selectedCustomer = {};
         this.dialogEditCustomer = true;

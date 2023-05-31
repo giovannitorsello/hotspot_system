@@ -48,8 +48,8 @@
     },
     data() {
       return {
-        username: "superadmin",
-        password: "superadmin",
+        username: "reseller1",
+        password: "reseller1",
       };
     },
     methods: {

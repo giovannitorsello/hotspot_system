@@ -11,6 +11,7 @@
 </template>
 
 <script>
+
   import { hsStoreReseller } from "@/store/storeReseller.js";
   import axios from "axios";
   import SidebarReseller from "@/components/reseller/SidebarReseller.vue";
@@ -27,7 +28,6 @@
         tab: "",
         selectedUser: null,
         search: "",
-
         page: 1,
         itemsPerPage: 10,
         payload: {
@@ -43,7 +43,6 @@
         this.selectedUser = "";
         this.tab = "one";
       },
-
       openDeleteUser(user) {
         this.selectedUser = user;
         this.tab = "three";
@@ -52,7 +51,6 @@
         this.selectedUser = user;
         this.tab = "two";
       },
-
       insertUser() {
         this.payload.ResellerId = this.hsComponentStore.$state.user.ResellerId;
         axios

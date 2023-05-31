@@ -11,21 +11,23 @@
       <v-card-text>
         <v-window v-model="tabSettings">
           <v-window-item value="userGeneralSettings">
-            <v-text-field v-model="selectedUser.firstname" label="Nome"></v-text-field>
-            <v-text-field v-model="selectedUser.lastname" label="Cognome"></v-text-field>
-            <v-text-field v-model="selectedUser.email" label="Email"></v-text-field>
-            <v-text-field v-model="selectedUser.phone" label="Telefono"></v-text-field>
+            <v-form ref="formUserGeneralSettings">
+            <v-text-field v-model="selectedUser.firstname" :rules="validationRules('firstname')"  label="Nome"></v-text-field>
+            <v-text-field v-model="selectedUser.lastname" :rules="validationRules('lastname')" label="Cognome"></v-text-field>
+            <v-text-field v-model="selectedUser.email" :rules="validationRules('email')" label="Email"></v-text-field>
+            <v-text-field v-model="selectedUser.phone" :rules="validationRules('phone')" label="Telefono"></v-text-field>
+          </v-form>
             <v-row>
               <v-col>
                 <v-sheet class="pa-2 ma-1" align="end">
                   <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="exitEditUser()"></i>
-                  <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="saveUser(selectedUser)"></i>
+                  <i class="bi bi-arrow-right ma-1" style="font-size: xx-large" @click="validateFormUserGeneralSettings()"></i>
                 </v-sheet>
               </v-col>
             </v-row>
           </v-window-item>
           <v-window-item value="userProfileSettings">
-            <v-text-field v-model="selectedUser.username" label="Login"></v-text-field>
+            <v-text-field v-model="selectedUser.username" label="Username"></v-text-field>
             <v-text-field v-model="selectedUser.password" label="Password"></v-text-field>
             <v-row>
               <v-col>
@@ -53,6 +55,7 @@
   </v-dialog>
 </template>
 <script>
+import { rules } from "@/utils/validate";
   import { hsStoreReseller } from "@/store/storeReseller.js";
   export default {
     name: "FormUser",
@@ -68,6 +71,15 @@
       };
     },
     methods: {
+      async validateFormUserGeneralSettings(){
+        const { valid } = await this.$refs.formUserGeneralSettings.validate();
+      if (valid){
+        this.tabSettings = 'userProfileSettings';
+      }
+      },
+      validationRules(field) {
+      return rules[field];
+    },
       saveUser(user) {
         if (!this.selectedUser.username || this.selectedUser.username == "") this.selectedUser.username = this.selectedUser.email;
         if (!this.selectedUser.password || this.selectedUser.password == "") this.selectedUser.password = this.selectedUser.email;

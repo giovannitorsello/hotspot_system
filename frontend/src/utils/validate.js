@@ -24,6 +24,11 @@ export const rules = {
     ],
     address:[
         (v) => !!v || 'Questo campo è obbligatorio.',
+    ],
+    firstname:[
+        (v) => !!v || 'Questo campo è obbligatorio.',
+    ],
+    lastname:[
+      (v) => !!v || 'Questo campo è obbligatorio.',
     ]
-    
   };

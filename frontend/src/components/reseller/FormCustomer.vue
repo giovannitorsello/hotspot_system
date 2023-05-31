@@ -13,30 +13,34 @@
       <v-card-text>
         <v-window v-model="tabSettings">
           <v-window-item value="customerGeneralSettings">
-            <v-text-field v-model="selectedCustomer.companyName" label="Denominazione"></v-text-field>
-            <v-text-field v-model="selectedCustomer.fiscalCode" label="Codice fiscale"></v-text-field>
-            <v-text-field v-model="selectedCustomer.vatCode" label="Partita IVA"></v-text-field>
-            <v-text-field v-model="selectedCustomer.city" label="Comune"></v-text-field>
+            <v-form ref="formGeneralSettings">
+            <v-text-field v-model="selectedCustomer.companyName" :rules="validationRules('companyName')" label="Denominazione"></v-text-field>
+            <v-text-field v-model="selectedCustomer.fiscalCode"  :rules="validationRules('fiscalCode')" label="Codice fiscale"></v-text-field>
+            <v-text-field v-model="selectedCustomer.vatCode"  :rules="validationRules('vatCode')" label="Partita IVA"></v-text-field>
+            <v-text-field v-model="selectedCustomer.city" :rules="validationRules('city')" label="Comune"></v-text-field>
 
             <v-row>
               <v-col>
                 <v-sheet class="pa-2 ma-1" align="end">
                   <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="exit()"></i>
-                  <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="saveCustomer(selectedCustomer)"></i>
+                  <i class="bi bi-arrow-right ma-1" style="font-size: xx-large" @click="validateGeneralSettingsForm()"></i>
                 </v-sheet>
               </v-col>
             </v-row>
+            </v-form>
           </v-window-item>
           <v-window-item value="customerContactSettings">
-            <v-text-field v-model="selectedCustomer.addressCompany" label="Indirizzo"></v-text-field>
-            <v-text-field v-model="selectedCustomer.email" label="Email"></v-text-field>
-            <v-text-field v-model="selectedCustomer.phone" label="Telefono"></v-text-field>
+            <v-form ref="formContractSettings">
+            <v-text-field v-model="selectedCustomer.addressCompany" :rules="validationRules('address')"  label="Indirizzo"></v-text-field>
+            <v-text-field v-model="selectedCustomer.email" :rules="validationRules('email')" label="Email"></v-text-field>
+            <v-text-field v-model="selectedCustomer.phone" :rules="validationRules('phone')"  label="Telefono"></v-text-field>
             <v-text-field v-model="selectedCustomer.fax" label="Fax"></v-text-field>
+          </v-form>
             <v-row>
               <v-col>
                 <v-sheet class="pa-2 ma-1" align="end">
-                  <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="exit()"></i>
-                  <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="saveCustomer(selectedCustomer)"></i>
+                  <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="tabSettings='customerGeneralSettings'"></i>
+                  <i class="bi bi-arrow-right ma-1" style="font-size: xx-large" @click="validateContractSettingsForm()"></i>
                 </v-sheet>
               </v-col>
             </v-row>
@@ -48,7 +52,7 @@
             <v-row>
               <v-col>
                 <FormDevice v-if="dialogEditDevice" @exitEditDevice="exitEditDevice" @saveDevice="saveDevice" />
-                <v-sheet class="pa-2 ma-1" align="begin"> <v-btn density="compact" icon="mdi-plus" @click="addDevice()"> </v-btn></v-sheet>
+                <v-sheet class="pa-2 ma-1" align="begin"> <v-btn density="compact" icon="bi bi-plus" @click="addDevice()"> </v-btn></v-sheet>
                 <v-sheet class="pa-2 ma-1" align="end">
                   <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="exit()"></i>
                   <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="saveCustomer(selectedCustomer)"></i>
@@ -98,6 +102,7 @@
 </template>
 <script>
   import axios from "axios";
+  import { rules } from "@/utils/validate";
   import UploadLogoService from "@/services/UploadLogoService";
   import utilityArrays from "@/utils/utilityArrays.js";
   import { hsStoreReseller } from "@/store/storeReseller.js";
@@ -130,6 +135,21 @@
       this.imageInfos.url = process.env.VUE_APP_API_ENDPOINT + "/logo/customer_" + this.selectedCustomer.id + ".jpg";
     },
     methods: {
+      async validateGeneralSettingsForm(){
+        const {valid} = await this.$refs.formGeneralSettings.validate();
+        if(valid){
+          this.tabSettings = "customerContactSettings"
+        }
+      },
+      async validateContractSettingsForm(){
+        const {valid} = await this.$refs.formContractSettings.validate();
+        if(valid){
+          this.tabSettings = "customerDevicesSettings"
+        }
+      },
+      validationRules(field) {
+      return rules[field];
+    },
       changeLogo() {
         console.log("Entering change logo");
         if (this.selectedLogo && this.selectedLogo.length === 1) this.previewLogo = URL.createObjectURL(this.selectedLogo[0]);

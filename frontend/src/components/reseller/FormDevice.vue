@@ -63,7 +63,6 @@
   export default {
     name: "FormDevice",
     components: { Vue3JsonEditor },
-
     setup() {
       const hsComponentStore = hsStoreReseller();
       const state = reactive({
@@ -77,7 +76,9 @@
         dialogEditDevice: true,
         selectedReseller: {},
         selectedCustomer: {},
-        selectedDevice: {},
+        selectedDevice: {
+          bandwidthProfiles:[],
+        },
         header: [
           { title: "Descrizione", key: "description" },
           { title: "Indirizzo installazione", key: "setupAddress" },
@@ -96,6 +97,15 @@
       this.dialogEditDevice = true;
       this.selectedReseller = this.hsComponentStore.loggedReseller;
       this.selectedCustomer = this.hsComponentStore.selectedCustomer;
+
+      //Set default object dandprofiles
+      if(!this.hsComponentStore.selectedDevice.bandwidthProfiles) {
+        this.hsComponentStore.selectedDevice.bandwidthProfiles = [
+            {id: "1", name:"base", download:"4000", upload:"1000"},
+            {id: "2", name:"premium", download:"8000", upload:"2000"},
+            {id: "3", name:"professional", download:"16000", upload:"5000"},
+        ];
+      }
       this.selectedDevice = this.hsComponentStore.selectedDevice;
     },
     methods: {

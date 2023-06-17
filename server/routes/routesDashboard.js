@@ -77,7 +77,6 @@ routerDashboard.post("/data/dataReseller", async (req, res) => {
   });
 });
 
-// DATA PER
 routerDashboard.post("/data/datahotel", async (req, res) => {
   res.send({
     status: "200",

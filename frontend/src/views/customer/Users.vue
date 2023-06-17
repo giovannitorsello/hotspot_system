@@ -29,11 +29,7 @@
       saveUser(user) {
         user.CustomerId = this.hsComponentStore.loggedCustomer.id;
         user.ResellerId = this.hsComponentStore.loggedCustomer.ResellerId;
-        axios
-          .post("/api/user/save", {
-            user: user,
-          })
-          .then((response) => {
+        axios.post("/api/user/save", {user: user,}).then((response) => {
             if (response.data.status == 200) {
               this.hsComponentStore.addUser(response.data.result);
               this.$swal(response.data.msg);
@@ -43,7 +39,7 @@
           });
       },
       deleteUser(user) {
-        axios.post("//api/user/delete", { user: user }).then((response) => {
+        axios.post("/api/user/delete", { user: user }).then((response) => {
           if (response.data.status == 200) {
             this.$swal(response.data.msg);
           } else {

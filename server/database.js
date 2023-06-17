@@ -87,6 +87,7 @@ const Customer = sequelize.define(
       type: Sequelize.STRING,
       allowNull: true,
     },
+
   },
   { tableName: "customer" }
 );
@@ -321,6 +322,7 @@ const Ticket = sequelize.define(
 Reseller.hasMany(Customer);
 Reseller.hasMany(Ticket);
 Reseller.hasMany(User);
+User.belongsTo(Reseller);
 Reseller.hasMany(Device);
 Customer.hasMany(Device);
 Customer.hasMany(Ticket);

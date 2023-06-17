@@ -7,6 +7,7 @@ export const hsStoreSuperadmin = defineStore({
     loggedUser: {},
     loggedSupedAdmin: {},
     resellersOfSelectedSuperadmin: [],
+    usersResellerOfselectedSuperadmin: [],
   }),
   getters: {},
   actions: {
@@ -14,16 +15,29 @@ export const hsStoreSuperadmin = defineStore({
       if (user && user.id > 0 && user.role === "SUPERADMIN") {
         this.loggedUser = user;
         this.loggedSuperadmin = user;
-        this.resellersOfSelectedSuperadmin = await this.fetchResellers();
+        await this.fetchResellers();
         return true;
       }
       return false;
     },
-    //only for superadmin
+
     async fetchResellers() {
       const res = await axios.post("/api/reseller/getResellers");
-      if (!res.data || !res.data.resellers) return {};
+      if (!res.data || !res.data.resellers) {
+        this.resellersOfSelectedSuperadmin = [];
+        return [];
+      }
+      this.resellersOfSelectedSuperadmin = res.data.resellers;
       return res.data.resellers;
+    },
+    async fetchUsersResellers(superadmin) {
+      const res = await axios.post("/api/reseller/getResellersUser", { superadmin: superadmin });
+      if (!res.data || !res.data.users) {
+        this.usersResellerOfselectedSuperadmin = [];
+        return [];
+      }
+      this.usersResellerOfselectedSuperadmin = res.data.users;
+      return res.data.users;
     },
     async fetchStatisticsSuperadmin() {},
     async fetchStatisticsReseller(reseller) {},
@@ -42,7 +56,6 @@ export const hsStoreSuperadmin = defineStore({
       newReseller = toUpdate;
       this.resellersOfSelectedSuperadmin[oldReseller] = newReseller;
     },
-
   },
   persist: true,
 });

@@ -21,6 +21,7 @@
 <script>
   import { hsStoreReseller } from "@/store/storeReseller.js";
   import generateRandomCredentials from "@/utils/random";
+import axios from 'axios';
   export default {
     name: "TableTicket",
     setup() {
@@ -49,22 +50,18 @@
     computed: {},
     props: {},
     methods: {
-      insertTicket() {
+      insertTicket(){
         this.payload.user = this.hsComponentStore.user;
         this.payload.credentials = generateRandomCredentials();
-        axios
-          .post("/admin/tickets/insert", {
-            payload: this.payload,
-          })
-          .then((response) => {
-            console.log(response);
-            if (response.data.status == 200) {
-              this.hsComponentStore.addTicket(response.data.result);
-              this.$swal(response.data.msg);
-            } else {
-              this.$swal(response.data.msg);
-            }
-          });
+        axios.post("/admin/tickets/insert", {payload: this.payload,}).then((response) => {
+          console.log(response);
+          if(response.data.status == 200){
+            this.hsComponentStore.addTicket(response.data.result);
+            this.$swal(response.data.msg);
+          }else{
+            this.$swal(response.data.msg);
+          }
+        });
       },
       deleteTicket(ticket) {
         axios.post("/admin/tickets/delete", { payload: ticket }).then((response) => {

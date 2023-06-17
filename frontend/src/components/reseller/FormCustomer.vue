@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialogEditCustomer" :scrim="false" transition="dialog-bottom-transition">
+  <v-dialog v-model="dialogEditCustomer" :scrim="true" persistent transition="dialog-bottom-transition">
     <v-card>
       <v-card-title> Modifica cliente </v-card-title>
       <v-tabs v-model="tabSettings" bg-color="primary">
@@ -8,8 +8,8 @@
         <v-tab value="customerDevicesSettings">Dispositivi</v-tab>
         <v-tab value="customerNotes">Annotazioni</v-tab>
         <v-tab value="customerLogo">Logo</v-tab>
+        <v-tab value="customerUser">Utenti</v-tab>
       </v-tabs>
-
       <v-card-text>
         <v-window v-model="tabSettings">
           <v-window-item value="customerGeneralSettings">
@@ -18,7 +18,6 @@
             <v-text-field v-model="selectedCustomer.fiscalCode"  :rules="validationRules('fiscalCode')" label="Codice fiscale"></v-text-field>
             <v-text-field v-model="selectedCustomer.vatCode"  :rules="validationRules('vatCode')" label="Partita IVA"></v-text-field>
             <v-text-field v-model="selectedCustomer.city" :rules="validationRules('city')" label="Comune"></v-text-field>
-
             <v-row>
               <v-col>
                 <v-sheet class="pa-2 ma-1" align="end">
@@ -46,9 +45,7 @@
             </v-row>
           </v-window-item>
           <v-window-item value="customerDevicesSettings">
-            <v-row>
               <TableDevices />
-            </v-row>
             <v-row>
               <v-col>
                 <FormDevice v-if="dialogEditDevice" @exitEditDevice="exitEditDevice" @saveDevice="saveDevice" />
@@ -71,7 +68,7 @@
               </v-col>
             </v-row>
           </v-window-item>
-          <v-window-item value="customerLogo">
+           <v-window-item value="customerLogo">
             <v-form id="formLogo">
               <v-file-input v-model="selectedLogo" show-size label="Seleziona logo" accept="image/jpeg, image/jpg" @change="uploadLogo()"></v-file-input>
               <v-card v-if="imageInfos" class="mx-auto">
@@ -95,6 +92,25 @@
               </v-col>
             </v-row>
           </v-window-item>
+          <v-window-item value="customerUser">
+            <h4 style="text-align:center">Credenziali d'accesso al sistema per questo cliente</h4>
+            <v-divider />
+            <v-text-field v-model="selectedCustomer.username"  label="Username"></v-text-field>
+            <v-text-field
+            v-model="selectedCustomer.password"
+            :append-inner-icon="showPass ? 'mdi mdi-eye' : 'mdi mdi-eye-off'"
+            @click:append-inner="showPass = !showPass"
+            :type="showPass ? 'text' : 'password'"
+            label="Password"></v-text-field>
+            <v-row>
+              <v-col>
+                <v-sheet class="pa-2 ma-1" align="end">
+                  <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="exit()"></i>
+                  <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="saveCustomer(selectedCustomer)"></i>
+                </v-sheet>
+              </v-col>
+            </v-row>
+          </v-window-item>
         </v-window>
       </v-card-text>
     </v-card>
@@ -102,22 +118,24 @@
 </template>
 <script>
   import axios from "axios";
+  import { generateRandomPassword } from "@/utils/randomPassword";
   import { rules } from "@/utils/validate";
   import UploadLogoService from "@/services/UploadLogoService";
   import utilityArrays from "@/utils/utilityArrays.js";
   import { hsStoreReseller } from "@/store/storeReseller.js";
   import TableDevices from "@/components/reseller/TableDevices.vue";
   import FormDevice from "@/components/reseller/FormDevice.vue";
+  import FormUser from "@/components/reseller/FormUser.vue";
   export default {
     name: "FormCustomer",
-    components: { TableDevices, FormDevice },
-
+    components: { TableDevices, FormDevice, FormUser },
     setup() {
       const hsComponentStore = hsStoreReseller();
       return { hsComponentStore };
     },
     data() {
       return {
+        showPass:false,
         urlLogo: {},
         selectedLogo: {},
         imageInfos: {},
@@ -147,15 +165,27 @@
           this.tabSettings = "customerDevicesSettings"
         }
       },
+      async createUserForCustomer(customer){
+        var newUser={
+          role: "CUSTOMER",
+          email: customer.email,
+          phone: customer.phone,
+          firstname: customer.companyName,
+          username: customer.email,
+          password: generateRandomPassword(8),
+          ResellerId: customer.ResellerId,
+          CustomerId: customer.id
+        }
+        await axios.post("/api/user/save",{user: newUser});
+      },
       validationRules(field) {
       return rules[field];
-    },
+      },
       changeLogo() {
         console.log("Entering change logo");
         if (this.selectedLogo && this.selectedLogo.length === 1) this.previewLogo = URL.createObjectURL(this.selectedLogo[0]);
         this.uploadLogo();
       },
-
       uploadLogo() {
         console.log("Entering upload logo");
         if (!this.selectedLogo) {
@@ -171,7 +201,6 @@
         formData.append("companyLogo", this.selectedLogo[0]);
         formData.append("typeCompany", "customer");
         formData.append("idCompany", this.selectedCustomer.id);
-
         axios
           .post("/api/customer/upload/logo", formData, {
             headers: {
@@ -187,8 +216,23 @@
             this.selectedLogo = null;
           });
       },
-      saveCustomer() {
-        this.$emit("saveCustomer", this.selectedCustomer);
+      saveCustomer(customer) {
+        customer.ResellerId = this.hsComponentStore.loggedReseller.id;
+        axios
+          .post("/api/customer/save", {
+            customer: customer,
+          })
+          .then(async (response) => {
+            if (response.data.status == 200) {
+              this.hsComponentStore.selectedCustomer = response.data.customer;
+              this.createUserForCustomer(response.data.customer);
+              utilityArrays.updateElementById(this.hsComponentStore.customersOfSelectedReseller, response.data.customer);
+              this.dialogEditCustomer = false;
+              this.$swal(response.data.msg);
+            } else {
+              this.$swal(response.data.msg);
+            }
+          });
       },
       deleteCustomer(customer) {
         this.$emit("deleteCustomer", customer);

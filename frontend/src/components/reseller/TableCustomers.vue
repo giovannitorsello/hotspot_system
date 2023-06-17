@@ -1,10 +1,9 @@
 <template>
-  
       <v-row class="justify-content-center">
       <v-col cols="auto"> <v-btn icon="bi bi-plus"  @click="addCustomer" /> </v-col>
     </v-row>
     <v-row>
-      <v-text-field v-model="search" label="CERCA"></v-text-field>
+      <v-text-field v-model="search" label="Cerca"></v-text-field>
       <v-data-table
         :headers="headers"
         :items="hsComponentStore.customersOfSelectedReseller"
@@ -12,21 +11,19 @@
         :page.sync="page"
         :items-per-page="itemsPerPage"
         :hide-default-footer="true"
-        disable-pagination
-      >
+        disable-pagination>
         <template v-slot:[`item.actions`]="{ item }">
           <i class="bi bi-trash" @click="deleteCustomer(item.raw)"> </i>
           <i class="bi bi-pen" @click="editCustomer(item.raw)"></i>
         </template>
+        <template #bottom v-if="true != false"></template>
       </v-data-table>
     </v-row>
     <FormCustomer v-if="dialogEditCustomer" @exitEditCustomer="exitEditCustomer" @saveCustomer="saveCustomer" />
-  
 </template>
 
 <script>
   import utilityArrays from "@/utils/utilityArrays.js";
-
   import { hsStoreReseller } from "@/store/storeReseller.js";
   import FormCustomer from "@/components/reseller/FormCustomer.vue";
   import TableCustomers from "@/components/reseller/TableCustomers.vue";
@@ -64,7 +61,6 @@
       };
     },
     methods: {
-    
       addCustomer() {
         this.hsComponentStore.selectedCustomer = {};
         this.dialogEditCustomer = true;
@@ -109,6 +105,7 @@
           });
       },
       exitEditCustomer() {
+        this.selectedCustomer = {};
         this.dialogEditCustomer = false;
       },
     },

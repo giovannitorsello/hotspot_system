@@ -25,6 +25,7 @@
     "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
+    "@mdi/font": "^7.2.96",
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-plugin-vuex": "~5.0.0",
     "@vue/cli-service": "~5.0.0"

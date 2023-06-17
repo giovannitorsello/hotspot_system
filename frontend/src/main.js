@@ -1,26 +1,23 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import axios from "axios";
-
 import App from "../App.vue";
 
 //VUETIFY DIRECTIVES
-import "material-design-icons-iconfont/dist/material-design-icons.css";
 import "vuetify/styles";
+import '@mdi/font/css/materialdesignicons.css'
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { VDataTable } from "vuetify/labs/VDataTable";
-import { mdi } from "vuetify/iconsets/mdi";
-import { aliases, fa } from "vuetify/iconsets/fa";
+import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import piniaPluginPersistedState from "pinia-plugin-persistedstate";
 
 const vuetify = createVuetify({
   icons: {
-    defaultSet: "fa",
+    defaultSet: 'mdi',
     aliases,
     sets: {
-      fa,
       mdi,
     },
   },

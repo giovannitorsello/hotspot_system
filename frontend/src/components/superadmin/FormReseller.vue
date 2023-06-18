@@ -233,7 +233,10 @@
                 username: this.selectedReseller.email,
                 password: userPassword,
               };
-              let newUserReseller = this.createUserForReseller(userReseller);
+              if (userPassword && userPassword !== "") {
+                let newUserReseller = this.createUserForReseller(userReseller);
+                this.$refs.snackbarMessage.open("Utente principale del reseller aggiornato", "info");
+              }
               utilityArrays.updateElementById(this.hsComponentStore.resellersOfSelectedSuperadmin, response.data.reseller);
               this.dialogEditReseller = false;
               this.$refs.snackbarMessage.open(response.data.msg, "info");

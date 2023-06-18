@@ -21,17 +21,21 @@
     </v-data-table>
   </v-row>
   <FormReseller v-if="dialogEditReseller" @exitEditReseller="exitEditReseller" @saveReseller="saveReseller" />
+  <DialogConfirm ref="dialogConfirm" />
+  <SnackbarMessage ref="snackbarMessage" />
 </template>
 
 <script>
   import utilityArrays from "@/utils/utilityArrays.js";
   import { hsStoreSuperadmin } from "@/store/storeSuperadmin.js";
   import FormReseller from "@/components/superadmin/FormReseller.vue";
+  import DialogConfirm from "@/components/general/DialogConfirm.vue";
+  import SnackbarMessage from "@/components/general/SnackbarMessage.vue";
 
   import axios from "axios";
   export default {
     name: "TableResellers",
-    components: { FormReseller },
+    components: { FormReseller, DialogConfirm, SnackbarMessage },
     setup() {
       const hsComponentStore = hsStoreSuperadmin();
       return { hsComponentStore };
@@ -73,21 +77,26 @@
         this.selectedReseller.username = this.selectedReseller.email;
         this.dialogEditReseller = true;
       },
-      deleteReseller(reseller) {
+      async deleteReseller(reseller) {
         console.log("Reseller to delete:", reseller);
-        axios
-          .post("/api/reseller/delete", {
-            reseller: reseller,
-          })
-          .then((response) => {
-            if (response.data.status == 200) {
-              utilityArrays.deleteElementById(this.hsComponentStore.resellersOfSelectedSuperadmin, reseller);
-              this.$swal(response.data.msg);
-            } else {
-              utilityArrays.deleteElementById(this.hsComponentStore.resellersOfSelectedSuperadmin, reseller);
-              this.$swal(response.data.msg);
-            }
-          });
+        var bConfirm = await this.$refs.dialogConfirm.open("Richiesta di conferma", "Sei sicuro di cancellare questo reseller, saranno eliminati anche i suoi clienti e ogni altro riferimento.");
+        if (bConfirm) {
+          axios
+            .post("/api/reseller/delete", {
+              reseller: reseller,
+            })
+            .then((response) => {
+              if (response.data.status == 200) {
+                utilityArrays.deleteElementById(this.hsComponentStore.resellersOfSelectedSuperadmin, reseller);
+                this.$refs.snackbarMessage.open(response.data.msg, "info");
+                //this.$swal(response.data.msg);
+              } else {
+                utilityArrays.deleteElementById(this.hsComponentStore.resellersOfSelectedSuperadmin, reseller);
+                this.$refs.snackbarMessage.open(response.data.msg, "error");
+                //this.$swal(response.data.msg);
+              }
+            });
+        }
       },
       saveReseller(reseller) {
         this.selectedReseller = reseller;
@@ -100,9 +109,11 @@
               this.hsComponentStore.selectedReseller = response.data.reseller;
               utilityArrays.updateElementById(this.hsComponentStore.resellersOfSelectedSuperadmin, response.data.reseller);
               this.dialogEditReseller = false;
-              this.$swal(response.data.msg);
+              this.$refs.snackbarMessage.open(response.data.msg, "info");
+              //this.$swal(response.data.msg);
             } else {
-              this.$swal(response.data.msg);
+              this.$refs.snackbarMessage.open(response.data.msg, "error");
+              //this.$swal(response.data.msg);
             }
           });
       },

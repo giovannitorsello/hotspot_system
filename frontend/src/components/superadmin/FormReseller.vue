@@ -102,6 +102,8 @@
       </v-card-text>
     </v-card>
   </v-dialog>
+  <DialogConfirm ref="dialogConfirm" />
+  <SnackbarMessage ref="snackbarMessage" />
 </template>
 <script>
   import axios from "axios";
@@ -109,10 +111,13 @@
   import { rules } from "@/utils/validate";
   import utilityArrays from "@/utils/utilityArrays.js";
   import { hsStoreSuperadmin } from "@/store/storeSuperadmin.js";
+  import DialogConfirm from "@/components/general/DialogConfirm.vue";
+  import SnackbarMessage from "@/components/general/SnackbarMessage.vue";
   import FormUser from "@/components/superadmin/FormUser.vue";
+
   export default {
     name: "FormReseller",
-    components: { FormUser },
+    components: { FormUser, DialogConfirm, SnackbarMessage },
     setup() {
       const hsComponentStore = hsStoreSuperadmin();
       return { hsComponentStore };
@@ -231,9 +236,11 @@
               let newUserReseller = this.createUserForReseller(userReseller);
               utilityArrays.updateElementById(this.hsComponentStore.resellersOfSelectedSuperadmin, response.data.reseller);
               this.dialogEditReseller = false;
-              this.$swal(response.data.msg);
+              this.$refs.snackbarMessage.open(response.data.msg, "info");
+              //this.$swal(response.data.msg);
             } else {
-              this.$swal(response.data.msg);
+              this.$refs.snackbarMessage.open(response.data.msg, "error");
+              //this.$swal(response.data.msg);
             }
           });
       },

@@ -15,9 +15,6 @@ const md5 = require("md5");
 const formidable = require("formidable");
 const multer = require("multer");
 
-var customer = {};
-var device = {};
-
 // ////////////////// LOGIN ////////////////
 router.post("/api/login", async (req, res) => {
   // Prevent errors
@@ -41,7 +38,7 @@ router.post("/api/login", async (req, res) => {
 router.post("/api/user/save", async (req, res) => {
   console.log(req.body.user);
   var user = req.body.user;
-  if (!user || !(user.username || user.password)) {
+  if (!user || !user.username || !user.password) {
     res.send({ status: "404", msg: "DATI NON COMPLETI O ERRATI" });
     return;
   }
@@ -57,15 +54,21 @@ router.post("/api/user/save", async (req, res) => {
     foundUser = await User.findOne({
       where: {
         username: user.username,
-        password: user.password,
         role: user.role,
         email: user.email,
       },
     });
 
   // NEW INSERT
-  if (foundUser == null) {
+  if (foundUser == null || !foundUser.id || foundUser.id === 0) {
     var userToInsert = Object.assign({}, user);
+
+    //Manage constraints
+    //Delete CustomerID to avoid block problem with foreign keys constraints
+    if (userToInsert.CustomerId && userToInsert.CustomerId == 0) delete userToInsert.CustomerId;
+    if (userToInsert.ResellerId && userToInsert.ResellerId == 0) delete userToInsert.ResellerId;
+    //Manage constraints
+
     var userSaved = await User.create(userToInsert);
     if (userSaved) res.send({ status: "200", msg: "UTENTE INSERITO", user: userSaved });
     else res.send({ status: "404", msg: "DATI NON COMPLETI O ERRATI" });
@@ -73,6 +76,12 @@ router.post("/api/user/save", async (req, res) => {
 
   // UPDATE
   if (foundUser && foundUser.id !== 0) {
+    //Manage constraints
+    //Delete CustomerID to avoid block problem with foreign keys constraints
+    if (user.CustomerId || user.CustomerId === 0) delete user.CustomerId;
+    if (user.ResellerId || user.ResellerId === 0) delete user.ResellerId;
+    //Manage constraints
+
     var userUpdated = await foundUser.update(user);
     if (userUpdated) res.send({ status: "200", msg: "UTENTE SALVATO.", user: userUpdated });
     else res.send({ status: "404", msg: "DATI NON COMPLETI O ERRATI" });
@@ -160,7 +169,7 @@ router.post("/api/customer/upload/logo", (req, res) => {
     const fileExt = companyLogo.name.split(".").pop();
     var newFileNameLogo = "",
       newAbsoluteFilePath = "";
-    if (idCompany && typeCompany && (typeCompany === "reseller" || typeCompany === "customer")) {
+    if (idCompany && typeCompany && typeCompany === "customer") {
       newFileNameLogo = typeCompany + "_" + idCompany + "." + fileExt;
       newAbsoluteFilePath = process.cwd() + config.folder.folderCompanyLogo + newFileNameLogo;
     }
@@ -228,6 +237,12 @@ router.post("/api/customer/delete", async (req, res) => {
     },
   });
   if (foundCustomer) {
+    //Must delete in sequence
+    //1) All tickets
+    database.deleteCustomerTickets(foundCustomer);
+    //2) All websurfers
+    database.deleteCustomerWebsurfers(foundCustomer);
+    //4) Finally delete customer
     foundCustomer.destroy();
     res.send({ status: "200", msg: "CLIENTE ELIMINATO", customer: customer });
   } else {
@@ -310,7 +325,7 @@ router.post("/api/reseller/save", async (req, res) => {
     var resellerSaved = await Reseller.create(resellerToInsert);
     if (resellerSaved) {
       console.log(resellerSaved);
-      res.send({ status: "200", msg: "RESELLER INSERITO", result: resellerSaved });
+      res.send({ status: "200", msg: "Nuovo Reseller inserito.", reseller: resellerSaved });
     } else {
       res.send({ status: "404", msg: "DATI NON COMPLETI O ERRATI" });
     }
@@ -318,7 +333,7 @@ router.post("/api/reseller/save", async (req, res) => {
   // UPDATE
   if (foundReseller && foundReseller.id !== 0) {
     var resellerUpdated = await foundReseller.update(reseller);
-    if (resellerUpdated) res.send({ status: "200", msg: "RESELLER SALVATO", result: resellerUpdated });
+    if (resellerUpdated) res.send({ status: "200", msg: "Reseller salvato", reseller: resellerUpdated });
     else res.send({ status: "404", msg: "DATI NON COMPLETI O ERRATI" });
   }
 });
@@ -332,6 +347,14 @@ router.post("/api/reseller/delete", async (req, res) => {
       },
     });
   if (foundReseller) {
+    //Must delete in sequence
+    //1) All tickets
+    database.deleteResellerTickets(foundReseller);
+    //2) All websurfers
+    database.deleteResellerWebsurfers(foundReseller);
+    //3) All customers
+    database.deleteResellerCustomers(foundReseller);
+    //4) Finally delete reseller
     const result = foundReseller.destroy();
     res.send({ status: "200", msg: "RIVENDITORE ELIMINATO", reseller: foundReseller });
   } else res.send({ status: "400", msg: "ERRORE DI ELIMINAZIONE RIVENDITORE", reseller: {} });
@@ -383,6 +406,31 @@ router.post("/api/reseller/getResellersUser", async function (req, res) {
   res.send({ status: "200", msg: "Success.", users: users });
 });
 
+router.post("/api/reseller/upload/logo", (req, res) => {
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.send({ status: "200", msg: "UPLOAD LOGO CORRETTAMENTE ESEGUITO", companyLogo: {} });
+  }
+
+  let companyLogo = req.files.companyLogo;
+
+  if (typeof companyLogo !== "undefined" && companyLogo) {
+    const typeCompany = req.body.typeCompany;
+    const idCompany = req.body.idCompany;
+    const fileExt = companyLogo.name.split(".").pop();
+    var newFileNameLogo = "",
+      newAbsoluteFilePath = "";
+    if (idCompany && typeCompany && typeCompany === "reseller") {
+      newFileNameLogo = typeCompany + "_" + idCompany + "." + fileExt;
+      newAbsoluteFilePath = process.cwd() + config.folder.folderCompanyLogo + newFileNameLogo;
+    }
+    companyLogo.mv(newAbsoluteFilePath, (error) => {
+      if (!error) {
+        companyLogo.url = "https://" + config.server.domain + ":" + config.server.https_port + "/logo/" + newFileNameLogo;
+        res.send({ status: "200", msg: "UPLOAD LOGO CORRETTAMENTE ESEGUITO", companyLogo: companyLogo });
+      } else res.send({ status: "404", msg: "ERRORE NELL'UPLOAD DEL LOGO", companyLogo: {} });
+    });
+  }
+});
 // ////////////////// DEVICES MANAGEMENT ROUTES ///////////////
 router.post("/api/device/save", async (req, res) => {
   var device = req.body.device;
@@ -452,9 +500,9 @@ router.post("/api/websurfer/save", async (req, res) => {
     return;
   }
 
-  if (!websurfer.email) device.email = "";
-
-  if (!websurfer.phone) device.phone = "";
+  //Avoid null fields
+  if (!websurfer.email) websurfer.email = "";
+  if (!websurfer.phone) websurfer.phone = "";
 
   if (websurfer.id && websurfer.id > 0)
     foundWebsurfer = await Websurfer.findOne({
@@ -490,7 +538,7 @@ router.post("/api/websurfer/delete", async (req, res) => {
   if (websurfer && websurfer.id)
     foundWebsurfer = await Websurfer.findOne({
       where: {
-        id: device.id,
+        id: websurfer.id,
       },
     });
 

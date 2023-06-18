@@ -49,7 +49,7 @@
               <v-col>
                 <v-sheet class="pa-2 ma-1" align="end">
                   <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="exit()"></i>
-                  <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="saveCustomer(selectedReseller)"></i>
+                  <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="saveReseller(selectedReseller)"></i>
                 </v-sheet>
               </v-col>
             </v-row>
@@ -125,19 +125,21 @@
         selectedLogo: {},
         imageInfos: {},
         dialogEditReseller: true,
-        selectedReseller: { id: 0 },
+        selectedReseller: {},
       };
     },
     mounted() {
       this.dialogEditReseller = true;
-      if (this.hsComponentStore.selectedReseller) this.selectedReseller = this.hsComponentStore.selectedReseller;
 
-      if (this.selectedReseller.id) {
+      //Load dato from store in case of modification
+      if (this.hsComponentStore.selectedReseller && this.hsComponentStore.selectedReseller.id) {
+        this.selectedReseller = this.hsComponentStore.selectedReseller;
         this.imageInfos.name = "logo";
         this.imageInfos.url = process.env.VUE_APP_API_ENDPOINT + "/logo/reseller_" + this.selectedReseller.id + ".jpg";
+      } else {
+        //Prepare a new auto-generated password
+        this.selectedReseller.password = generateRandomPassword(12);
       }
-
-      this.selectedReseller.password = generateRandomPassword(8);
     },
     methods: {
       async validateGeneralSettingsForm() {
@@ -208,30 +210,35 @@
           });
       },
       saveReseller(reseller) {
+        //Save password in local variable
+        var userPassword = this.selectedReseller.password;
         axios
           .post("/api/reseller/save", {
             reseller: reseller,
           })
           .then(async (response) => {
             if (response.data.status == 200) {
-              this.hsComponentStore.selectedReseller = response.data.reselle;
-              this.createUserForReseller(response.data.reselle);
+              this.hsComponentStore.selectedReseller = response.data.reseller;
+              this.selectedReseller = response.data.reseller;
+              let userReseller = {
+                ResellerId: this.selectedReseller.id,
+                CunstomerId: 0,
+                role: "RESELLER",
+                email: this.selectedReseller.email,
+                username: this.selectedReseller.email,
+                password: userPassword,
+              };
+              let newUserReseller = this.createUserForReseller(userReseller);
               utilityArrays.updateElementById(this.hsComponentStore.resellersOfSelectedSuperadmin, response.data.reseller);
-              this.dialogEditCustomer = false;
+              this.dialogEditReseller = false;
               this.$swal(response.data.msg);
             } else {
               this.$swal(response.data.msg);
             }
           });
       },
-      deleteCustomer(reseller) {
+      deleteReseller(reseller) {
         this.$emit("deleteReseller", reseller);
-      },
-      editDevice(customer) {
-        console.log("Selected reseller is:", reseller);
-        this.hsComponentStore.selectedReseller = reseller;
-        this.selectedReseller = reseller;
-        this.selectedReseller.username = this.selectedReseller.email;
       },
       exit() {
         this.$emit("exitEditReseller");

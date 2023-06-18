@@ -61,13 +61,16 @@
     methods: {
       addReseller() {
         console.log("Add Reseller");
-        this.hsComponentStore.selectedReseller = { id: 0 };
+        //Reset store object
+        this.hsComponentStore.selectedReseller = {};
         this.dialogEditReseller = true;
       },
       editReseller(reseller) {
         console.log("Modify Reseller:", reseller);
         this.hsComponentStore.selectedReseller = reseller;
         this.selectedReseller = reseller;
+        //Force userame equal to email.
+        this.selectedReseller.username = this.selectedReseller.email;
         this.dialogEditReseller = true;
       },
       deleteReseller(reseller) {

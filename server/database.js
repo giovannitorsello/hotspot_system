@@ -87,7 +87,6 @@ const Customer = sequelize.define(
       type: Sequelize.STRING,
       allowNull: true,
     },
-
   },
   { tableName: "customer" }
 );
@@ -115,7 +114,7 @@ const Reseller = sequelize.define(
       type: Sequelize.STRING,
       allowNull: true,
     },
-    addessCompany: {
+    addressCompany: {
       type: Sequelize.STRING,
       allowNull: true,
     },
@@ -560,6 +559,27 @@ const deleteWebSurferTickets = async (websurfer) => {
   return deletedData;
 };
 
+const deleteResellerTickets = async (reseller) => {
+  if (!reseller || !reseller.id) return;
+  const sql = "DELETE FROM ticket WHERE ResellerId=" + reseller.id + ";";
+  const deletedData = await sequelize.query(sql, { type: QueryTypes.DELETE });
+  return deletedData;
+};
+
+const deleteResellerWebSurfers = async (reseller) => {
+  if (!reseller || !reseller.id) return;
+  const sql = "DELETE FROM websurfer WHERE ResellerId=" + reseller.id + ";";
+  const deletedData = await sequelize.query(sql, { type: QueryTypes.DELETE });
+  return deletedData;
+};
+
+const deleteResellerCustomers = async (reseller) => {
+  if (!reseller || !reseller.id) return;
+  const sql = "DELETE FROM customer WHERE ResellerId=" + reseller.id + ";";
+  const deletedData = await sequelize.query(sql, { type: QueryTypes.DELETE });
+  return deletedData;
+};
+
 module.exports = {
   sequelize: sequelize,
   Reseller: Reseller,
@@ -592,4 +612,7 @@ module.exports = {
   deleteWebSurferTickets: deleteWebSurferTickets,
   deleteCustomerWebSurfers: deleteCustomerWebSurfers,
   deleteCustomerTickets: deleteCustomerTickets,
+  deleteResellerTickets: deleteResellerTickets,
+  deleteResellerWebSurfers: deleteResellerWebSurfers,
+  deleteResellerCustomers: deleteResellerCustomers,
 };

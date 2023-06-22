@@ -106,6 +106,13 @@
             {id: "3", name:"professional", download:"16000", upload:"5000"},
         ];
       }
+
+      //set default object websurferCustomFields
+      if(!this.hsComponentStore.selectedDevice.websurferCustomFields) {
+        this.hsComponentStore.selectedDevice.websurferCustomFields = [
+            {id: "1", name:"TAVOLI"},
+        ];
+      }
       this.selectedDevice = this.hsComponentStore.selectedDevice;
     },
     methods: {

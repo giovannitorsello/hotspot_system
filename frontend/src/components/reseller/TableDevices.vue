@@ -41,7 +41,6 @@
       return { hsComponentStore };
     },
     mounted() {
-    
     },
     data() {
       return {

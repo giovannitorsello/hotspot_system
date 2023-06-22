@@ -135,7 +135,7 @@
     },
     mounted() {
       this.dialogEditReseller = true;
-
+      this.selectedReseller = this.hsComponentStore.selectedReseller;
       //Load dato from store in case of modification
       if (this.hsComponentStore.selectedReseller && this.hsComponentStore.selectedReseller.id) {
         this.selectedReseller = this.hsComponentStore.selectedReseller;

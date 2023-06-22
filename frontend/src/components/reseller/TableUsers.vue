@@ -1,6 +1,5 @@
 <template>
   <div>
-   
     <v-row>
       <v-text-field v-model="search" label="CERCA"></v-text-field>
       <v-data-table

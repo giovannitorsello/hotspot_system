@@ -1,8 +1,7 @@
-import {defineStore} from "pinia";
+import { defineStore } from "pinia";
 import axios from "axios";
 
 export const hsStoreCustomer = defineStore({
-
   id: "storeCustomer",
   state: () => ({
     loggedCustomer: {},
@@ -107,5 +106,4 @@ export const hsStoreCustomer = defineStore({
     async fetchStatisticsCustomer(customer) {},
   },
   persist: true,
->>>>>>> 13ae2b716706178e15e4c63d0387f1ed053bf82f
 });

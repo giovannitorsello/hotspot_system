@@ -24,10 +24,10 @@ export const hsStoreReseller = defineStore({
     async init(user) {
       if (user && user.id > 0 && user.role === "RESELLER") {
         this.loggedUser = user;
-         await this.fetchResellerByUser(user);
-         await this.fetchCustomersByReseller(this.loggedReseller);
-         await this.fetchUsersByReseller(this.loggedReseller);
-         await this.fetchDevicesByReseller(this.loggedReseller);
+        await this.fetchResellerByUser(user);
+        await this.fetchCustomersByReseller(this.loggedReseller);
+        await this.fetchUsersByReseller(this.loggedReseller);
+        await this.fetchDevicesByReseller(this.loggedReseller);
         return true;
       }
       return false;
@@ -53,9 +53,9 @@ export const hsStoreReseller = defineStore({
       this.customersOfSelectedReseller = res.data.customers;
       return res.data.customers;
     },
-    async fetchDevicesByReseller(reseller){
+    async fetchDevicesByReseller(reseller) {
       if (!reseller || !reseller.id) return [];
-      const res = await axios.post("/api/reseller/getDevicesByReseller",{reseller: reseller});
+      const res = await axios.post("/api/reseller/getDevicesByReseller", { reseller: reseller });
       if (!res.data || !res.data.devices) return [];
       this.devicesOfSelectedReseller = res.data.devices;
       return res.data.devices;
@@ -73,9 +73,9 @@ export const hsStoreReseller = defineStore({
       this.devicesOfSelectedCustomer = res.data.devices;
       return res.data.devices;
     },
-   
+
     async fetchStatisticsReseller(reseller) {},
     async fetchStatisticsCustomer(customer) {},
   },
-  
+  persist: true,
 });

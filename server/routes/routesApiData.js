@@ -160,8 +160,6 @@ router.post("/api/customer/upload/logo", (req, res) => {
   }
 
   let companyLogo = req.files.companyLogo;
-  var reseller = req.body.reseller;
-  var customer = req.body.customer;
 
   if (typeof companyLogo !== "undefined" && companyLogo) {
     const typeCompany = req.body.typeCompany;

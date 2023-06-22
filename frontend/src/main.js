@@ -5,17 +5,17 @@ import App from "../App.vue";
 
 //VUETIFY DIRECTIVES
 import "vuetify/styles";
-import '@mdi/font/css/materialdesignicons.css'
+import "@mdi/font/css/materialdesignicons.css";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { VDataTable } from "vuetify/labs/VDataTable";
-import { aliases, mdi } from 'vuetify/iconsets/mdi'
+import { aliases, mdi } from "vuetify/iconsets/mdi";
 import piniaPluginPersistedState from "pinia-plugin-persistedstate";
 
 const vuetify = createVuetify({
   icons: {
-    defaultSet: 'mdi',
+    defaultSet: "mdi",
     aliases,
     sets: {
       mdi,
@@ -34,7 +34,6 @@ import VueSweetalert2 from "vue-sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 
 const pinia = createPinia();
-
 pinia.use(piniaPluginPersistedState);
 
 //Set BaseURL for Axios from .env file

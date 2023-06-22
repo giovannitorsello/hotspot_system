@@ -210,7 +210,6 @@ router.post("/api/customer/save", multer().array("files"), async (req, res) => {
     var customerToInsert = Object.assign({}, customer);
     var customerSaved = await Customer.create(customerToInsert);
     if (customerSaved) {
-      console.log(customerSaved);
       res.send({ status: "200", msg: "DISPOSITIVO INSERITO", customer: customerSaved, isNewInsert: "true" });
     } else {
       res.send({ status: "404", msg: "DATI NON COMPLETI O ERRATI" });
@@ -377,10 +376,10 @@ router.post("/api/reseller/getUsersByReseller", async function (req, res) {
 });
 
 router.post("/api/reseller/getDevicesByReseller", async function (req, res) {
-  if (!req.body || !req.body.reseller || !req.body.reseller.id) res.send({ status: "404", msg: "No reseller data present", state: "error", users: {} });
+  if (!req.body || !req.body.reseller || !req.body.reseller.id) res.send({ status: "404", msg: "No reseller data present", state: "error", devices: {} });
 
   const reseller = req.body.reseller;
-  var devices = await database.getUsersByReseller(reseller);
+  var devices = await database.getDevicesByReseller(reseller);
   res.send({ status: "200", msg: "Success.", devices: devices });
 });
 

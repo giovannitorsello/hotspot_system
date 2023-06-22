@@ -8,17 +8,19 @@
       <TableUsers />
     </div>
   </div>
+  <SnackbarMessage ref="snackbarMessage" />
 </template>
 
 <script>
 
   import { hsStoreReseller } from "@/store/storeReseller.js";
   import axios from "axios";
+  import SnackbarMessage from "@/components/general/SnackbarMessage.vue";
   import SidebarReseller from "@/components/reseller/SidebarReseller.vue";
   import TableUsers from "@/components/reseller/TableUsers.vue";
   export default {
     name: "Users",
-    components: { SidebarReseller, TableUsers },
+    components: { SidebarReseller, TableUsers,SnackbarMessage },
     setup() {
       const hsComponentStore = hsStoreReseller();
       return { hsComponentStore };
@@ -60,9 +62,9 @@
           .then((response) => {
             if (response.data.status == 200) {
               this.hsComponentStore.addUser(response.data.result);
-              this.$swal(response.data.msg);
+              this.$refs.snackbarMessage.open(response.data.msg, "info");
             } else {
-              this.$swal(response.data.msg);
+              this.$refs.snackbarMessage.open(response.data.msg, "error");
             }
           });
       },
@@ -71,9 +73,9 @@
           if (response.data.status == 200) {
             this.hsComponentStore.deleteUser(user.id);
             this.tab = "one";
-            this.$swal(response.data.msg);
+            this.$refs.snackbarMessage.open(response.data.msg, "info");
           } else {
-            this.$swal(response.data.msd);
+            this.$refs.snackbarMessage.open(response.data.msg, "error");
           }
         });
       },

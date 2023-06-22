@@ -62,14 +62,17 @@
       </v-window>
     </v-card-text>
   </v-card>
+  <SnackbarMessage ref="snackbarMessage" />
 </template>
 
 <script>
   import axios from "axios";
   import { hsStoreCustomer } from "@/store/storeCustomer.js";
+  import SnackbarMessage from "../general/SnackbarMessage.vue";
   import generateRandomCredentials from "@/utils/random";
   export default {
     name: "TableTicket",
+    components:{SnackbarMessage},
     setup() {
       const hsComponentStore = hsStoreCustomer();
       return { hsComponentStore };
@@ -126,7 +129,7 @@
         console.log("Selected ticket is is:", selectedTicket);
         console.log("Websurfer of this ticket is: ", webSurfer);
         var msg = webSurfer.firstname + " " + webSurfer.lastname;
-        this.$swal("Ticket appartenente a " + msg);
+        this.$refs.snackbarMessage.open("Ticket appartenente a " + msg, "info");
       },
       getBandwidthProfileName(item) {
         try {

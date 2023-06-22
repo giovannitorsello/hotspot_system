@@ -134,6 +134,7 @@ const Reseller = sequelize.define(
       type: Sequelize.STRING,
       allowNull: true,
     },
+  
   },
   { tableName: "reseller" }
 );
@@ -321,6 +322,8 @@ const Ticket = sequelize.define(
 Reseller.hasMany(Customer);
 Reseller.hasMany(Ticket);
 Reseller.hasMany(User);
+Reseller.hasMany(Websurfer);
+Websurfer.belongsTo(Reseller);
 User.belongsTo(Reseller);
 Reseller.hasMany(Device);
 Customer.hasMany(Device);
@@ -445,7 +448,7 @@ const getResellerByUser = async (user) => {
 
 const getUsersByReseller = async (reseller) => {
   if (!reseller || !reseller.id) return {};
-  var users = await User.findAll({ attributes: { exclude: ["password"] }, where: { [Op.and]: { ResellerId: reseller.id, role: "RESELLER" } } });
+  var users = await User.findAll({ attributes: { exclude: ["password"] }, where: { [Op.and]: { ResellerId: reseller.id} } });
   return users;
 };
 

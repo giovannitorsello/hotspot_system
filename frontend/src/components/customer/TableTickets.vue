@@ -60,12 +60,9 @@
       };
     },
     mounted() {
-      var thisTableTickets = this;
-      this.hsComponentStore.fetchTicketsByWebsurfer(this.hsComponentStore.selectedWebsurfer).then((tickets) => {
-        console.log("Found tickets: ", tickets);
-        this.hsComponentStore.ticketsOfSelectedWebsurfer = tickets;
-        thisTableTickets.tickets = tickets;
-      });
+      this.hsComponentStore.fetchTicketsByWebsurfer(this.hsComponentStore.selectedWebsurfer);
+      console.log("Selected websurfer is: ", this.hsComponentStore.selectedWebsurfer);
+      console.log("Found tickets: ", this.hsComponentStore.ticketsOfSelectedWebsurfer);
     },
     methods: {
       addTicket() {

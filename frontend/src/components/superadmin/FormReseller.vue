@@ -159,19 +159,6 @@
           this.tabSettings = "resellerDevicesSettings";
         }
       },
-      async createUserForReseller(reseller) {
-        var newUser = {
-          role: "RESELLER",
-          email: reseller.email,
-          phone: reseller.phone,
-          firstname: reseller.companyName,
-          username: reseller.email,
-          password: reseller.password,
-          ResellerId: reseller.ResellerId,
-          CustomerId: 0,
-        };
-        await axios.post("/api/user/save", { user: newUser });
-      },
       validationRules(field) {
         return rules[field];
       },
@@ -226,15 +213,16 @@
               this.hsComponentStore.selectedReseller = response.data.reseller;
               this.selectedReseller = response.data.reseller;
               let userReseller = {
+                firstname:this.selectedReseller.companyName,
+                phone: this.selectedReseller.phone,
                 ResellerId: this.selectedReseller.id,
-                CunstomerId: 0,
                 role: "RESELLER",
                 email: this.selectedReseller.email,
                 username: this.selectedReseller.email,
                 password: userPassword,
               };
               if (userPassword && userPassword !== "") {
-                let newUserReseller = this.createUserForReseller(userReseller);
+                await axios.post("/api/user/save", { user: userReseller });
                 this.$refs.snackbarMessage.open("Utente principale del reseller aggiornato", "info");
               }
               utilityArrays.updateElementById(this.hsComponentStore.resellersOfSelectedSuperadmin, response.data.reseller);

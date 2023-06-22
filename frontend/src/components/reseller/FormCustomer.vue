@@ -30,7 +30,7 @@
           </v-window-item>
           <v-window-item value="customerContactSettings">
             <v-form ref="formContractSettings">
-            <v-text-field v-model="selectedCustomer.addressCompany" :rules="validationRules('address')"  label="Indirizzo"></v-text-field>
+            <v-text-field v-model="selectedCustomer.addessCompany" :rules="validationRules('address')"  label="Indirizzo"></v-text-field>
             <v-text-field v-model="selectedCustomer.email" :rules="validationRules('email')" label="Email"></v-text-field>
             <v-text-field v-model="selectedCustomer.phone" :rules="validationRules('phone')"  label="Telefono"></v-text-field>
             <v-text-field v-model="selectedCustomer.fax" label="Fax"></v-text-field>
@@ -115,6 +115,7 @@
       </v-card-text>
     </v-card>
   </v-dialog>
+  <SnackbarMessage ref="snackbarMessage" />
 </template>
 <script>
   import axios from "axios";
@@ -126,9 +127,10 @@
   import TableDevices from "@/components/reseller/TableDevices.vue";
   import FormDevice from "@/components/reseller/FormDevice.vue";
   import FormUser from "@/components/reseller/FormUser.vue";
+  import SnackbarMessage from "../general/SnackbarMessage.vue";
   export default {
     name: "FormCustomer",
-    components: { TableDevices, FormDevice, FormUser },
+    components: { TableDevices, FormDevice, FormUser,SnackbarMessage },
     setup() {
       const hsComponentStore = hsStoreReseller();
       return { hsComponentStore };
@@ -228,9 +230,11 @@
               this.createUserForCustomer(response.data.customer);
               utilityArrays.updateElementById(this.hsComponentStore.customersOfSelectedReseller, response.data.customer);
               this.dialogEditCustomer = false;
-              this.$swal(response.data.msg);
+              this.$refs.snackbarMessage.open(response.data.msg, "info");
+             
             } else {
-              this.$swal(response.data.msg);
+              this.$refs.snackbarMessage.open(response.data.msg, "error");
+              
             }
           });
       },
@@ -263,10 +267,10 @@
         axios.post("/api/device/delete", { device: device }).then(async (response) => {
           if (response.data.status == 200) {
             utilityArrays.deleteElementById(this.hsComponentStore.devicesOfSelectedCustomer, device);
-            this.$swal(response.data.msg);
+            this.$refs.snackbarMessage.open(response.data.msg, "info");
           } else {
             utilityArrays.deleteElementById(this.hsComponentStore.devicesOfSelectedCustomer, device);
-            this.$swal(response.data.msg);
+            this.$refs.snackbarMessage.open(response.data.msg, "error");
           }
         });
       },

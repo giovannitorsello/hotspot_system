@@ -4,9 +4,7 @@ import axios from "axios";
 export const hsStoreReseller = defineStore({
   id: "storeReseller",
   state: () => ({
-    loggedUser: {},
     loggedReseller: {},
-    superadminOfSelectedReseller: {},
     customersOfSelectedReseller: [],
     usersOfSelectedReseller: [],
     devicesOfSelectedReseller: [],
@@ -29,6 +27,7 @@ export const hsStoreReseller = defineStore({
          await this.fetchResellerByUser(user);
          await this.fetchCustomersByReseller(this.loggedReseller);
          await this.fetchUsersByReseller(this.loggedReseller);
+         await this.fetchDevicesByReseller(this.loggedReseller);
         return true;
       }
       return false;
@@ -54,6 +53,13 @@ export const hsStoreReseller = defineStore({
       this.customersOfSelectedReseller = res.data.customers;
       return res.data.customers;
     },
+    async fetchDevicesByReseller(reseller){
+      if (!reseller || !reseller.id) return [];
+      const res = await axios.post("/api/reseller/getDevicesByReseller",{reseller: reseller});
+      if (!res.data || !res.data.devices) return [];
+      this.devicesOfSelectedReseller = res.data.devices;
+      return res.data.devices;
+    },
     async fetchWebsurfersByCustomer(customer) {
       if (!customer || !customer.id) return [];
       const res = await axios.post("/api/websurfer/getWebsurfersByCustomer", { customer: customer });
@@ -67,8 +73,9 @@ export const hsStoreReseller = defineStore({
       this.devicesOfSelectedCustomer = res.data.devices;
       return res.data.devices;
     },
+   
     async fetchStatisticsReseller(reseller) {},
     async fetchStatisticsCustomer(customer) {},
   },
-  persist: true,
+  
 });

@@ -22,6 +22,7 @@
     </v-row>
     <FormWebsurfer v-if="dialogEditWebsurfer" @exitEditWebsurfer="exitEditWebsurfer" @saveWebsurfer="saveWebsurfer" />
   </div>
+  <SnackbarMessage ref="snackbarMessage" />
 </template>
 
 <script>
@@ -29,13 +30,14 @@
   import utilityArrays from "@/utils/utilityArrays.js";
   import { hsStoreCustomer } from "@/store/storeCustomer.js";
   import FormWebsurfer from "@/components/customer/FormWebsurfer.vue";
+  import SnackbarMessage from "../general/SnackbarMessage.vue";
   export default {
     name: "TableWebsurfer",
     setup() {
       const hsComponentStore = hsStoreCustomer();
       return { hsComponentStore };
     },
-    components: { FormWebsurfer },
+    components: { FormWebsurfer,SnackbarMessage },
     data() {
       return {
         dialogEditWebsurfer: false,
@@ -78,10 +80,11 @@
         axios.post("/api/websurfer/delete", { websurfer: websurfer }).then(async (response) => {
           if (response.data.status == 200) {
             utilityArrays.deleteElementById(this.hsComponentStore.websurfersOfSelectedCustomer, response.data.websurfer);
-            this.$swal(response.data.msg);
+            this.$refs.snackbarMessage.open(response.data.msg, "info");
+
           } else {
             utilityArrays.deleteElementById(this.hsComponentStore.websurfersOfSelectedCustomer, response.data.websurfer);
-            this.$swal(response.data.msg);
+            this.$refs.snackbarMessage.open(response.data.msg, "error");
           }
         });
       },

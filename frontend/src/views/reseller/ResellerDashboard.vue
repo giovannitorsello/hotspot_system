@@ -8,8 +8,8 @@
       <SidebarReseller />
 
       <div class="page-heading">
-        <h3>WIFI TICKET SYSTEM -- {{ this.hsComponentStore.loggedReseller.companyName }}</h3>
-        <h4>Bentornato {{ this.hsComponentStore.loggedUser.utente }}</h4>
+        <h3>WIFI TICKET SYSTEM</h3>
+        <h4>Bentornato {{ this.hsComponentStore.loggedReseller.companyName }}</h4>
       </div>
       <div class="page-content">
         <section class="row">

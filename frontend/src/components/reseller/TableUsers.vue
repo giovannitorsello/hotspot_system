@@ -1,10 +1,6 @@
 <template>
   <div>
-    <v-row>
-      <v-col cols="auto">
-        <v-btn icon="fas fa-plus" @click="editResellerUser" />
-      </v-col>
-    </v-row>
+   
     <v-row>
       <v-text-field v-model="search" label="CERCA"></v-text-field>
       <v-data-table
@@ -31,6 +27,7 @@
       @changeResellerUserPassword="changeResellerUserPassword"
     />
   </div>
+  <SnackbarMessage ref="snackbarMessage" />
 </template>
 
 <script>
@@ -38,10 +35,11 @@ import axios from "axios";
 import utilityArrays from "@/utils/utilityArrays.js";
 import { hsStoreReseller } from "@/store/storeReseller.js";
 import FormUser from "@/components/reseller/FormUser.vue";
+import SnackbarMessage from "../general/SnackbarMessage.vue";
 import generateRandomCredentials from "@/utils/random";
 export default {
   name: "TableUser",
-  components: { FormUser },
+  components: { FormUser,SnackbarMessage },
   setup() {
     const hsComponentStore = hsStoreReseller();
     return { hsComponentStore };
@@ -53,11 +51,10 @@ export default {
       search: "",
       headers: [
         { title: "NOME", key: "firstname" },
-        { title: "COGNOME", key: "lastname" },
-        { title: "EMAIL", key: "email" },
-        { title: "TELEFONO", key: "phone" },
         { title: "USERNAME", key: "username" },
-        { title: "Actions", key: "actions" },
+        { title: "TELEFONO", key: "phone" },
+        { title:"RUOLO", key:"role"},
+        { title: "ACTIONS", key: "actions" },
       ],
       page: 1,
       itemsPerPage: 10,
@@ -90,19 +87,17 @@ export default {
             this.hsComponentStore.usersOfSelectedReseller,
             response.data.user
           );
-          this.$swal(response.data.msg);
+          this.$refs.snackbarMessage.open(response.data.msg, "info");
         } else {
           utilityArrays.deleteElementById(
             this.hsComponentStore.usersOfSelectedReseller,
             response.data.user
           );
-          this.$swal(response.data.msg);
+          this.$refs.snackbarMessage.open(response.data.msg, "error");
         }
       });
     },
     changeResellerUserPassword(user) {
-      user.ResellerId = this.hsComponentStore.loggedReseller.id;
-      user.role = "RESELLER";
       axios
         .post("/api/user/changePassword", {
           user: user,
@@ -110,6 +105,8 @@ export default {
         .then((response) => {
           if (response.data.status == 200) {
             console.log("Password changed");
+            this.$refs.snackbarMessage.open(response.data.msg, "info");
+            this.dialogEditUser= false;
           } else {
             console.log("Change password error");
           }

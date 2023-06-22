@@ -22,6 +22,7 @@
     </v-row>
     <FormUser v-if="dialogEditUser" @exitEditUser="exitEditUser" @saveCustomerUser="saveCustomerUser" @changeCustomerUserPassword="changeCustomerUserPassword" />
   </div>
+  <SnackbarMessage ref="snackbarMessage" />
 </template>
 
 <script>
@@ -29,11 +30,12 @@
   import utilityArrays from "@/utils/utilityArrays.js";
   import { hsStoreCustomer } from "@/store/storeCustomer.js";
   import FormUser from "@/components/customer/FormUser.vue";
+  import SnackbarMessage from "../general/SnackbarMessage.vue";
   import generateRandomCredentials from "@/utils/random";
 
   export default {
     name: "TableUsers",
-    components: { FormUser },
+    components: { FormUser,SnackbarMessage },
     setup() {
       const hsComponentStore = hsStoreCustomer();
       return { hsComponentStore };
@@ -76,10 +78,10 @@
         axios.post("/api/user/delete", { user: user }).then(async (response) => {
           if (response.data.status == 200) {
             utilityArrays.deleteElementById(this.hsComponentStore.usersOfSelectedCustomer, response.data.user);
-            this.$swal(response.data.msg);
+            this.$refs.snackbarMessage.open(response.data.msg, "info");
           } else {
             utilityArrays.deleteElementById(this.hsComponentStore.usersOfSelectedCustomer, response.data.user);
-            this.$swal(response.data.msg);
+            this.$refs.snackbarMessage.open(response.data.msg, "error");
           }
         });
       },

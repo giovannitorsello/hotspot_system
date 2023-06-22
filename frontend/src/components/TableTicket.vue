@@ -16,14 +16,17 @@
       </template>
     </v-data-table>
   </div>
+  <SnackbarMessage ref="snackbarMessage" />
 </template>
 
 <script>
   import { hsStoreReseller } from "@/store/storeReseller.js";
   import generateRandomCredentials from "@/utils/random";
-import axios from 'axios';
+  import SnackbarMessage from "@/components/general/SnackbarMessage.vue";
+  import axios from 'axios';
   export default {
     name: "TableTicket",
+    components:{SnackbarMessage},
     setup() {
       const hsComponentStore = hsStoreReseller();
       return { hsComponentStore };
@@ -45,6 +48,7 @@ import axios from 'axios';
         ],
         page: 1,
         itemsPerPage: 10,
+
       };
     },
     computed: {},
@@ -57,9 +61,9 @@ import axios from 'axios';
           console.log(response);
           if(response.data.status == 200){
             this.hsComponentStore.addTicket(response.data.result);
-            this.$swal(response.data.msg);
+            this.$refs.snackbarMessage.open(response.data.msg, "info");
           }else{
-            this.$swal(response.data.msg);
+            this.$refs.snackbarMessage.open(response.data.msg, "error");
           }
         });
       },
@@ -67,9 +71,9 @@ import axios from 'axios';
         axios.post("/admin/tickets/delete", { payload: ticket }).then((response) => {
           if (response.data.status == 200) {
             this.hsComponentStore.deleteTicket(ticket.id);
-            this.$swal(response.data.msg);
+             this.$refs.snackbarMessage.open(response.data.msg, "info");
           } else {
-            this.$swal(response.data.msg);
+            this.$refs.snackbarMessage.open(response.data.msg, "error");
           }
         });
       },

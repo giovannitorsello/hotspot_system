@@ -136,11 +136,11 @@
     mounted() {
       this.dialogEditReseller = true;
       this.selectedReseller = this.hsComponentStore.selectedReseller;
-      //Load dato from store in case of modification
+      //Load data from store in case of modification
       if (this.hsComponentStore.selectedReseller && this.hsComponentStore.selectedReseller.id) {
         this.selectedReseller = this.hsComponentStore.selectedReseller;
-        this.imageInfos.name = "logo";
-        this.imageInfos.url = process.env.VUE_APP_API_ENDPOINT + "/logo/reseller_" + this.selectedReseller.id + ".jpg";
+        this.imageInfos.name = "LOGO_"+this.selectedReseller.companyName;
+        this.imageInfos.url = process.env.VUE_APP_RESELLER_LOGO + this.selectedReseller.id + ".jpg";
       } else {
         //Prepare a new auto-generated password
         this.selectedReseller.password = generateRandomPassword(12);
@@ -195,7 +195,7 @@
           .then((result) => {
             console.log("File uploaded: ", result.data);
             this.imageInfos = result.data.companyLogo;
-            this.imageInfos.url = result.data.companyLogo.url + "?rnd=" + new Date().getTime();
+            this.imageInfos.url = result.data.companyLogo.url;
           })
           .catch((error) => {
             this.selectedLogo = null;

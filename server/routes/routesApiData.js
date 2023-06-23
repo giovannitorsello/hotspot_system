@@ -407,7 +407,7 @@ router.post("/api/reseller/upload/logo", (req, res) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.send({ status: "200", msg: "UPLOAD LOGO CORRETTAMENTE ESEGUITO", companyLogo: {} });
   }
-
+  console.log(req.body);
   let companyLogo = req.files.companyLogo;
 
   if (typeof companyLogo !== "undefined" && companyLogo) {

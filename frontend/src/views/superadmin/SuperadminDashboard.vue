@@ -8,7 +8,7 @@
     <SidebarSuperadmin />
     <div class="page-heading">
       <h3>WIFI TICKET SYSTEM -- SUPERADMIN DASHBOARD</h3>
-      <h4>Bentornato {{ this.hsComponentStore.loggedSuperadmin.companyName }}</h4>
+      <h4>Bentornato {{ this.hsComponentStore.loggedSuperadmin.firstname }}</h4>
     </div>
     <div class="page-content">
       <v-divider></v-divider>
@@ -31,7 +31,6 @@ export default {
     const hsComponentStore = hsStoreSuperadmin();
     return { hsComponentStore };
   },
-  data() {},
-  
+  data() {}, 
 };
 </script>

@@ -4,7 +4,7 @@
       <div class="sidebar-header">
         <div class="d-flex justify-content-between">
           <div class="logo">
-            <a href="/dashboard"><img src="/img/logo_ASYTECH.png" alt="Logo" /></a>
+            <a href="/dashboard"><img :src="resellerLogo" alt="Logo" /></a>
           </div>
         </div>
       </div>
@@ -42,6 +42,7 @@
     },
     data() {
       return {
+        resellerLogo:"",
         menus: [],
       };
     },
@@ -54,6 +55,7 @@
       },
     },
     created() {
+      this.resellerLogo = process.env.VUE_APP_RESELLER_LOGO + this.hsComponentStore.loggedReseller.id + ".jpg"
       this.menus = [
         {
           name: "Home",

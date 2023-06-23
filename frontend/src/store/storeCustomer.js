@@ -4,6 +4,7 @@ import axios from "axios";
 export const hsStoreCustomer = defineStore({
   id: "storeCustomer",
   state: () => ({
+    loggedUser: {},
     loggedCustomer: {},
     websurfersOfSelectedCustomer: [],
     usersOfSelectedCustomer: [],

@@ -25,6 +25,7 @@ syncModels();
 /* const job = schedule.scheduleJob('0 10 * * * *', function(){
   syncModels();
 }); */
+app.set('view engine', 'ejs');
 app.use(cors());
 app.use(
   fileupload({

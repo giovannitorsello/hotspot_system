@@ -92,6 +92,7 @@
       },
       saveCustomer(customer) {
         customer.ResellerId = this.selectedReseller.id;
+        this.selectedCustomer = this.selectedCustomer;
         axios
           .post("/api/customer/save", {
             customer: customer,
@@ -112,7 +113,7 @@
         this.dialogEditCustomer = false;
       },
     },
-    async mounted() {
+    mounted() {
       console.log("Logged reseller is:", this.hsComponentStore.loggedReseller);
       this.selectedReseller = this.hsComponentStore.loggedReseller;
       this.selectedCustomer = this.hsComponentStore.selectedCustomer;

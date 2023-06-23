@@ -31,7 +31,7 @@
           <v-window-item value="customerContactSettings">
             <v-form ref="formContractSettings">
             <v-text-field v-model="selectedCustomer.addessCompany" :rules="validationRules('address')"  label="Indirizzo"></v-text-field>
-            <v-text-field v-model="selectedCustomer.email" :rules="validationRules('email')" label="Email"></v-text-field>
+            <v-text-field v-model="selectedCustomer.email" :rules="validationRules('email')" label="Email" :change="changeEmail()"></v-text-field>
             <v-text-field v-model="selectedCustomer.phone" :rules="validationRules('phone')"  label="Telefono"></v-text-field>
             <v-text-field v-model="selectedCustomer.fax" label="Fax"></v-text-field>
           </v-form>
@@ -93,9 +93,9 @@
             </v-row>
           </v-window-item>
           <v-window-item value="customerUser">
-            <h4 style="text-align:center">Credenziali d'accesso al sistema per questo cliente</h4>
+            <h4 style="text-align:center">Credenziali iniziali per questo reseller</h4>
             <v-divider />
-            <v-text-field v-model="selectedCustomer.username"  label="Username"></v-text-field>
+            <v-text-field v-model="selectedCustomer.username"  label="Username" disabled></v-text-field>
             <v-text-field
             v-model="selectedCustomer.password"
             :append-inner-icon="showPass ? 'mdi mdi-eye' : 'mdi mdi-eye-off'"
@@ -121,8 +121,8 @@
   import axios from "axios";
   import { generateRandomPassword } from "@/utils/randomPassword";
   import { rules } from "@/utils/validate";
-  import UploadLogoService from "@/services/UploadLogoService";
   import utilityArrays from "@/utils/utilityArrays.js";
+  import DialogConfirm from "@/components/general/DialogConfirm.vue";
   import { hsStoreReseller } from "@/store/storeReseller.js";
   import TableDevices from "@/components/reseller/TableDevices.vue";
   import FormDevice from "@/components/reseller/FormDevice.vue";
@@ -130,7 +130,7 @@
   import SnackbarMessage from "../general/SnackbarMessage.vue";
   export default {
     name: "FormCustomer",
-    components: { TableDevices, FormDevice, FormUser,SnackbarMessage },
+    components: { TableDevices, FormDevice, FormUser, SnackbarMessage },
     setup() {
       const hsComponentStore = hsStoreReseller();
       return { hsComponentStore };
@@ -150,9 +150,14 @@
     mounted() {
       this.dialogEditCustomer = true;
       this.selectedCustomer = this.hsComponentStore.selectedCustomer;
-      this.selectedDevice = this.hsComponentStore.selectedDevice;
-      this.imageInfos.name = "logo";
-      this.imageInfos.url = process.env.VUE_APP_API_ENDPOINT + "/logo/customer_" + this.selectedCustomer.id + ".jpg";
+      if(this.hsComponentStore.selectedCustomer && this.hsComponentStore.selectedCustomer.id){
+        this.selectedCustomer = this.hsComponentStore.selectedCustomer;
+        this.selectedDevice = this.hsComponentStore.selectedDevice;
+        this.imageInfos.name = "LOGO_"+this.selectedCustomer.companyName;
+        this.imageInfos.url = process.env.VUE_APP_API_ENDPOINT + "/logo/customer_" + this.selectedCustomer.id + ".jpg";
+      }else{
+        this.selectedCustomer.password = generateRandomPassword(12);
+      }
     },
     methods: {
       async validateGeneralSettingsForm(){
@@ -167,21 +172,11 @@
           this.tabSettings = "customerDevicesSettings"
         }
       },
-      async createUserForCustomer(customer){
-        var newUser={
-          role: "CUSTOMER",
-          email: customer.email,
-          phone: customer.phone,
-          firstname: customer.companyName,
-          username: customer.email,
-          password: generateRandomPassword(8),
-          ResellerId: customer.ResellerId,
-          CustomerId: customer.id
-        }
-        await axios.post("/api/user/save",{user: newUser});
-      },
       validationRules(field) {
       return rules[field];
+      },
+      changeEmail() {
+        this.selectedCustomer.username = this.selectedCustomer.email;
       },
       changeLogo() {
         console.log("Entering change logo");
@@ -212,13 +207,14 @@
           .then((result) => {
             console.log("File uploaded: ", result.data);
             this.imageInfos = result.data.companyLogo;
-            this.imageInfos.url = result.data.companyLogo.url + "?rnd=" + new Date().getTime();
+            this.imageInfos.url = result.data.companyLogo.url;
           })
           .catch((error) => {
             this.selectedLogo = null;
           });
       },
       saveCustomer(customer) {
+        let userPassword = this.selectedCustomer.password;
         customer.ResellerId = this.hsComponentStore.loggedReseller.id;
         axios
           .post("/api/customer/save", {
@@ -227,14 +223,25 @@
           .then(async (response) => {
             if (response.data.status == 200) {
               this.hsComponentStore.selectedCustomer = response.data.customer;
-              this.createUserForCustomer(response.data.customer);
+              this.selectedCustomer = response.data.customer;
+              let userCustomer ={
+                role: "CUSTOMER",
+                email: this.selectedCustomer.email,
+                phone: this.selectedCustomer.phone,
+                firstname: this.selectedCustomer.companyName,
+                username: this.selectedCustomer.email,
+                password: userPassword,
+                ResellerId: this.selectedCustomer.ResellerId,
+                CustomerId: this.selectedCustomer.id
+              }
+              if (userPassword && userPassword !== "") {
+                await axios.post("/api/user/save", { user: userCustomer });
+              }
               utilityArrays.updateElementById(this.hsComponentStore.customersOfSelectedReseller, response.data.customer);
               this.dialogEditCustomer = false;
               this.$refs.snackbarMessage.open(response.data.msg, "info");
-             
             } else {
               this.$refs.snackbarMessage.open(response.data.msg, "error");
-              
             }
           });
       },

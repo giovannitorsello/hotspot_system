@@ -5,7 +5,7 @@ export const hsStoreSuperadmin = defineStore({
   id: "storeSuperadmin",
   state: () => ({
     loggedUser: {},
-    loggedSupedAdmin: {},
+    loggedSuperadmin: {},
     resellersOfSelectedSuperadmin: [],
     usersResellerOfselectedSuperadmin: [],
   }),

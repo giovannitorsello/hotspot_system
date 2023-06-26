@@ -1,0 +1,37 @@
+nav {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .drawer {
+    background-color: #333;
+    color: #fff;
+    height: 100vh;
+    padding: 1rem;
+    width: 15rem;
+  }
+  
+  .drawer h2 {
+    margin-top: 0;
+  }
+  
+  .drawer ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .drawer li {
+    margin: 0.5rem 0;
+  }
+  
+  .drawer li a {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  .main {
+    padding: 1rem;
+    width: 100%;
+  }
+  

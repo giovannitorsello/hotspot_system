@@ -1,5 +1,4 @@
 var config = require("./config.js").load();
-
 const express = require("express");
 const fs = require("fs");
 const https = require("https");
@@ -18,6 +17,8 @@ const routesApiData = require("./routes/routesApiData");
 const { sequelize, connectToDatabase, syncModels } = require("./database");
 
 const app = express();
+
+
 connectToDatabase();
 syncModels();
 
@@ -25,7 +26,6 @@ syncModels();
 /* const job = schedule.scheduleJob('0 10 * * * *', function(){
   syncModels();
 }); */
-app.set('view engine', 'ejs');
 app.use(cors());
 app.use(
   fileupload({
@@ -36,8 +36,7 @@ app.use(
 );
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(__dirname + "/public"));
-app.use(express.static(__dirname + "/public/assets"));
+app.use(express.static('login/dist'));
 app.use("/logo", express.static(__dirname + "/upload/folderCompanyLogo"));
 app.use("/", routes);
 app.use("/", routesApiData);

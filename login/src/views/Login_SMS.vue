@@ -2,16 +2,16 @@
   <div class="ie-fixMibìnHeight">
         <div class="main">
             <div class="wrap animated fadeIn">
-                <img class="logo_default" src="/img/logo_ASYTECH.png">
+                <img class="logo_default" src="assets/img/logo_ASYTECH.png">
                 <h1>Credenziali di accesso</h1>
                 <h5>Arrivera in pochi secondi l'sms con le credenziali di accesso</h5>
                 <form name="login" action="http://10.0.0.1/login" method="post">
                     <label>
-                        <img class="ico" src="/img/user.svg" />
+                        <img class="ico" src="assets/img/user.svg" />
                         <input type="text" name="username">
                     </label>
                     <label>
-                        <img class="ico" src="/img/password.svg" />
+                        <img class="ico" src="assets/img/password.svg" />
                         <input type="password" name="password">
                     </label>
 
@@ -32,7 +32,10 @@ export default {
   name: "Login_SMS",
   created() {},
   data() {
-    return {};
+    return {
+        data(){
+        }
+    };
   },
   props: {},
   methods: {},

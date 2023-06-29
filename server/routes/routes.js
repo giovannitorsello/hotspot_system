@@ -5,7 +5,7 @@ const router = express.Router();
 //login/register tramite social
 const passport = require("passport");
 const database = require("../database");
-const {Websurfer, Ticket, Customer} = require("../database");
+const {Websurfer, Ticket, Customer, Device} = require("../database");
 const generateRandomCredentials = require("../utils/random");
 
 //invio sms, controllare che arrivino
@@ -13,6 +13,7 @@ const senders = require("../utils/senders");
 const {ticketUsername, ticketPassword} = generateRandomCredentials();
 
 //verificare se sono da eliminare
+const folderLogos= "upload/folderCompanyLogo/"
 const createUser = require("../utils/radiusDB");
 const dateUtils = require("../utils/dateUtils");
 const axios = require("axios");
@@ -26,6 +27,47 @@ router.use(session({resave: false, saveUninitialized: true, secret: "secret"}));
 router.post("/getInfoWebsurfer", (req, res) => {
     res.json(newConnection);
 });
+
+router.post("/getDeviceByApiKey", async (req, res) => {
+    var _api_key = req.body.api_key;
+    if (_api_key) {
+        foundDevice = await Device.findOne({
+            where: {
+                api_key: _api_key
+            }
+        });
+        if (foundDevice) {
+            res.send({status: "200", msg: "Device Trovato", device: foundDevice});
+        }else{
+          res.send({status: "404", msg: "Device non Trovato", device: {}});
+        }
+    };
+
+});
+
+router.post("/getCustomerInfoByDevice", async (req,res)=>{
+    var CustomerId = req.body.CustomerId;
+    if(CustomerId){
+        infoCustomer= await Customer.findOne({
+            where:{
+                id: CustomerId,
+            }
+        });
+        if(infoCustomer){
+            res.send({status: "200", msg: "Infomazioni Cliente", customer: infoCustomer});
+        }else{
+            res.send({status: "404", msg: "Errore nel fetch dei dati", customer: {}});
+        }
+    }
+});
+router.post("/logoCustomer", (req,res) =>{
+    console.log(req.body);
+    var id = req.body.id;
+    const logoName = "customer_"+ id +".jpg";
+    const logoPath = folderLogos+ logoName; 
+    console.log(logoPath);
+    res.sendFile(logoPath , { root: '/' });
+})
 
 router.post("/", (req, res) => {
     newConnection = req.body;

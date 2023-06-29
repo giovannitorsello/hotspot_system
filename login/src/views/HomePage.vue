@@ -2,10 +2,10 @@
   <div class="ie-fixMinHeight">
     <div class="main">
       <div class="wrap animated fadeIn">
-        <img src="assets/img/logo_ASYTECH.png" class="logo_default" />
+        <img :src="logoURL" class="logo_default" />
         <a href="/register">
           <input type="submit" value="ACCEDI CON EMAIL E PASSWORD" />
-          <input type="text" :value="this.storeLogin.device.pin">
+          
         </a>
         <div class="row">
           <div class="column">
@@ -22,7 +22,6 @@
         <p class="info bt">
           Powered by <img class="logo_powered" src="assets/img/logo.png" />
         </p>
-        
       </div>
     </div>
   </div>
@@ -30,7 +29,6 @@
 
 <script>
 import { hsStoreWebsurfer } from '@/store/login_Store';
-
 export default {
   name: "HomePage",
   setup(){
@@ -40,12 +38,13 @@ export default {
   },
   data() {
     return {
-      dataFromServer: null
+      dataFromServer: null,
     };
   },
-  props: {},
-  methods: {
-   
+  computed: {
+    logoURL(){
+      return process.env.VUE_APP_CUSTOMER_LOGO+ this.storeLogin.customerInfo.id+".jpg"
+    }
   },
 };
 </script>

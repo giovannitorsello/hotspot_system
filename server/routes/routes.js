@@ -60,14 +60,6 @@ router.post("/getCustomerInfoByDevice", async (req,res)=>{
         }
     }
 });
-router.post("/logoCustomer", (req,res) =>{
-    console.log(req.body);
-    var id = req.body.id;
-    const logoName = "customer_"+ id +".jpg";
-    const logoPath = folderLogos+ logoName; 
-    console.log(logoPath);
-    res.sendFile(logoPath , { root: '/' });
-})
 
 router.post("/", (req, res) => {
     newConnection = req.body;
@@ -75,104 +67,40 @@ router.post("/", (req, res) => {
     res.redirect("https://hotspot.wifinetcom.net:60443");
 });
 
-/* router.post("/", (req, res) => {
-    res.render("pages/auth");
-    device = req.body;
-    console.log(device);
-}); */
-
 router.get("/login", function (req, res) {
     res.render("pages/login_sms");
 });
 
-router.get("/register", function (req, res) {
-    res.render("pages/register");
-});
-
 router.post("/auth/register", async (req, res) => {
-    try {
-        console.log(device);
-
-        // Controlli preliminari
-        if (!req.body)
-            res.render("pages/error");
-        if (!req.body.firstname)
-            res.render("pages/error");
-        if (!req.body.lastname)
-            res.render("pages/error");
-        if (!req.body.email)
-            res.render("pages/error");
-        if (!req.body.phone)
-            res.render("pages/error");
-        if (! device.pin)
-            res.render("pages/error");
-
-        const customer = await Customer.findOne({
-            where: {
-                pin: device.pin
-            }
-        });
-        console.log("Customer is", customer.id);
-
-        // Ulteriore controllo
-        if (! customer)
-            res.render("pages/error");
-
-        webSurferFound = await Websurfer.findOne({
-            where: {
-                email: req.body.email
-            }
-        });
-
-        // Caso websurfer trovato
-        if (webSurferFound != null) {
-            console.log("Websurfer found: ", webSurferFound.id);
-            // Aggiorna il customer ID
-            webSurferFound = await webSurferFound.update({CustomerId: customer.id});
-            // cerca un eventuale ticket esistente
-            var ticketFound = await Ticket.findOne({
-                where: {
-                    WebsurferId: webSurferFound.id
-                }
-            });
-            if (ticketFound) { // First update origin data
-                ticketFound = await ticketFound.update({CustomerId: customer.id, ResellerId: customer.ResellerId, pinAzienda: customer.pin, note: "Created by registration."});
-                console.log("Ticket found is. ", ticketFound.login);
-
-                // invio tramite sms o email
-                senders.sendTicketByEmail(webSurferFound.email, ticketFound);
-                senders.sendTicketBySms(webSurferFound.phone, ticketFound);
-                res.status(301).redirect("http://wifi.hotspot.local/login_local.html");
-            } else { // Creazione nuovo ticket
-                const newTicket = database.generateTicket(customer, webSurferFound, 7);
-                console.log("New ticket is. ", newTicket.login);
-                // invio tramite sms o email
-                senders.sendTicketByEmail(webSurferFound.email, newTicket);
-                senders.sendTicketBySms(webSurferFound.phone, newTicket);
-                res.status(301).redirect("http://wifi.hotspot.local/login_local.html");
-            }
-        } else { // Caso websurfer ignoto
-            webSurferNew = await Websurfer.create({
-                CustomerId: customer.id,
-                firstname: req.body.firstname,
-                lastname: req.body.lastname,
-                email: req.body.email,
-                phone: req.body.phone
-            });
-            if (webSurferNew != null) {
-                console.log("Websurfer created: ", webSurferNew.id);
-                // Creazione nuovo ticket
-                const newTicket = database.generateTicket(customer, webSurferNew, 7);
-                console.log("Generated ticket is", newTicket.login);
-                // invio tramite sms o email
-                senders.sendTicketByEmail(webSurferNew.email, newTicket);
-                senders.sendTicketBySms(webSurferNew.phone, newTicket);
-                console.log("Redirect to: ", customer.web);
-                res.status(301).redirect("http://wifi.hotspot.local/login_local.html");
-            }
+    console.log(req.body);
+    //check if websurfer exist
+    wsFound= await Websurfer.findOne({
+        where:{
+            email: req.body.user.email
         }
-    } catch (error) {
-        console.log("Error in /auth/register");
+    });
+    if(wsFound){
+        console.log("utente esistente");
+    }else{
+        console.log("non esiste, creazione nuoto utente");
+        wsNew = await Websurfer.create({
+            firstname: req.body.user.firstname,
+            lastname:req.body.user.lastname,
+            email:req.body.user.email,
+            phone:req.body.user.phone,
+            CustomerId:req.body.customer.id,
+            ResellerId:req.body.customer.ResellerId,
+        });
+        if(wsNew){
+            console.log("Utente Creato" + wsNew);
+            //Creazione primo ticket per il websurfer
+            newTicket = await database.generateTicket(req.body.customer,req.body.device,wsNew,7);
+            console.log("New Ticket is: " + newTicket);
+            //if project is in production
+            /* senders.sendTicketBySms(wsNew.phone, newTicket);
+            senders.sendTicketByEmail(wsNew.email, newTicket); */
+            res.send({status:"200",msg:"Inserito con successo!"});
+        }
     }
 });
 

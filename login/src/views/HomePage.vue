@@ -1,18 +1,18 @@
 <template>
-  <div class="ie-fixMinHeight">
-    <div class="main">
-      <div class="wrap animated fadeIn">
         <img :src="logoURL" class="logo_default" />
-        <a href="/register">
+        <router-link to="/register">
           <input type="submit" value="ACCEDI CON EMAIL E PASSWORD" />
-          
-        </a>
+        </router-link>
         <div class="row">
           <div class="column">
-            <a href="/auth/google" class="fa fa-google"></a>
+            <a :href="urlGoogle" >
+              <img class="logo_powered" src="assets/img/google_logo.png" />
+              </a>
           </div>
           <div class="column">
-            <a href="/auth/facebook" class="fa fa-facebook"></a>
+            <a :href="urlFacebook">
+              <img class="logo_powered" src="assets/img/facebook_logo.png" />
+              </a>
           </div>
         </div>
         <a href="/login_SMS">
@@ -22,9 +22,6 @@
         <p class="info bt">
           Powered by <img class="logo_powered" src="assets/img/logo.png" />
         </p>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -44,9 +41,14 @@ export default {
   computed: {
     logoURL(){
       return process.env.VUE_APP_CUSTOMER_LOGO+ this.storeLogin.customerInfo.id+".jpg"
+    },
+    urlGoogle(){
+      return process.env.VUE_APP_API_ENDPOINT + "/auth/google";
+    },
+    urlFacebook(){
+      return process.env.VUE_APP_API_ENDPOINT + "/auth/facebook";
     }
   },
+
 };
 </script>
-
-<style lang="scss" scoped></style>

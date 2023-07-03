@@ -1,40 +1,42 @@
 <template>
-   <div class="ie-fixMibìnHeight">
-        <div class="main">
-            <div class="wrap animated fadeIn">
-                <img class="logo_default" src="/img/logo_ASYTECH.png">
+                <img class="logo_default" :src="logoURL" />
                 <h1>Credenziali di accesso</h1>
-                <!--  <h5>Arrivera in pochi secondi l'sms con le credenziali di accesso</h5> -->
-                <form name="login" action="http://wifi.hotspot.local/login" method="post">
+                  <h4 style="text-align:center">Le tue credenziali stanno arrivando!<br> Controlla i tuoi SMS o la tua EMAIL!</h4> 
+                  <form name="login" action="http://10.0.0.1/login" method="post">
                     <label>
-                        <img class="ico" src="/img/user.svg" />
+                        <img class="ico" src="assets/img/user.svg" />
                         <input type="text" name="username">
                     </label>
                     <label>
-                        <img class="ico" src="/img/password.svg" />
+                        <img class="ico" src="assets/img/password.svg" />
                         <input type="password" name="password">
                     </label>
 
-
-                    <!--     <input type="hidden" name="domain" value="hotspot.wifinetcom.net">  -->
-
-                    <input type="hidden" name="dst" value="http://www.google.it/">
+                    <input type="hidden" name="dst" :value="dst">
 
                     <input type="submit" name="login" value="ACCEDI">
                 </form>
-            </div>
-        </div>
-    </div>
 </template>
 
 <script>
+import { hsStoreWebsurfer } from '@/store/login_Store';
 export default {
   name: "SuccessPage",
-  created() {},
+  setup(){
+    const storeLogin = hsStoreWebsurfer();
+    return {storeLogin};
+   },
   data() {
     return {};
   },
-  props: {},
+  computed: {
+    logoURL(){
+      return process.env.VUE_APP_CUSTOMER_LOGO+ this.storeLogin.customerInfo.id+".jpg"
+    },
+    dst(){
+        return this.storeLogin.customerDevice.postAuthLandingPage;
+    }
+  },
   methods: {},
 };
 </script>

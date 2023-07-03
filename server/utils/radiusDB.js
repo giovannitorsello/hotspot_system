@@ -8,9 +8,9 @@ const sequelizeRAD = new Sequelize(config.radius_database_configuration);
 const Radcheck = sequelizeRAD.define("radcheck", {});
 const RadReply = sequelizeRAD.define("radreply", {});
 
-async function createUser(user, pass) {
+async function createUser(user, pass,downRate,upRate) {
   const sql = `INSERT INTO radcheck (username, attribute, op, value) VALUES ('${user}', 'Cleartext-Password', ':=', '${pass}');`;
-  const sql2 = `INSERT INTO radreply (username, attribute, op, value) VALUES ('${user}', 'Mikrotik-Rate-Limit', ':=', '1024K/1024K');`;
+  const sql2 = `INSERT INTO radreply (username, attribute, op, value) VALUES ('${user}', 'Mikrotik-Rate-Limit', ':=', '${upRate}K/${downRate}K');`;
   try {
     await sequelizeRAD.query(sql);
     await sequelizeRAD.query(sql2);

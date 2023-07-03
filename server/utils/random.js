@@ -14,7 +14,7 @@ function generateRandomCredentials(len = 5) {
     ticketPassword += chars[randomIndex];
   }
 
-  return [ticketUsername, ticketPassword];
+  return { ticketUsername, ticketPassword };
 }
 
 module.exports = generateRandomCredentials;

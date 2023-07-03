@@ -7,7 +7,7 @@
       <v-text-field v-model="search" label="CERCA"></v-text-field>
       <v-data-table
         :headers="headers"
-        :items="this.hsComponentStore.ticketsOfSelectedWebsurfer"
+        :items="tickets"
         :search="search"
         :page.sync="page"
         :items-per-page="itemsPerPage"
@@ -60,7 +60,7 @@
       };
     },
     mounted() {
-      this.hsComponentStore.fetchTicketsByWebsurfer(this.hsComponentStore.selectedWebsurfer);
+      this.tickets= this.hsComponentStore.ticketsOfSelectedWebsurfer;
       console.log("Selected websurfer is: ", this.hsComponentStore.selectedWebsurfer);
       console.log("Found tickets: ", this.hsComponentStore.ticketsOfSelectedWebsurfer);
     },

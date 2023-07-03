@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const hsStoreWebsurfer = defineStore('storeWebsurfer', {
   state: () => (
-    { device: {}, customerDevice: {}, customerInfo: {}, logo: "" }
+    { device: {}, customerDevice: {}, customerInfo: {}, newWebsurfer:{}, }
   ),
   actions: {
     async deviceInit() {
@@ -16,9 +16,6 @@ export const hsStoreWebsurfer = defineStore('storeWebsurfer', {
       const res = await axios.post("/getInfoWebsurfer");
       if (!res.data)
         return {};
-
-
-
       this.device = res.data;
       return res.data;
     },
@@ -36,7 +33,6 @@ export const hsStoreWebsurfer = defineStore('storeWebsurfer', {
       this.customerInfo = res.data.customer;
       return res.data.customer;
     },
-
+    persist: true,
   }
-
 });

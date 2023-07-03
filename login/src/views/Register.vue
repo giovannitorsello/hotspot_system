@@ -1,24 +1,20 @@
 <template>
-  <div class="ie-fixMinHeight">
-    <div class="main">
-      <div class="wrap animated fadeIn">
-        <img class="logo_default" src="assets/img/logo_ASYTECH.png" />
-        <form method="POST" action="/auth/register">
+        <img class="logo_default" :src="logoURL" />
           <label>
             <h1>EMAIL AND PASSWORD</h1>
           </label>
           <label>
             <img class="ico" src="assets/img/user.svg" />
-            <input name="firstname" type="text" placeholder="Nome" required />
+            <input name="firstname" required type="text" placeholder="Nome" v-model="newUser.firstname"  />
           </label>
           <label>
             <img class="ico" src="assets/img/user.svg" />
-            <input name="lastname" type="text" placeholder="Cognome" required />
+            <input name="lastname" type="text" placeholder="Cognome" required v-model="newUser.lastname"  />
           </label>
 
           <label>
             <img class="ico" src="assets/img/email.png" />
-            <input name="email" type="email" placeholder="Email" required />
+            <input name="email" type="email" placeholder="Email" required v-model="newUser.email"  />
           </label>
 
           <label>
@@ -27,31 +23,59 @@
               name="phone"
               type="text"
               placeholder="Telefono (per ricevere i codici di accesso)"
+              v-model="newUser.phone"
               required
             />
           </label>
-
           <label>
-            <input type="submit" value="CONTINUA CON EMAIL E PASSWORD" />
+            <input type="submit" @click="register()" :hidden="isValid" value="REGISTRATI" />
           </label>
-        </form>
         <br />
         <p class="info bt">
           Powered by <img class="logo_powered" src="assets/img/logo.png" />
         </p>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script>
+import { hsStoreWebsurfer } from '@/store/login_Store';
+import axios from 'axios';
 export default {
   name: "RegisterPage",
-  created() {},
+ setup(){
+    const storeLogin = hsStoreWebsurfer();
+    return {storeLogin};
+   },
   data() {
-    return {};
+    return {
+      newUser:{}
+    };
   },
-  props: {},
-  methods: {},
+  mounted(){
+    this.storeLogin.newWebsurfer = this.newUser;
+  },
+  computed: {
+    logoURL(){
+      return process.env.VUE_APP_CUSTOMER_LOGO+ this.storeLogin.customerInfo.id+".jpg"
+    },
+    isValid(){
+      if(this.newUser.firstname != null && this.newUser.lastname != null && this.newUser.email != null && this.newUser.phone != null ){
+        return false
+      }else{
+        return true
+      }
+    }
+  },
+  methods: {
+   async register(){
+     const res = await axios.post("/auth/register",{user :this.newUser, customer: this.storeLogin.customerInfo,device: this.storeLogin.customerDevice});
+     if(res.data.status == 200 ){
+      this.$router.push("/success");
+     }
+     console.log(res);
+    },
+    checkData(){
+      console.log(this.newUser);
+    }
+  },
 };
 </script>

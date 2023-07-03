@@ -1,6 +1,5 @@
 const { Sequelize, QueryTypes, Op } = require("sequelize");
 var config = require("./config.js").load();
-const generateRandomCredentials = require("./utils/random");
 const createRadiusUser = require("./utils/radiusDB");
 const senders = require("./utils/senders");
 
@@ -373,8 +372,11 @@ const resumeExpiredTicket = async (ticket, durationDays) => {
   return resumedTicket;
 };
 
-const generateTicket = (customer, websurfer, durationDays) => {
+const generateTicket = async (customer, device, websurfer, durationDays) => {
+  const generateRandomCredentials = require("./utils/random");
   var { ticketUsername, ticketPassword } = generateRandomCredentials();
+  console.log(ticketPassword,ticketUsername);
+  console.log(device);
   //TODO ---> Inserire controllo se già esistenti e rigenerazione
   var emissionDate = new Date();
   var expirationDate = new Date();
@@ -382,7 +384,7 @@ const generateTicket = (customer, websurfer, durationDays) => {
   expirationDate.setDate(expirationDate.getDate() + durationDays);
   expirationUsageDate.setDate(expirationDate.getDate() + 730); //scadenza dopo due anni circa
   var serialNumber = websurfer.id + "-" + customer.id + "-" + emissionDate.getTime();
-
+ 
   var generatedTicket = Ticket.create({
     ResellerId: customer.ResellerId,
     CustomerId: customer.id,
@@ -396,11 +398,12 @@ const generateTicket = (customer, websurfer, durationDays) => {
     durationDays: durationDays,
     emissionDate: emissionDate,
     firstUse: emissionDate,
+    bandwidthProfile:device.bandwidthProfiles[0],
     expirationDate: expirationDate,
     expirationUsageDate: expirationUsageDate,
   });
   //Insert in radius database
-  createRadiusUser(ticketUsername, ticketPassword);
+  createRadiusUser(ticketUsername, ticketPassword, device.bandwidthProfiles[0].download, device.bandwidthProfiles[0].upload);
   return generatedTicket;
 };
 

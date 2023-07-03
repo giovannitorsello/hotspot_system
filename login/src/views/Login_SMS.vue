@@ -1,10 +1,6 @@
 <template>
-  <div class="ie-fixMibìnHeight">
-        <div class="main">
-            <div class="wrap animated fadeIn">
-                <img class="logo_default" src="assets/img/logo_ASYTECH.png">
-                <h1>Credenziali di accesso</h1>
-                <h5>Arrivera in pochi secondi l'sms con le credenziali di accesso</h5>
+                <img :src="logoURL" class="logo_default" />
+                <h4 style="text-align:center">Se ti sono state fornite già le credenziali, inseriscile qui!</h4>
                 <form name="login" action="http://10.0.0.1/login" method="post">
                     <label>
                         <img class="ico" src="assets/img/user.svg" />
@@ -15,27 +11,34 @@
                         <input type="password" name="password">
                     </label>
 
-
-                    <!--input type="hidden" name="domain" value="hotspot.wifinetcom.net"-->
-
-                    <input type="hidden" name="dst" value="http://www.wifinetcom.net/">
-
+                    <input type="hidden" name="dst" :value="dst">
                     <input type="submit" name="login" value="ACCEDI">
                 </form>
-            </div>
-        </div>
-    </div>
+
 </template>
 
 <script>
+import { hsStoreWebsurfer } from '@/store/login_Store';
 export default {
   name: "Login_SMS",
-  created() {},
+  setup(){
+    const storeLogin = hsStoreWebsurfer();
+    storeLogin.deviceInit();
+    return {storeLogin};
+  },
   data() {
     return {
         data(){
         }
     };
+  },
+  computed:{
+    logoURL(){
+      return process.env.VUE_APP_CUSTOMER_LOGO+ this.storeLogin.customerInfo.id+".jpg"
+    },
+    dst(){
+        return this.storeLogin.customerDevice.postAuthLandingPage;
+    }
   },
   props: {},
   methods: {},

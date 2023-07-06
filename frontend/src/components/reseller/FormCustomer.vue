@@ -49,7 +49,6 @@
             <v-row>
               <v-col>
                 <FormDevice v-if="dialogEditDevice" @exitEditDevice="exitEditDevice" @saveDevice="saveDevice" />
-                <v-sheet class="pa-2 ma-1" align="begin"> <v-btn density="compact" icon="bi bi-plus" @click="addDevice()"> </v-btn></v-sheet>
                 <v-sheet class="pa-2 ma-1" align="end">
                   <i class="bi bi-arrow-left ma-1" style="font-size: xx-large" @click="exit()"></i>
                   <i class="bi bi-check-circle ma-1" style="font-size: xx-large" @click="saveCustomer(selectedCustomer)"></i>

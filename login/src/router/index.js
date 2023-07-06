@@ -21,7 +21,13 @@ const routes = [
         path: '/login_SMS',
         name: 'login_SMS',
         component: () => import ("../views/Login_SMS.vue")
-    }, {
+    }, 
+    {
+        path: '/success_social',
+        name: 'success_social',
+        component: () => import ("../views/SuccessSocial.vue")
+    },
+    {
         path: '/about',
         name: 'about',
         // route level code-splitting

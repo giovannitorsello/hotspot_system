@@ -14,7 +14,10 @@ const {
 } = require("../database");
 const generateRandomCredentials = require("../utils/random");
 const senders = require("../utils/senders");
-const {ticketUsername, ticketPassword} = generateRandomCredentials();
+var {
+    ticketUsername,
+    ticketPassword
+} = generateRandomCredentials();
 const createUser = require("../utils/radiusDB");
 const dateUtils = require("../utils/dateUtils");
 const axios = require("axios");
@@ -22,11 +25,11 @@ const md5 = require("md5");
 const formidable = require("formidable");
 const multer = require("multer");
 
+
 // ////////////////// LOGIN ////////////////
 router.post("/api/login", async (req, res) => { // Prevent errors
-    if (!req.body || !req.body.username || !req.body.password) 
+    if (!req.body || !req.body.username || !req.body.password)
         res.send({status: "404", msg: "Login incorrect"});
-    
     // Encrypt password into md5 format
     req.body.password = md5(req.body.password);
     const user = await User.findOne({
@@ -52,13 +55,13 @@ router.post("/api/user/save", async (req, res) => {
     }
     // Encrypt password into md5 format
     user.password = md5(user.password);
-    if (user.id && user.id > 0) 
+    if (user.id && user.id > 0)
         foundUser = await User.findOne({
             where: {
                 id: user.id
             }
         });
-     else 
+     else
         foundUser = await User.findOne({
             where: {
                 username: user.username,
@@ -66,7 +69,6 @@ router.post("/api/user/save", async (req, res) => {
                 email: user.email
             }
         });
-    
 
     // NEW INSERT
     if (foundUser == null || !foundUser.id || foundUser.id === 0) {
@@ -74,40 +76,40 @@ router.post("/api/user/save", async (req, res) => {
 
         // Manage constraints
         // Delete CustomerID to avoid block problem with foreign keys constraints
-        if (userToInsert.CustomerId && userToInsert.CustomerId == 0) 
+        if (userToInsert.CustomerId && userToInsert.CustomerId == 0)
             delete userToInsert.CustomerId;
-        
-        if (userToInsert.ResellerId && userToInsert.ResellerId == 0) 
+
+        if (userToInsert.ResellerId && userToInsert.ResellerId == 0)
             delete userToInsert.ResellerId;
-        
+
         // Manage constraints
 
         var userSaved = await User.create(userToInsert);
-        if (userSaved) 
+        if (userSaved)
             res.send({status: "200", msg: "UTENTE INSERITO", user: userSaved});
-         else 
+         else
             res.send({status: "404", msg: "DATI NON COMPLETI O ERRATI"});
-        
+
     }
 
     // UPDATE
     if (foundUser && foundUser.id !== 0) {
         // Manage constraints
         // Delete CustomerID to avoid block problem with foreign keys constraints
-        if (user.CustomerId || user.CustomerId === 0) 
+        if (user.CustomerId || user.CustomerId === 0)
             delete user.CustomerId;
-        
-        if (user.ResellerId || user.ResellerId === 0) 
+
+        if (user.ResellerId || user.ResellerId === 0)
             delete user.ResellerId;
-        
+
         // Manage constraints
 
         var userUpdated = await foundUser.update(user);
-        if (userUpdated) 
+        if (userUpdated)
             res.send({status: "200", msg: "UTENTE SALVATO.", user: userUpdated});
-         else 
+         else
             res.send({status: "404", msg: "DATI NON COMPLETI O ERRATI"});
-        
+
     }
 });
 
@@ -140,35 +142,34 @@ router.post("/api/user/changePassword", async function (req, res) {
     var foundUser = {};
     // Encrypt password into md5 format
     user.password = md5(user.password);
-    if (user.email) 
+    if (user.email)
         foundUser = await User.findOne({
             where: {
                 email: user.email
             }
         });
-    
-    if (user.id) 
+
+    if (user.id)
         foundUser = await User.findOne({
             where: {
                 id: user.id
             }
         });
-    
+
     // UPDATE
     if (foundUser && foundUser.id !== 0) {
         var userUpdated = await foundUser.update(user);
-        if (userUpdated) 
+        if (userUpdated)
             res.send({status: "200", msg: "PASSWORD MODIFICATA.", user: userUpdated});
-         else 
+         else
             res.send({status: "404", msg: "DATI NON COMPLETI O ERRATI"});
-        
+
     }
 });
 
 router.post("/api/user/getResellerByUser", async function (req, res) {
-    if (! req.body || ! req.body.user || ! req.body.user.id) 
+    if (! req.body || ! req.body.user || ! req.body.user.id)
         res.send({status: "404", msg: "No customer data present", state: "error", reseller: {}});
-    
 
     const user = req.body.user;
     var reseller = await database.getResellerByUser(user);
@@ -176,9 +177,8 @@ router.post("/api/user/getResellerByUser", async function (req, res) {
 });
 
 router.post("/api/user/getCustomerByUser", async function (req, res) {
-    if (! req.body || ! req.body.user || ! req.body.user.id) 
+    if (! req.body || ! req.body.user || ! req.body.user.id)
         res.send({status: "404", msg: "No customer data present", state: "error", customer: {}});
-    
 
     const user = req.body.user;
     var customer = await database.getCustomerByUser(user);
@@ -208,9 +208,8 @@ router.post("/api/customer/upload/logo", (req, res) => {
             if (!error) {
                 companyLogo.url = "https://" + config.server.domain + ":" + config.server.https_port + "/logo/" + newFileNameLogo;
                 res.send({status: "200", msg: "UPLOAD LOGO CORRETTAMENTE ESEGUITO", companyLogo: companyLogo});
-            } else 
+            } else
                 res.send({status: "404", msg: "ERRORE NELL'UPLOAD DEL LOGO", companyLogo: {}});
-            
         });
     }
 });
@@ -223,21 +222,20 @@ router.post("/api/customer/save", multer().array("files"), async (req, res) => {
         res.send({status: "404", msg: "DATI NON COMPLETI O ERRATI"});
         return;
     }
-
-    if (customer.id && customer.id > 0) 
+    if (customer.id && customer.id > 0)
         foundCustomer = await Customer.findOne({
             where: {
                 id: customer.id
             }
         });
-     else 
+     else
         foundCustomer = await Customer.findOne({
             where: {
                 fiscalCode: customer.fiscalCode,
                 vatCode: customer.vatCode
             }
         });
-    
+
 
     // NEW INSERT
     if (foundCustomer == null) {
@@ -252,11 +250,10 @@ router.post("/api/customer/save", multer().array("files"), async (req, res) => {
     // UPDATE
     if (foundCustomer && foundCustomer.id !== 0) {
         var customerUpdated = await foundCustomer.update(customer);
-        if (customerUpdated) 
+        if (customerUpdated)
             res.send({status: "200", msg: "CLIENTE SALVATO.", customer: customerUpdated});
-         else 
+         else
             res.send({status: "404", msg: "DATI NON COMPLETI O ERRATI"});
-        
     }
 });
 
@@ -287,9 +284,9 @@ router.post("/api/customer/delete", async (req, res) => {
 });
 
 router.post("/api/customer/getUsersByCustomer", async function (req, res) {
-    if (! req.body || ! req.body.customer || ! req.body.customer.id) 
+    if (! req.body || ! req.body.customer || ! req.body.customer.id)
         res.send({status: "404", msg: "No customer data present", state: "error", users: []});
-    
+
 
     const customer = req.body.customer;
     var users = await database.getUsersByCustomer(customer);
@@ -297,9 +294,9 @@ router.post("/api/customer/getUsersByCustomer", async function (req, res) {
 });
 
 router.post("/api/customer/getDevicesByCustomer", async function (req, res) {
-    if (! req.body || ! req.body.customer || ! req.body.customer.id) 
+    if (! req.body || ! req.body.customer || ! req.body.customer.id)
         res.send({status: "404", msg: "No customer data present", state: "error", users: {}});
-    
+
 
     const customer = req.body.customer;
     var devices = await database.getDevicesByCustomer(customer);
@@ -307,9 +304,9 @@ router.post("/api/customer/getDevicesByCustomer", async function (req, res) {
 });
 
 router.post("/api/customer/getTicketsByCustomer", async function (req, res) {
-    if (! req.body || ! req.body.customer || ! req.body.customer.id) 
+    if (! req.body || ! req.body.customer || ! req.body.customer.id)
         res.send({status: "404", msg: "No customer data present", state: "error", tickets: {}});
-    
+
 
     const customer = req.body.customer;
     var tickets = await database.getTicketsByCustomer(customer);
@@ -317,9 +314,9 @@ router.post("/api/customer/getTicketsByCustomer", async function (req, res) {
 });
 
 router.post("/api/customer/getActiveTicketsByCustomer", async function (req, res) {
-    if (! req.body || ! req.body.customer || ! req.body.customer.id) 
+    if (! req.body || ! req.body.customer || ! req.body.customer.id)
         res.send({status: "404", msg: "No customer data present", state: "error", tickets: {}});
-    
+
 
     const customer = req.body.customer;
     var tickets = await database.getActiveTicketsByCustomer(customer);
@@ -327,9 +324,8 @@ router.post("/api/customer/getActiveTicketsByCustomer", async function (req, res
 });
 
 router.post("/api/customer/getExpiredTicketsByCustomer", async function (req, res) {
-    if (! req.body || ! req.body.customer || ! req.body.customer.id) 
+    if (! req.body || ! req.body.customer || ! req.body.customer.id)
         res.send({status: "404", msg: "No customer data present", state: "error", tickets: {}});
-    
 
     const customer = req.body.customer;
     var tickets = await database.getExpiredTicketsByCustomer(customer);
@@ -337,9 +333,8 @@ router.post("/api/customer/getExpiredTicketsByCustomer", async function (req, re
 });
 
 router.post("/api/customer/generateTicketForNewWebsurfer", async function (req, res) {
-    if (! req.body || ! req.body.websurfer || ! req.body.websurfer.id) 
+    if (! req.body || ! req.body.websurfer || ! req.body.websurfer.id)
         res.send({status: "404", msg: "No websurfer data present", state: "error", ticket: {}});
-    
 
     const customer = req.body.customer;
     const websurfer = req.body.websurfer;
@@ -362,19 +357,19 @@ router.post("/api/reseller/save", async (req, res) => {
         res.send({status: "404", msg: "DATI NON COMPLETI O ERRATI"});
         return;
     }
-    if (reseller.id && reseller.id > 0) 
+    if (reseller.id && reseller.id > 0)
         foundReseller = await Reseller.findOne({
             where: {
                 id: reseller.id
             }
         });
-     else 
+     else
         foundReseller = await Reseller.findOne({
             where: {
                 vatCode: reseller.vatCode
             }
         });
-    
+
     // NEW INSERT
     if (foundReseller == null) {
         var resellerToInsert = Object.assign({}, reseller);
@@ -389,23 +384,22 @@ router.post("/api/reseller/save", async (req, res) => {
     // UPDATE
     if (foundReseller && foundReseller.id !== 0) {
         var resellerUpdated = await foundReseller.update(reseller);
-        if (resellerUpdated) 
+        if (resellerUpdated)
             res.send({status: "200", msg: "Reseller salvato", reseller: resellerUpdated});
-         else 
+         else
             res.send({status: "404", msg: "DATI NON COMPLETI O ERRATI"});
-        
+
     }
 });
 
 router.post("/api/reseller/delete", async (req, res) => {
     var reseller = req.body.reseller;
-    if (reseller && reseller.id) 
+    if (reseller && reseller.id)
         foundReseller = await Reseller.findOne({
             where: {
                 id: reseller.id
             }
         });
-    
     if (foundReseller) {
         // Must delete in sequence
         // 1) All tickets
@@ -417,15 +411,14 @@ router.post("/api/reseller/delete", async (req, res) => {
         // 4) Finally delete reseller
         const result = foundReseller.destroy();
         res.send({status: "200", msg: "RIVENDITORE ELIMINATO", reseller: foundReseller});
-    } else 
+    } else
         res.send({status: "400", msg: "ERRORE DI ELIMINAZIONE RIVENDITORE", reseller: {}});
-    
 });
 
 router.post("/api/reseller/getCustomersByFulltextSearch", function (req, res) {
-    if (! req.body || ! req.body.searchString) 
+    if (! req.body || ! req.body.searchString)
         res.send({status: "404", msg: "No reseller data present", state: "error", customers: {}});
-    
+
 
     const searchString = req.body.searchString;
     var customers = database.getCustomersByFulltextSearch(searchString);
@@ -433,9 +426,8 @@ router.post("/api/reseller/getCustomersByFulltextSearch", function (req, res) {
 });
 
 router.post("/api/reseller/getUsersByReseller", async function (req, res) {
-    if (! req.body || ! req.body.reseller || ! req.body.reseller.id) 
+    if (! req.body || ! req.body.reseller || ! req.body.reseller.id)
         res.send({status: "404", msg: "No reseller data present", state: "error", users: {}});
-    
 
     const reseller = req.body.reseller;
     var users = await database.getUsersByReseller(reseller);
@@ -443,9 +435,8 @@ router.post("/api/reseller/getUsersByReseller", async function (req, res) {
 });
 
 router.post("/api/reseller/getDevicesByReseller", async function (req, res) {
-    if (! req.body || ! req.body.reseller || ! req.body.reseller.id) 
+    if (! req.body || ! req.body.reseller || ! req.body.reseller.id)
         res.send({status: "404", msg: "No reseller data present", state: "error", devices: {}});
-    
 
     const reseller = req.body.reseller;
     var devices = await database.getDevicesByReseller(reseller);
@@ -453,9 +444,8 @@ router.post("/api/reseller/getDevicesByReseller", async function (req, res) {
 });
 
 router.post("/api/reseller/getCustomersByReseller", async function (req, res) {
-    if (! req.body || ! req.body.reseller || ! req.body.reseller.id) 
+    if (! req.body || ! req.body.reseller || ! req.body.reseller.id)
         res.send({status: "404", msg: "No reseller data present", state: "error", customers: {}});
-    
 
     const reseller = req.body.reseller;
     var customers = await database.getCustomersByReseller(reseller);
@@ -464,18 +454,16 @@ router.post("/api/reseller/getCustomersByReseller", async function (req, res) {
 
 router.post("/api/reseller/getResellers", async function (req, res) {
     var resellers = await database.getResellers();
-    if (! resellers) 
+    if (! resellers)
         res.send({status: "404", msg: "No weseller data present", state: "error", resellers: {}});
-    
 
     res.send({status: "200", msg: "Success.", resellers: resellers});
 });
 
 router.post("/api/reseller/getResellersUser", async function (req, res) {
     var users = await database.getResellersUsers(req.body.superadmin);
-    if (! users) 
+    if (!users)
         res.send({status: "404", msg: "No users data present", state: "error", users: {}});
-    
 
     res.send({status: "200", msg: "Success.", users: users});
 });
@@ -501,9 +489,9 @@ router.post("/api/reseller/upload/logo", (req, res) => {
             if (!error) {
                 companyLogo.url = "https://" + config.server.domain + ":" + config.server.https_port + "/logo/" + newFileNameLogo;
                 res.send({status: "200", msg: "UPLOAD LOGO CORRETTAMENTE ESEGUITO", companyLogo: companyLogo});
-            } else 
+            } else
                 res.send({status: "404", msg: "ERRORE NELL'UPLOAD DEL LOGO", companyLogo: {}});
-            
+
         });
     }
 });
@@ -515,68 +503,62 @@ router.post("/api/device/save", async (req, res) => {
         return;
     }
 
-    if (! device.ipv4Management) 
+    if (! device.ipv4Management)
         device.ipv4Management = "";
-    
 
-    if (! device.ipv6Management) 
+    if (! device.ipv6Management)
         device.ipv6Management = "";
-    
 
-    if (device.id && device.id > 0) 
+    if (device.id && device.id > 0)
         foundDevice = await Device.findOne({
             where: {
                 id: device.id
             }
         });
-     else 
+     else
         foundDevice = await Device.findOne({
             where: {
                 ipv4Management: device.ipv4Management,
                 ipv6Management: device.ipv6Management
             }
         });
-    
 
     // NEW INSERT
     if (foundDevice == null) {
         var deviceToInsert = Object.assign({}, device);
         var deviceSaved = await Device.create(deviceToInsert);
-        if (deviceSaved) 
+        if (deviceSaved)
             res.send({status: "200", msg: "DISPOSITIVO INSERITO", device: deviceSaved, isNewInsert: "true"});
-         else 
+         else
             res.send({status: "404", msg: "DATI NON COMPLETI O ERRATI"});
-        
+
     }
     // UPDATE
     if (foundDevice && foundDevice.id !== 0) { // foundDevice = Object.assign({ id: foundDevice.id }, device);
         var deviceUpdated = await foundDevice.update(device);
-        if (deviceUpdated) 
+        if (deviceUpdated)
             res.send({status: "200", msg: "DISPOSITIVO SALVATO", device: deviceUpdated});
-         else 
+         else
             res.send({status: "404", msg: "DATI NON COMPLETI O ERRATI"});
-        
     }
 });
 
 router.post("/api/device/delete", async (req, res) => {
     var device = req.body.device;
-    if (device && device.id) 
+    if (device && device.id)
         foundDevice = await Device.findOne({
             where: {
                 id: device.id
             }
         });
-    
 
     if (foundDevice) {
         const result = foundDevice.destroy();
         res.send({status: "200", msg: "DISPOSITIVO ELIMINATO", device: foundDevice});
-    } else 
+    } else
         res.send({status: "400", msg: "ERRORE DI ELIMINAZIONE DISPOSITIVO", device: {}});
-    
-});
 
+});
 
 
 router.post("/api/device/getResellerByDevice", async (req, res) => {});
@@ -592,71 +574,67 @@ router.post("/api/websurfer/save", async (req, res) => {
     }
 
     // Avoid null fields
-    if (! websurfer.email) 
+    if (! websurfer.email)
         websurfer.email = "";
-    
-    if (! websurfer.phone) 
-        websurfer.phone = "";
-    
 
-    if (websurfer.id && websurfer.id > 0) 
+    if (! websurfer.phone)
+        websurfer.phone = "";
+
+    if (websurfer.id && websurfer.id > 0)
         foundWebsurfer = await Websurfer.findOne({
             where: {
                 id: websurfer.id
             }
         });
-     else 
+     else
         foundWebsurfer = await Websurfer.findOne({
             where: {
                 email: websurfer.email,
                 phone: websurfer.phone
             }
         });
-    
 
     // NEW INSERT
     if (foundWebsurfer == null) {
         var websurferToInsert = Object.assign({}, websurfer);
         var websurferSaved = await Websurfer.create(websurferToInsert);
-        if (websurferSaved) 
+        if (websurferSaved)
             res.send({status: "200", msg: "WEBSURFER INSERITO", websurfer: websurferSaved});
-         else 
+         else
             res.send({status: "404", msg: "DATI NON COMPLETI O ERRATI"});
-        
+
     }
     // UPDATE
     if (foundWebsurfer && foundWebsurfer.id !== 0) {
         var websurferUpdated = await foundWebsurfer.update(websurfer);
-        if (websurferUpdated) 
+        if (websurferUpdated)
             res.send({status: "200", msg: "DISPOSITIVO SALVATO", websurfer: websurferUpdated});
-         else 
+         else
             res.send({status: "404", msg: "DATI NON COMPLETI O ERRATI"});
-        
+
     }
 });
 
 router.post("/api/websurfer/delete", async (req, res) => {
     var websurfer = req.body.websurfer;
-    if (websurfer && websurfer.id) 
+    if (websurfer && websurfer.id)
         foundWebsurfer = await Websurfer.findOne({
             where: {
                 id: websurfer.id
             }
         });
-    
 
     if (foundWebsurfer) {
         const result = foundWebsurfer.destroy();
         res.send({status: "200", msg: "DISPOSITIVO ELIMINATO", websurfer: foundWebsurfer});
-    } else 
+    } else
         res.send({status: "400", msg: "ERRORE DI ELIMINAZIONE DISPOSITIVO", websurfer: {}});
-    
+
 });
 
 router.post("/api/websurfer/getWebsurfersByCustomer", async function (req, res) {
-    if (! req.body || ! req.body.customer || ! req.body.customer.id) 
+    if (! req.body || ! req.body.customer || ! req.body.customer.id)
         res.send({status: "404", msg: "No customer data present", state: "error", websurfers: {}});
-    
 
     const customer = req.body.customer;
     var websurfers = await database.getWebSurfersByCustomer(customer);
@@ -664,9 +642,8 @@ router.post("/api/websurfer/getWebsurfersByCustomer", async function (req, res) 
 });
 
 router.post("/api/websurfer/getTicketsByWebsurfer", async function (req, res) {
-    if (! req.body || ! req.body.websurfer || ! req.body.websurfer.id) 
+    if (! req.body || ! req.body.websurfer || ! req.body.websurfer.id)
         res.send({status: "404", msg: "No websurfer data present", state: "error", tickets: {}});
-    
 
     const websurfer = req.body.websurfer;
     var tickets = await database.getTicketsByWebsurfer(websurfer);
@@ -680,22 +657,21 @@ router.post("/api/ticket/save", async (req, res) => {
         res.send({status: "404", msg: "DATI NON COMPLETI O ERRATI"});
         return;
     }
-    if (ticket && ticket.id > 0) 
+    if (ticket && ticket.id > 0)
         foundTicket = await Ticket.findOne({
             where: {
                 id: ticket.id
             }
         });
-     else if (ticket && ticket.login && ticket.password) 
+     else if (ticket && ticket.login && ticket.password)
         foundTicket = await Ticket.findOne({
             where: {
                 login: ticket.login,
                 password: ticket.password
             }
         });
-     else 
+     else
         foundTicket = null;
-    
 
     // Generate credentials checking if couple exists
     if (! ticket.login || ! ticket.password) {
@@ -709,9 +685,8 @@ router.post("/api/ticket/save", async (req, res) => {
                     password: ticket.password
                 }
             });
-            if (!searchTicket) 
+            if (!searchTicket)
                 exists = false;
-            
 
             nTries++;
         }
@@ -721,39 +696,38 @@ router.post("/api/ticket/save", async (req, res) => {
         ticket.serialNumber = new Date().getTime();
         var ticketToInsert = Object.assign({}, ticket);
         var ticketSaved = await Ticket.create(ticketToInsert);
-        if (ticketSaved) 
+        if (ticketSaved)
             res.send({status: "200", msg: "WEBSURFER INSERITO", ticket: ticketSaved});
-         else 
+         else
             res.send({status: "404", msg: "DATI NON COMPLETI O ERRATI"});
-        
+
     }
     // UPDATE
     if (foundTicket && foundTicket.id !== 0) {
         var ticketUpdated = await foundTicket.update(ticket);
-        if (ticketUpdated) 
+        if (ticketUpdated)
             res.send({status: "200", msg: "DISPOSITIVO SALVATO", ticket: ticketUpdated});
-         else 
+         else
             res.send({status: "404", msg: "DATI NON COMPLETI O ERRATI"});
-        
+
     }
 });
 
 router.post("/api/ticket/delete", async (req, res) => {
     var ticket = req.body.ticket;
-    if (ticket && ticket.id) 
+    if (ticket && ticket.id)
         foundTicket = await Ticket.findOne({
             where: {
                 id: ticket.id
             }
         });
-    
 
     if (foundTicket) {
         const result = foundTicket.destroy();
         res.send({status: "200", msg: "DISPOSITIVO ELIMINATO", ticket: foundTicket});
-    } else 
+    } else
         res.send({status: "400", msg: "ERRORE DI ELIMINAZIONE DISPOSITIVO", ticket: {}});
-    
+
 });
 
 module.exports = router;

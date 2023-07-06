@@ -31,6 +31,5 @@ export default {
     const hsComponentStore = hsStoreSuperadmin();
     return { hsComponentStore };
   },
-  data() {}, 
 };
 </script>

@@ -4,7 +4,7 @@
       <div class="sidebar-header">
         <div class="d-flex justify-content-between">
           <div class="logo">
-            <a href="/dashboard"><img src="/img/logo_ASYTECH.png" alt="Logo" /></a>
+            <a href="/dashboard"><img :src="customerLogo" alt="Logo" /></a>
           </div>
         </div>
       </div>
@@ -42,6 +42,7 @@
     },
     data() {
       return {
+        customerLogo:"",
         menus: [],
       };
     },
@@ -54,6 +55,7 @@
       },
     },
     created() {
+      this.customerLogo = process.env.VUE_APP_CUSTOMER_LOGO+ this.hsComponentStore.loggedCustomer.id+".jpg"
       this.menus = [
         {
           name: "Home",

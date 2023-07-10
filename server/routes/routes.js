@@ -68,8 +68,8 @@ router.post("/", (req, res) => {
     console.log(newConnection);
     res.redirect("https://hotspot.wifinetcom.net:60443");
 });
-// ok
 
+// ok
 router.get("/login", function (req, res) {
     res.render("pages/login_sms");
 });
@@ -108,17 +108,12 @@ router.post("/auth/register", async (req, res) => {
     }
 });
 
-/* router.get("/auth/success", (req, res) => {
-    res.render("pages/successLogin", {
-        username: ticketUsername,
-        password: ticketPassword
-    });
-});
- */
+//OK
 router.get("/auth/google", passport.authenticate("google", {
     scope: ["profile", "email", "phone"]
 }));
 
+//OK
 router.get("/auth/google/callback", passport.authenticate("google", {failureRedirect: "https://hotspot.wifinetcom.net:60443/"}), async function (req, res) {
     var device,
         customer;
@@ -144,7 +139,7 @@ router.get("/auth/google/callback", passport.authenticate("google", {failureRedi
                 firstname: req.user._json.given_name,
                 lastname: req.user._json.family_name,
                 email: req.user._json.email,
-                phone: "000000000",
+                phone: "0000000000",
                 idSocial: req.user.id,
                 typeSocial: "GOOGLE",
                 CustomerId: device.CustomerId,
@@ -174,45 +169,41 @@ router.get("/auth/google/callback", passport.authenticate("google", {failureRedi
     }
 });
 
-
-router.get("/auth/facebook", passport.authenticate("facebook"));
-
+//OK
+router.get("/auth/facebook", passport.authenticate("facebook",{ scope: ["public_profile", "email"]}));
+//OK
 router.get("/auth/facebook/callback", passport.authenticate("facebook", {failureRedirect: "https://hotspot.wifinetcom.net:60443/"}), async function (req, res) {
     var device,customer;
-    console.log(req.user);
-  /*   try {
+    try{
         const checkIfExist = await Websurfer.findOne({
-            where: {
+            where:{
                 email: req.user._json.email
             }
         });
-        if (! checkIfExist) { // Find customerId and ResellerId
+        if(!checkIfExist){
             device = await Device.findOne({
-                where: {
+                where:{
                     api_key: newConnection.api_key
                 }
             });
-            customer = await Customer.findOne({
-                where: {
+            customer= await Customer.findOne({
+                where:{
                     id: device.CustomerId
                 }
-            })
-            // Create new websurfer
+            });
             const newWebsurfer = await Websurfer.create({
-                firstname: req.user._json.given_name,
-                lastname: req.user._json.family_name,
+                firstname: req.user._json.first_name,
+                lastname: req.user._json.last_name,
                 email: req.user._json.email,
-                phone: "000000000",
+                phone: "0000000000",
                 idSocial: req.user.id,
-                typeSocial: "GOOGLE",
+                typeSocial: "FACEBOOK",
                 CustomerId: device.CustomerId,
                 ResellerId: device.ResellerId
             });
-            if (newWebsurfer) {
-                const newTicket = await database.generateTicket(customer, device, newWebsurfer, 7);
+            if(newWebsurfer){
+                const newTicket = await database.generateTicket(customer,device,newWebsurfer,7);
                 senders.sendTicketByEmail(newWebsurfer.email, newTicket);
-                // il phone non viene letto da google
-                // senders.sendTicketBySms(newWebsurfer.phone, newTicket);
                 console.log(newTicket);
                 res.redirect(`https://hotspot.wifinetcom.net:60443/success_social?id=${
                     customer.id
@@ -223,20 +214,13 @@ router.get("/auth/facebook/callback", passport.authenticate("facebook", {failure
                 }&redirect=${
                     device.postAuthLandingPage
                 }`);
-            } else {}
+            }else{}
         }
-    } catch (error) {
+    }catch(error){
         console.error(error);
-        // Handle error and send an appropriate response
         res.status(500).send("Internal Server Error");
     }
-    res.redirect("https://hotspot.wifinetcom.net:60443/"); */
 });
 
-router.get("/success", (req, res) => {
-    res.render("pages/success", {socialUser: userProfile});
-});
-
-router.get("/error", (req, res) => res.send("error logging in"));
 
 module.exports = router;

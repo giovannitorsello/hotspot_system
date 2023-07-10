@@ -6,6 +6,7 @@ export const hsStoreCustomer = defineStore({
   state: () => ({
     loggedUser: {},
     loggedCustomer: {},
+    selectedWebsurfer:{},
     websurfersOfSelectedCustomer: [],
     usersOfSelectedCustomer: [],
     devicesOfSelectedCustomer: [],
@@ -34,7 +35,6 @@ export const hsStoreCustomer = defineStore({
     async fetchCustomerByUser(user) {
       const res = await axios.post("/api/user/getCustomerByUser", { user: user });
       if (!res.data || !res.data.customer) return {};
-
       this.loggedCustomer = res.data.customer;
       return res.data.customer;
     },
@@ -43,13 +43,11 @@ export const hsStoreCustomer = defineStore({
 
       const res = await axios.post("/api/customer/getUsersByCustomer", { customer: customer });
       if (!res.data || !res.data.users) return [];
-
       this.usersOfSelectedCustomer = res.data.users;
       return res.data.users;
     },
     async fetchWebsurfersByCustomer(customer) {
       if (!customer || !customer.id) return [];
-
       const res = await axios.post("/api/websurfer/getWebsurfersByCustomer", { customer: customer });
       if (!res.data || !res.data.websurfers) return [];
 

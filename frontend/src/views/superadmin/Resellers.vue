@@ -3,7 +3,7 @@
     <SidebarSupeadmin />
     <div id="main">
       <div class="page-heading">
-        <h3>RIVENDITORI</h3>
+        <h3>RESELLER</h3>
       </div>
       <TableResellers />
     </div>

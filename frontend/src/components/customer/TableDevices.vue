@@ -1,8 +1,6 @@
 <template>
-  <div>
     <v-text-field
       v-model="search"
-      append-icon="mdi-magnify"
       label="Cerca"
       single-line
       hide-details
@@ -11,21 +9,21 @@
       :headers="headers"
       :items="hsComponentStore.devicesOfSelectedCustomer"
       :search="search"
-      :page.sync="page"
       :items-per-page="itemsPerPage"
-      :hide-default-header="true"
       :hide-default-footer="true"
+      disable-pagination
     >
-      <template v-slot:[`item.state`]="{ item }">
+    <template v-slot:[`item.state`]="{ item }">
         <p>OK</p>
       </template>
+      <template #bottom v-if="true != false"></template>
     </v-data-table>
     <FormDevice
       v-if="dialogEditDevice"
       @exitEditDevice="exitEditDevice"
       @saveDevice="saveDevice"
     />
-  </div>
+ 
   <SnackbarMessage ref="snackbarMessage" />
 </template>
 <script>

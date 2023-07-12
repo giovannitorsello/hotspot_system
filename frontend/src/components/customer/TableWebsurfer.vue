@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-row class="justify-content-center">
+    <v-row class="justify-content-center m-3">
       <v-btn icon="bi bi-plus" @click="addWebsurfer()" />
     </v-row>
     <v-row>
@@ -9,7 +9,6 @@
         :headers="headers"
         :items="hsComponentStore.websurfersOfSelectedCustomer"
         :search="search"
-        :page.sync="page"
         :items-per-page="itemsPerPage"
         :hide-default-footer="true"
         disable-pagination
@@ -18,6 +17,7 @@
           <i class="bi bi-trash" @click="deleteWebsurfer(item.raw)"> </i>
           <i class="bi bi-pen" @click="editWebsurfer(item.raw)"></i>
         </template>
+        <template #bottom v-if="true != false"></template>
       </v-data-table>
     </v-row>
     <FormWebsurfer v-if="dialogEditWebsurfer" @exitEditWebsurfer="exitEditWebsurfer" @saveWebsurfer="saveWebsurfer" />
@@ -45,11 +45,11 @@
         selectedCustomer: {},
         search: "",
         headers: [
+          {title:"ID", key:"id"},
           { title: "NOME", key: "firstname" },
           { title: "COGNOME", key: "lastname" },
           { title: "EMAIL", key: "email" },
           { title: "TELEFONO", key: "phone" },
-          { title: "NOTE", key: "note" },
           { title: "SOCIAL", key: "typeSocial" },
           { title: "Actions", key: "actions" },
         ],

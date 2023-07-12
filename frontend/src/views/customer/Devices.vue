@@ -4,6 +4,7 @@
     <div id="main">
       <div class="page-heading">
         <h3>DISPOSITIVI</h3>
+        <h5>Gestione apparati hardware</h5>
       </div>
       <TableDevices />
     </div>

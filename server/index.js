@@ -9,7 +9,6 @@ const fileupload = require("express-fileupload");
 const passport = require("passport");
 const schedule = require("node-schedule");
 
-const passportConfig = require("./utils/passport");
 const routes = require("./routes/routes");
 const routesDashboard = require("./routes/routesDashboard");
 const routesApiData = require("./routes/routesApiData");
@@ -26,6 +25,7 @@ syncModels();
 /* const job = schedule.scheduleJob('0 10 * * * *', function(){
   syncModels();
 }); */
+
 app.use(cors());
 app.use(
   fileupload({
@@ -34,6 +34,7 @@ app.use(
     tempFileDir: process.cwd + "/tmp/",
   })
 );
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('login/dist'));

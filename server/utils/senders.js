@@ -2,14 +2,13 @@ var config = require("../config.js").load();
 const spawn = require("child_process").spawn;
 const nodemailer = require("nodemailer");
 
-const sendTicketByEmail = (email, ticket) => {
+const sendTicketByEmail = (email, ticket, urlToLogin) => {
   if (!email) return;
   if (!ticket) return;
   if (!ticket.id) return;
 
-  var ticketMessage = "Le tue credenziali wifi sono: \n login: " + ticket.login + "\n password: " + ticket.password + "\n";
-  ticketMessage += "Disabilita i dati SIM, attiva il WIFI e vai a questo indirizzo: http://wifi.hotspot.local/login_local.html";
-
+  var ticketMessage = "Le tue credenziali wifi sono: \n Username: " + ticket.login + "\n Password: " + ticket.password + "\n";
+  ticketMessage += "Disabilita i dati SIM, attiva il WIFI e vai a questo indirizzo:" + urlToLogin;
   if (config.mailserver) {
     let transporter = nodemailer.createTransport(config.mailserver);
     var mailOptions = {
@@ -24,6 +23,7 @@ const sendTicketByEmail = (email, ticket) => {
         console.log(error);
       } else {
         console.log("Email sent: " + info.response);
+        console.log(urlToLogin);
       }
     });
   }

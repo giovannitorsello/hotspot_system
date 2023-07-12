@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-row>
+    <v-row class="justify-content-center m-1">
       <v-btn icon="bi bi-plus" @click="addTicket()" />
     </v-row>
     <v-row>
@@ -9,11 +9,15 @@
           :headers="headers"
           :items="this.hsComponentStore.ticketsOfSelectedWebsurfer"
           :search="search"
-          :page.sync="page"
-          :items-per-page="itemsPerPage"
-          :hide-default-header="true"
+          v-model:items-per-page="itemsPerPage"
           :hide-default-footer="true"
+          disable-pagination
         >
+         <template v-slot:[`item.state`]="{ item }">
+          <v-icon :class="[item.state === 'active' ? 'green--text' : 'red--text']">
+          {{ item.state == 'active' ? 'mdi-led-on' : 'mdi-led-off' }}
+          </v-icon>
+         </template>
           <template v-slot:[`item.emissionDate`]="{ item }">{{
             getFormattedDate(item.raw.emissionDate)
           }}</template>
@@ -27,6 +31,7 @@
             <i class="bi bi-pen" @click="editTicket(item.raw)"> </i>
             <i class="bi bi-trash" @click="deleteTicket(item.raw)"> </i>
           </template>
+          <template #bottom v-if="true != false"></template>
         </v-data-table>
     </v-row>
     <FormTicket
@@ -56,6 +61,7 @@ export default {
       selectedWebsurfer: {},
       search: "",
       headers: [
+        { title:"STATO TICKET", key:"state"},
         { title: "DATA EMISSIONE", key: "emissionDate" },
         { title: "DATA SCADENZA", key: "expirationDate" },
         { title: "DURATA IN GIORNI", key: "durationDays" },

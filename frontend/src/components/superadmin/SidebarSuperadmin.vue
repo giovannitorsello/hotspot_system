@@ -60,9 +60,13 @@
           path: "/superadmin/dashboard",
         },
         {
+          name:"Reseller",
+          path:"/superadmin/resellers"
+        },
+        {
           name: "Radius",
           path: "/superadmin/radius",
-        },
+        }
       ];
     },
 

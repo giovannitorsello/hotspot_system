@@ -101,8 +101,8 @@ router.post("/auth/register", async (req, res) => {
             newTicket = await database.generateTicket(req.body.customer, req.body.device, wsNew, 7);
             console.log("New Ticket is: " + newTicket);
             // if project is in production
-            /* senders.sendTicketBySms(wsNew.phone, newTicket);
-            senders.sendTicketByEmail(wsNew.email, newTicket); */
+             senders.sendTicketBySms(wsNew.phone, newTicket);
+            senders.sendTicketByEmail(wsNew.email, newTicket); 
             res.send({status: "200", msg: "Inserito con successo!"});
         }
     }
@@ -147,19 +147,12 @@ router.get("/auth/google/callback", passport.authenticate("google", {failureRedi
             });
             if (newWebsurfer) {
                 const newTicket = await database.generateTicket(customer, device, newWebsurfer, 7);
-                senders.sendTicketByEmail(newWebsurfer.email, newTicket);
+                const emailUrlRedirectUser = `https://hotspot.wifinetcom.net:60443/success_social?id=${customer.id}&username=${newTicket.login}&password=${newTicket.password}&redirect=${device.postAuthLandingPage}`
+                senders.sendTicketByEmail(newWebsurfer.email, newTicket, emailUrlRedirectUser);
                 // il phone non viene letto da google
                 // senders.sendTicketBySms(newWebsurfer.phone, newTicket);
                 console.log(newTicket);
-                res.redirect(`https://hotspot.wifinetcom.net:60443/success_social?id=${
-                    customer.id
-                }&username=${
-                    newTicket.login
-                }&password=${
-                    newTicket.password
-                }&redirect=${
-                    device.postAuthLandingPage
-                }`);
+                res.redirect(emailUrlRedirectUser);
             } else {}
         }
     } catch (error) {

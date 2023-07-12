@@ -1,20 +1,15 @@
 <template>
   <div id="main">
-    <header class="mb-3">
-      <a href="#" class="burger-btn d-block d-xl-none">
-        <i class="bi bi-justify fs-3"></i>
-      </a>
-    </header>
     <SidebarReseller />
     <div class="page-heading">
       <h3>WIFI TICKET SYSTEM</h3>
-      <h4>Bentornato {{ this.hsComponentStore.loggedReseller.companyName }}</h4>
+      <h5>Bentornato {{ this.hsComponentStore.loggedReseller.companyName }}</h5>
     </div>
     <div class="page-content">
-        <v-divider></v-divider>
-        <StatsReseller />
-        <v-divider></v-divider>
-        <TableCustomers />
+      <v-divider></v-divider>
+      <StatsReseller />
+      <v-divider></v-divider>
+      <TableCustomers />
     </div>
   </div>
 </template>
@@ -31,7 +26,5 @@ export default {
     const hsComponentStore = hsStoreReseller();
     return { hsComponentStore };
   },
-  data() {},
- 
 };
 </script>

@@ -1,7 +1,6 @@
 <template>
-  <div>
-    <v-row>
-      <v-btn icon="fas fa-plus" @click="addCustomerUser()" />
+    <v-row class="justify-content-center m-1">
+      <v-btn icon="mdi-plus" @click="addCustomerUser()" />
     </v-row>
     <v-row>
       <v-text-field label="CERCA" v-model="search"></v-text-field>
@@ -9,7 +8,6 @@
         :headers="headers"
         :items="hsComponentStore.usersOfSelectedCustomer"
         :search="search"
-        :page.sync="page"
         :items-per-page="itemsPerPage"
         :hide-default-footer="true"
         disable-pagination
@@ -18,10 +16,10 @@
           <i class="bi bi-pen" @click="editCustomerUser(item.raw)"> </i>
           <i class="bi bi-trash" @click="deleteCustomerUser(item.raw)"> </i>
         </template>
+        <template #bottom v-if="true != false"></template>
       </v-data-table>
     </v-row>
     <FormUser v-if="dialogEditUser" @exitEditUser="exitEditUser" @saveCustomerUser="saveCustomerUser" @changeCustomerUserPassword="changeCustomerUserPassword" />
-  </div>
   <SnackbarMessage ref="snackbarMessage" />
 </template>
 

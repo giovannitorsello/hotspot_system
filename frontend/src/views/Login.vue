@@ -45,8 +45,8 @@ export default {
     },
     data() {
         return {
-            username: "antoniocortese1999@gmail.com",
-            password: "mpghb3po",
+            username: "reseller1@gmail.com",
+            password: "reseller1",
         };
     },
     methods: {

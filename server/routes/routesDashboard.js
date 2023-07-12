@@ -4,8 +4,6 @@ const db = require("../database");
 const { Customer, User, Ticket, Websurfer, Reseller } = require("../database");
 const createUser = require("../utils/radiusDB");
 const senders = require("../utils/senders");
-var getDataUser = require("../data/getDataUser");
-var getResellerUser = require("../data/getResellerData");
 var userOBJ;
 
 //AUTH PAGE

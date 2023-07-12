@@ -3,7 +3,8 @@
     <SidebarCustomer />
     <div id="main">
       <div class="page-heading">
-        <h3>GESTIONE WEBSURFER - Utenti finali</h3>
+        <h3>WEBSURFER</h3>
+        <h5>Gestione dei websurfer della tua struttura</h5>
       </div>
       <TableWebsurfer />
     </div>
@@ -11,7 +12,6 @@
 </template>
 
 <script>
-  import axios from "axios";
   import { hsStoreReseller } from "@/store/storeReseller.js";
   import TableWebsurfer from "@/components/customer/TableWebsurfer.vue";
   import SidebarCustomer from "@/components/customer/SidebarCustomer.vue";
@@ -22,9 +22,5 @@
       const hsComponentStore = hsStoreReseller();
       return { hsComponentStore };
     },
-    data() {
-      return {};
-    },
-    methods: {},
   };
 </script>

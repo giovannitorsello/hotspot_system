@@ -1,7 +1,7 @@
 <template>
   <img class="logo_default" :src="logoURL" />
   <h1>Ci sei quasi!</h1>
-  <form name="login" action="http://10.0.0.1/login" method="post">
+  <form name="login" action="https://hotspot.wifi/login" method="post">
     <input type="hidden" name="username" :value="usernameTicket" />
     <input type="hidden" name="password" :value="passwordTicket" />
     <input type="hidden" name="dst" :value="dst" />
